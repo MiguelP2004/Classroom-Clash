@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class codigoExamen : MonoBehaviour
 {
-    public float velocidad = 2f; // la velocidad a la que van los exámenes
+    public float velocidad = 2f; // la velocidad a la que van a mover los exámenes
 
     [Header("Balanceo")]
     public float inclinacionMaxima = 7f;
