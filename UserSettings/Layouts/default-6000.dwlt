@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1920
     height: 989
   m_ShowMode: 4
-  m_Title: Hierarchy
+  m_Title: Scene
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -119,7 +119,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 112}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 568
+  controlID: 8154
   draggingID: 0
 --- !u!114 &6
 MonoBehaviour:
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 112}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 544
+  controlID: 8155
   draggingID: 0
 --- !u!114 &7
 MonoBehaviour:
@@ -171,7 +171,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 56}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 545
+  controlID: 8156
   draggingID: 0
 --- !u!114 &8
 MonoBehaviour:
@@ -697,8 +697,11 @@ MonoBehaviour:
       m_LastClickedID:
         m_Data: 0
       m_ExpandedIDs:
-      - m_Data: -63568
-      - m_Data: -62606
+      - m_Data: -22776
+      - m_Data: -15044
+      - m_Data: -1354
+      - m_Data: 49978
+      - m_Data: 49988
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1221,9 +1224,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -1.053456, y: -0.31487203, z: -0.02630452}
+    m_Target: {x: 954.2315, y: 458.12927, z: -5.1696854}
     speed: 2
-    m_Value: {x: 0, y: 0, z: 0}
+    m_Value: {x: 954.2315, y: 458.12927, z: -5.1696854}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1273,9 +1276,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 5.3535247
+    m_Target: 594.3393
     speed: 2
-    m_Value: 10
+    m_Value: 594.3393
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1425,19 +1428,19 @@ MonoBehaviour:
   m_LastFolders:
   - Assets
   m_LastFoldersGridSize: 96
-  m_LastProjectPath: D:\Unity\Classroom Clash - A Tower Defense Game\Classroom-Clash
+  m_LastProjectPath: D:\Unity\Classroom Clash - A Tower Defense Game
   m_LockTracker:
     m_IsLocked: 0
   m_LastLocalAssetsSearchArea: 1
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs:
-    - m_Data: 67808
+    - m_Data: 50428
     m_LastClickedID:
-      m_Data: 67808
+      m_Data: 50428
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 67808
+    - m_Data: 50428
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1470,7 +1473,7 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 67808
+    - m_Data: 50428
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1499,7 +1502,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: []
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs:
     - m_Data: 49948
     - m_Data: 49734
@@ -1575,9 +1578,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 720
-    width: 1661
-    height: 266
+    y: 647
+    width: 1618
+    height: 339
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1631,7 +1634,7 @@ MonoBehaviour:
     m_DynamicPanelBehavior: 0
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 78380
+  m_LastSelectedObjectID: 49978
 --- !u!114 &20
 MonoBehaviour:
   m_ObjectHideFlags: 52
