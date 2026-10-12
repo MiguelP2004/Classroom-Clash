@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CodigoAlumno
   rangoAtaque: 3.5
-  velocidadRotacion: 360
+  velocidadGiro: 6
   estaColocado: 0
   seleccionado: 0
 --- !u!114 &-7841631227051896934

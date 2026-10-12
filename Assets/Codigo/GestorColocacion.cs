@@ -5,14 +5,12 @@ public class GestorColocacion : MonoBehaviour
 {
     public enum ModoGestor { Nada, Colocando, Borrando }
 
-    [Header("Configuración")]
     public GameObject alumnoPrefab;
     public Sprite spriteBasura; 
 
     private ModoGestor modoActual = ModoGestor.Nada;
     private GameObject objetoEnRaton; 
 
-    // Variables para el efecto rojo de borrado
     private CodigoAlumno alumnoEnPuntoDeMira;
     private Color colorOriginalAlumno = Color.white;
 

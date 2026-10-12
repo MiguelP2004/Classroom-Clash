@@ -103,10 +103,10 @@ TextureImporter:
       name: alumno_0
       rect:
         serializedVersion: 2
-        x: 56
-        y: 66
-        width: 464
-        height: 308
+        x: 61
+        y: 67
+        width: 457
+        height: 305
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
