@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class CodigoAlumno : MonoBehaviour
 {
     [Header("Estadísticas del Alumno")]
-    public float rangoAtaque = 2.5f;
+    public float rangoAtaque = 3f;
     public float velocidadGiro = 6f;
 
     [HideInInspector] public bool estaColocado = false; 
