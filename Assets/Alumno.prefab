@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -7841631227051896934}
   - component: {fileID: 8390310246438761784}
   - component: {fileID: 4291482824124201970}
+  - component: {fileID: 1561439698371988768}
   m_Layer: 0
   m_Name: Alumno
   m_TagString: Untagged
@@ -107,8 +108,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc061b3a556b3aa4c8844b10a3e03919, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CodigoAlumno
-  rangoAtaque: 3.5
+  rangoAtaque: 3
   velocidadGiro: 6
+  proyectilPrefab: {fileID: 5888016210218751789, guid: 5550532f5c9651f469392d74209f20bb, type: 3}
+  cadenciaFuego: 1.2
+  fuerzaRetroceso: 0.1
+  tiempoAtras: 0.1
+  tiempoRecuperacion: 0.2
   estaColocado: 0
   seleccionado: 0
 --- !u!114 &-7841631227051896934
@@ -273,7 +279,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 4.64, y: 3.08}
+    oldSize: {x: 4.57, y: 3.05}
     newSize: {x: 4.64, y: 3.08}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -281,3 +287,17 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.5328717, y: 2.2315488}
   m_EdgeRadius: 0
+--- !u!114 &1561439698371988768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1783917996244953036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0efee3a39f28c3b4c854de18b3cb108a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrdenarCapas
+  offset: 0
+  ignorarEjeY: 0

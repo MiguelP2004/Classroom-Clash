@@ -21,8 +21,9 @@ public class generacionExamenes : MonoBehaviour
     {
         Camera cam = Camera.main;
 
-        Vector3 punto = cam.ViewportToWorldPoint(new Vector3(0f, 0.5f, 0f));
-        Vector3 posicion = new Vector3(punto.x - 0.5f, punto.y, 0f);
+        float bordeIzquierdoX = cam.ViewportToWorldPoint(new Vector3(0f, 0f, 0f)).x;
+
+        Vector3 posicion = new Vector3(bordeIzquierdoX - 0.5f, Random.Range(-1f, 1f), 0f);
 
         Instantiate(prefabExamen, posicion, Quaternion.identity);
     }
