@@ -10,12 +10,11 @@ public class CodigoAlumno : MonoBehaviour
 
     [Header("Disparo")]
     public GameObject proyectilPrefab;
-    public float cadenciaFuego = 1.5f; //[cite: 11]
+    public float cadenciaFuego = 1.5f;
 
-    [Header("Efecto Disparo")]
-    public float fuerzaRetroceso = 0.08f; //[cite: 11]
-    public float tiempoAtras = 0.04f; //[cite: 11]
-    public float tiempoRecuperacion = 0.15f; //[cite: 11]
+    private float fuerzaRetroceso = 0.1f;
+    private float tiempoAtras = 0.1f;
+    private float tiempoRecuperacion = 0.2f;
 
     [HideInInspector] public bool estaColocado = false; 
     [HideInInspector] public bool seleccionado = false;
@@ -42,7 +41,6 @@ public class CodigoAlumno : MonoBehaviour
             inicializado = true;
         }
 
-        // --- SISTEMA DE CLICS ---
         if (!listoParaSeleccionar)
         {
             if (Mouse.current.leftButton.wasReleasedThisFrame)
@@ -68,7 +66,6 @@ public class CodigoAlumno : MonoBehaviour
             }
         }
 
-        // --- LÓGICA DE ATAQUE ---
         BuscarObjetivo();
 
         if (objetivoActual != null)
@@ -149,19 +146,19 @@ public class CodigoAlumno : MonoBehaviour
         // Calcula el retroceso en la dirección contraria a donde está mirando
         Vector3 posAtras = posicionOriginal - (transform.right * fuerzaRetroceso);
 
-        while (tiempo < tiempoAtras) //[cite: 11]
+        while (tiempo < tiempoAtras)
         {
             tiempo += Time.deltaTime;
-            transform.position = Vector3.Lerp(posicionOriginal, posAtras, tiempo / tiempoAtras); //[cite: 11]
+            transform.position = Vector3.Lerp(posicionOriginal, posAtras, tiempo / tiempoAtras);
             yield return null;
         }
 
         tiempo = 0f;
 
-        while (tiempo < tiempoRecuperacion) //[cite: 11]
+        while (tiempo < tiempoRecuperacion)
         {
             tiempo += Time.deltaTime;
-            transform.position = Vector3.Lerp(posAtras, posicionOriginal, tiempo / tiempoRecuperacion); //[cite: 11]
+            transform.position = Vector3.Lerp(posAtras, posicionOriginal, tiempo / tiempoRecuperacion);
             yield return null;
         }
 
