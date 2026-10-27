@@ -88,12 +88,15 @@ public class codigoExamen : MonoBehaviour
         else
         {
             estaMuriendo = true;
-            gameObject.tag = "Untagged"; // Para que no le sigan disparando mientras muere
+            gameObject.tag = "Untagged"; 
             
             if (canvasBarraVida != null) canvasBarraVida.SetActive(false);
-            
-            // Si estaba parpadeando de rojo, lo paramos antes de desvanecer
             if (rutinaGolpe != null) StopCoroutine(rutinaGolpe); 
+            
+            if (ControladorJuego.instancia != null)
+            {
+                ControladorJuego.instancia.SumarEnergia(3);
+            }
             
             StartCoroutine(EfectoDesvanecer());
         }

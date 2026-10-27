@@ -10,9 +10,11 @@ public class GestorColocacion : MonoBehaviour
 
     private ModoGestor modoActual = ModoGestor.Nada;
     private GameObject objetoEnRaton; 
+    private EfectoBoton botonSeleccionado;
 
     private CodigoAlumno alumnoEnPuntoDeMira;
     private Color colorOriginalAlumno = Color.white;
+    public int costeAlumno1 = 20;
 
     void Update()
     {
@@ -46,8 +48,10 @@ public class GestorColocacion : MonoBehaviour
         }
     }
 
-    public void IniciarColocacion()
+    public void IniciarColocacion(EfectoBoton botonQueLlama)
     {
+        if (!ControladorJuego.instancia.PuedeComprar(costeAlumno1)) return;
+
         if (modoActual == ModoGestor.Colocando)
         {
             CancelarAccion();
@@ -57,6 +61,8 @@ public class GestorColocacion : MonoBehaviour
         CancelarAccion(); 
         objetoEnRaton = Instantiate(alumnoPrefab);
         modoActual = ModoGestor.Colocando;
+        
+        botonSeleccionado = botonQueLlama; // Guardamos el botón en memoria
     }
 
     public void IniciarBorrado()
@@ -75,7 +81,7 @@ public class GestorColocacion : MonoBehaviour
             SpriteRenderer sr = objetoEnRaton.AddComponent<SpriteRenderer>();
             sr.sprite = spriteBasura;
             sr.sortingOrder = 20000;
-            objetoEnRaton.transform.localScale = Vector3.one * 0.5f;
+            objetoEnRaton.transform.localScale = Vector3.one * 0.4f;
         }
 
         modoActual = ModoGestor.Borrando;
@@ -84,9 +90,16 @@ public class GestorColocacion : MonoBehaviour
     private void ColocarAlumno()
     {
         objetoEnRaton.GetComponent<CodigoAlumno>().estaColocado = true;
-        
         objetoEnRaton = null; 
         modoActual = ModoGestor.Nada;
+
+        ControladorJuego.instancia.GastarEnergia(costeAlumno1);
+
+        if (botonSeleccionado != null)
+        {
+            botonSeleccionado.IniciarCooldown();
+            botonSeleccionado = null;
+        }
     }
 
     private void GestionarBorrado(Vector3 posicionRaton)
@@ -127,14 +140,11 @@ public class GestorColocacion : MonoBehaviour
 
     public void CancelarAccion()
     {
-        if (objetoEnRaton != null)
-        {
-            Destroy(objetoEnRaton);
-        }
-
+        if (objetoEnRaton != null) Destroy(objetoEnRaton);
         RestaurarColorAlumno();
         
         objetoEnRaton = null;
+        botonSeleccionado = null; 
         modoActual = ModoGestor.Nada;
     }
 
