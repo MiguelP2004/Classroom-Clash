@@ -6,6 +6,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 {
     [Header("Configuración")]
     public int coste = 20;
+    [HideInInspector] public bool bloqueadoPorTutorial = false;
 
     [Header("Escala")]
     public float tamañoNormal = 1f;
@@ -37,6 +38,22 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     void Update()
     {
+        // Si el tutorial lo tiene bloqueado, el botón es una piedra estática (0 interacciones)
+        if (bloqueadoPorTutorial)
+        {
+            enCooldown = false;
+            ratonEncima = false;
+            estaSeleccionado = false;
+
+            if (miBoton != null) miBoton.interactable = false;
+            if (imagenCooldown != null) imagenCooldown.fillAmount = 0f;
+            if (miImagenBase != null) miImagenBase.color = Color.white;
+
+            Vector3 estatico = new Vector3(tamañoNormal, tamañoNormal, 0f);
+            transform.localScale += (estatico - transform.localScale) / 25f;
+            return;
+        }
+
         bool puedeComprar = (coste <= 0) || (ControladorJuego.instancia != null && ControladorJuego.instancia.PuedeComprar(coste));
 
         if (enCooldown)
@@ -79,6 +96,8 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void IniciarCooldown()
     {
+        if (bloqueadoPorTutorial) return;
+
         enCooldown = true;
         temporizador = tiempoCooldown;
         
@@ -90,8 +109,8 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         estaSeleccionado = false;
     }
 
-    public void OnPointerEnter(PointerEventData eventData) { ratonEncima = true; }
+    public void OnPointerEnter(PointerEventData eventData) { if (!bloqueadoPorTutorial) ratonEncima = true; }
     public void OnPointerExit(PointerEventData eventData) { ratonEncima = false; }
-    public void OnSelect(BaseEventData eventData) { estaSeleccionado = true; }
+    public void OnSelect(BaseEventData eventData) { if (!bloqueadoPorTutorial) estaSeleccionado = true; }
     public void OnDeselect(BaseEventData eventData) { estaSeleccionado = false; }
 }

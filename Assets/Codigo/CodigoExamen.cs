@@ -97,6 +97,10 @@ public class codigoExamen : MonoBehaviour
             {
                 ControladorJuego.instancia.SumarEnergia(3);
             }
+            if (GestorTutorial.instancia != null)
+            {
+                GestorTutorial.instancia.RegistrarMuerteExamen();
+            }
             
             StartCoroutine(EfectoDesvanecer());
         }

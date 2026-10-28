@@ -8,6 +8,8 @@ public class CodigoProfe : MonoBehaviour
     public GameObject proyectilPrefab;
     public float cadenciaFuego = 0.5f;
 
+    [HideInInspector] public bool bloqueadoPorTutorial = false;
+
     private float fuerzaRetroceso = 0.1f;
     private float tiempoAtras = 0.1f;
     private float tiempoRecuperacion = 0.2f;
@@ -32,8 +34,8 @@ public class CodigoProfe : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, 0f, angulo);
 
         temporizadorDisparo += Time.deltaTime;
-        
-        if (Mouse.current.leftButton.isPressed && temporizadorDisparo >= cadenciaFuego)
+
+        if (!bloqueadoPorTutorial && Mouse.current.leftButton.isPressed && temporizadorDisparo >= cadenciaFuego)
         {
             Disparar();
             temporizadorDisparo = 0f;
@@ -46,6 +48,7 @@ public class CodigoProfe : MonoBehaviour
         {
             Instantiate(proyectilPrefab, transform.position, transform.rotation);
         }
+        if (GestorTutorial.instancia != null) GestorTutorial.instancia.RegistrarDisparoProfe();
 
         if (rutinaRetroceso != null) StopCoroutine(rutinaRetroceso);
         rutinaRetroceso = StartCoroutine(EfectoRetrocesoVisual());

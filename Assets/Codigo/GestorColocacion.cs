@@ -95,6 +95,8 @@ public class GestorColocacion : MonoBehaviour
 
         ControladorJuego.instancia.GastarEnergia(costeAlumno1);
 
+        if (GestorTutorial.instancia != null) GestorTutorial.instancia.RegistrarAlumnoColocado();
+
         if (botonSeleccionado != null)
         {
             botonSeleccionado.IniciarCooldown();
@@ -130,6 +132,7 @@ public class GestorColocacion : MonoBehaviour
                 Destroy(alumnoEnPuntoDeMira.gameObject);
                 alumnoEnPuntoDeMira = null;
                 CancelarAccion(); 
+                if (GestorTutorial.instancia != null) GestorTutorial.instancia.RegistrarAlumnoBorrado();
             }
         }
         else
