@@ -21,15 +21,15 @@ public class GestorTutorial : MonoBehaviour
     private float posX_Alumno = -350f;
     private float posX_Basura = 350f;
 
-    private string msgBienvenida = "BIENVENIDO A <color=green>CLASSROOM CLASH</color>!!\n ESTE ES EL TUTORIAL"; 
-    private string msgDisparar = "PRESIONA <color=red>CLICK IZQUIERDO</color> CON EL MOUSE PARA DISPARAR CON EL PROFESOR";
-    private string msgExplicacionProfe = "EL PROFESOR APUNTA A TU MOUSE Y ES ESENCIAL PARA DAR APOYO A TUS ALUMNOS";
-    private string msgPlantarAlumno = "SELECCIONA EL <color=red>BOTON DEL ALUMNO</color> PARA DESPLEGAR UN ALUMNO EN EL AULA";
-    private string msgExplicacionAlumno = "LOS ALUMNOS DISPARAN AUTOMATICAMENTE A LOS EXAMENES DENTRO DE SU RANGO\n COLOCA TANTOS COMO PUEDAS!";
-    private string msgAlertaExamenes = "CUIDADO, SE ACERCA UN GRUPO DE EXAMENES!!\n ACABA CON ELLOS!!";
-    private string msgUsarBasura = "PERFECTO, ZONA LIMPIA. BUEN TRABAJO!!\n USA LA <color=red>BASURA</color> PARA RECOGER AL ALUMNO Y QUITARLO DEL AULA";
-    private string msgExplicacionBasura = "LA BASURA ES GRATIS Y TE PERMITE RECOGER A LOS ALUMNOS PARA ORGANIZAR MEJOR TUS DEFENSAS";
-    private string msgFinal = "ENHORABUENA, HAS TERMINADO EL TUTORIAL!!\n CUIDADO QUE SE ACERCAN MAS EXAMENES!!";
+    private string msgBienvenida = "BIENVENIDO A <color=#F3FF00><size=60>CLASSROOM CLASH</size></color>\nVAMOS A APRENDER LOS CONCEPTOS BASICOS!"; 
+    private string msgDisparar = "PRESIONA <color=#FF5151><size=60>CLICK IZQUIERDO</size></color> CON EL MOUSE PARA DISPARAR CON EL PROFESOR";
+    private string msgExplicacionProfe = "CON EL <color=#51DBFF><size=60>PROFESOR</size></color> PUEDES DISPARAR A LOS EXAMENES TAMBIEN Y ES ESENCIAL PARA DAR APOYO A TUS ALUMNOS";
+    private string msgPlantarAlumno = "SELECCIONA EL <color=#FF5151><size=60>BOTON DEL ALUMNO</size></color> PARA DESPLEGAR UN ALUMNO EN EL AULA";
+    private string msgExplicacionAlumno = "LOS <color=#51DBFF><size=60>ALUMNOS</size></color> DISPARAN AUTOMATICAMENTE A LOS EXAMENES DENTRO DE SU RANGO.\nCOLOCA TANTOS COMO PUEDAS!";
+    private string msgAlertaExamenes = "<color=#FF5151><size=60>CUIDADO!!\n</size></color> SE ACERCA UN GRUPO DE EXAMENES!!\nACABA CON ELLOS!";
+    private string msgUsarBasura = "PERFECTO! ZONA LIMPIA. <color=#F3FF00><size=60>BUEN TRABAJO!!</size></color>\nUSA EL <color=#FF5151><size=60>BOTON DE LA BASURA</size></color> PARA RECOGER AL ALUMNO Y QUITARLO DEL AULA";
+    private string msgExplicacionBasura = "LA <color=#51DBFF><size=60>BASURA</size></color> ES GRATIS Y TE PERMITE RECOGER A LOS ALUMNOS PARA ORGANIZAR MEJOR TUS DEFENSAS";
+    private string msgFinal = "<color=#F3FF00><size=60>ENHORABUENA</size></color>\nHAS TERMINADO EL TUTORIAL!\nCUIDADO QUE SE ACERCAN MAS <color=#FF5151><size=60>EXAMENES!!</size></color>";
 
     private bool profeHaDisparado = false;
     private bool alumnoColocado = false;
@@ -59,7 +59,7 @@ public class GestorTutorial : MonoBehaviour
     {
         if (textoTutorial != null)
         {
-            textoTutorial.transform.localScale += (Vector3.one - textoTutorial.transform.localScale) / 25f;
+            textoTutorial.transform.localScale += (Vector3.one - textoTutorial.transform.localScale) / 50f;
         }
     }
 
@@ -113,9 +113,10 @@ public class GestorTutorial : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        yield return StartCoroutine(MostrarTexto(msgAlertaExamenes, Color.red));
+        yield return StartCoroutine(MostrarTexto(msgAlertaExamenes, Color.white));
         
         examenesMuertos = 0;
+        yield return new WaitForSeconds(1f);
         for (int i = 0; i < 5; i++)
         {
             if (generadorExamenes != null) generadorExamenes.GenerarExamen();

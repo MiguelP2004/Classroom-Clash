@@ -1220,7 +1220,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ENHORABUENA, HAS TERMINADO EL TUTORIAL!!\n A POR TODAS!!
+  m_text: <color=#F3FF00><size=60>ENHORABUENA</size></color>\nHAS TERMINADO EL TUTORIAL!\nCUIDADO
+    QUE SE ACERCAN MAS <color=#FF5151><size=60>EXAMENES!!</size></color>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 6015cbcffa3e7a44da88a8aacb8c3c49, type: 2}
   m_sharedMaterial: {fileID: 7911857864314645245, guid: 6015cbcffa3e7a44da88a8aacb8c3c49, type: 2}

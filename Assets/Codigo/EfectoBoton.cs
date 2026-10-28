@@ -38,39 +38,27 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     void Update()
     {
-        // Si el tutorial lo tiene bloqueado, el botón es una piedra estática (0 interacciones)
-        if (bloqueadoPorTutorial)
-        {
-            enCooldown = false;
-            ratonEncima = false;
-            estaSeleccionado = false;
-
-            if (miBoton != null) miBoton.interactable = false;
-            if (imagenCooldown != null) imagenCooldown.fillAmount = 0f;
-            if (miImagenBase != null) miImagenBase.color = Color.white;
-
-            Vector3 estatico = new Vector3(tamañoNormal, tamañoNormal, 0f);
-            transform.localScale += (estatico - transform.localScale) / 25f;
-            return;
-        }
-
         bool puedeComprar = (coste <= 0) || (ControladorJuego.instancia != null && ControladorJuego.instancia.PuedeComprar(coste));
 
+        // 1. El Cooldown tiene prioridad absoluta sobre lo visual, pase lo que pase
         if (enCooldown)
         {
             temporizador -= Time.deltaTime;
             
             if (imagenCooldown != null) imagenCooldown.fillAmount = temporizador / tiempoCooldown;
             if (miImagenBase != null) miImagenBase.color = new Color(0.6f, 0.6f, 0.6f, 1f);
+            if (miBoton != null) miBoton.interactable = false;
 
             if (temporizador <= 0f) enCooldown = false;
         }
         else 
         {
-            if (!puedeComprar)
+            // 2. Si no está recargando, comprobamos si está bloqueado por el tutorial o por falta de dinero
+            if (bloqueadoPorTutorial || !puedeComprar)
             {
                 if (imagenCooldown != null) imagenCooldown.fillAmount = 0f; 
-                if (miImagenBase != null) miImagenBase.color = new Color(0.6f, 0.6f, 0.6f, 1f); 
+                // Si eres pobre se pone gris oscuro; si tienes dinero pero es culpa del tutorial, se queda blanco
+                if (miImagenBase != null) miImagenBase.color = (!puedeComprar) ? new Color(0.6f, 0.6f, 0.6f, 1f) : Color.white; 
                 if (miBoton != null) miBoton.interactable = false; 
                 
                 ratonEncima = false;
@@ -78,15 +66,17 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             }
             else
             {
+                // 3. Estado normal y 100% interactivo
                 if (imagenCooldown != null) imagenCooldown.fillAmount = 0f;
                 if (miImagenBase != null) miImagenBase.color = Color.white;
                 if (miBoton != null) miBoton.interactable = true;
             }
         }
 
+        // Gestión de la escala (no crecerá si el tutorial lo bloquea o está recargando)
         Vector3 objetivo = new Vector3(tamañoNormal, tamañoNormal, 0f);
         
-        if (!enCooldown && puedeComprar && (ratonEncima || estaSeleccionado))
+        if (!bloqueadoPorTutorial && !enCooldown && puedeComprar && (ratonEncima || estaSeleccionado))
         {
             objetivo = new Vector3(tamañoAgrandado, tamañoAgrandado, 0f);
         }
@@ -96,8 +86,6 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void IniciarCooldown()
     {
-        if (bloqueadoPorTutorial) return;
-
         enCooldown = true;
         temporizador = tiempoCooldown;
         
