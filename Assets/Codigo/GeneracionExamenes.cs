@@ -4,7 +4,12 @@ public class generacionExamenes : MonoBehaviour
 {
     public GameObject prefabExamen;
     public float tiempoAparicion = 2f;
-    [HideInInspector] public bool generacionActiva = false; // Controlado por el tutorial
+    [HideInInspector] public bool generacionActiva = false;
+
+    [Header("Aparición y Ruta")]
+    public float posX_Aparicion = -8.5f; // Ajusta en el Inspector a la flecha de entrada
+    public float posY_Aparicion = 0.2f;
+    public EdgeCollider2D rutaCamino;    // Arrastra aquí el mismo objeto Camino
 
     float temporizador;
 
@@ -20,12 +25,15 @@ public class generacionExamenes : MonoBehaviour
         }
     }
 
-    public void GenerarExamen() // Ahora es public para que el tutorial pueda llamarlo
+    public void GenerarExamen()
     {
-        Camera cam = Camera.main;
-        float bordeIzquierdoX = cam.ViewportToWorldPoint(new Vector3(0f, 0f, 0f)).x;
-        Vector3 posicion = new Vector3(bordeIzquierdoX - 0.5f, Random.Range(-1f, 1f), 0f);
+        Vector3 posicion = new Vector3(posX_Aparicion, posY_Aparicion, 0f);
+        GameObject nuevoExamen = Instantiate(prefabExamen, posicion, Quaternion.identity);
 
-        Instantiate(prefabExamen, posicion, Quaternion.identity);
+        if (rutaCamino != null)
+        {
+            codigoExamen script = nuevoExamen.GetComponent<codigoExamen>();
+            if (script != null) script.AsignarRuta(rutaCamino);
+        }
     }
 }

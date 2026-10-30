@@ -22,6 +22,8 @@ public class GestorTutorial : MonoBehaviour
     private float posX_Basura = 350f;
 
     private string msgBienvenida = "BIENVENIDO A <color=#F3FF00><size=60>CLASSROOM CLASH</size></color>\nVAMOS A APRENDER LOS CONCEPTOS BASICOS!"; 
+    private string msgMoverCamara = "UTILIZA EL <color=#FF5151><size=60>MOUSE</size></color> EN LOS BORDES PARA DESPLAZARTE A LA DERECHA E IZQUIERDA DEL MAPA";
+    private string msgExplicacionCamara = "MOVER LA <color=#51DBFF><size=60>CAMARA</size></color> ES FUNDAMENTAL PARA VIGILAR TODO EL RECORRIDO DE LOS EXAMENES Y ARMAR TU ESTRATEGIA DE DEFENSA";
     private string msgDisparar = "PRESIONA <color=#FF5151><size=60>CLICK IZQUIERDO</size></color> CON EL MOUSE PARA DISPARAR CON EL PROFESOR";
     private string msgExplicacionProfe = "CON EL <color=#51DBFF><size=60>PROFESOR</size></color> PUEDES DISPARAR A LOS EXAMENES TAMBIEN Y ES ESENCIAL PARA DAR APOYO A TUS ALUMNOS";
     private string msgPlantarAlumno = "SELECCIONA EL <color=#FF5151><size=60>BOTON DEL ALUMNO</size></color> PARA DESPLEGAR UN ALUMNO EN EL AULA";
@@ -31,6 +33,7 @@ public class GestorTutorial : MonoBehaviour
     private string msgExplicacionBasura = "LA <color=#51DBFF><size=60>BASURA</size></color> ES GRATIS Y TE PERMITE RECOGER A LOS ALUMNOS PARA ORGANIZAR MEJOR TUS DEFENSAS";
     private string msgFinal = "<color=#F3FF00><size=60>ENHORABUENA</size></color>\nHAS TERMINADO EL TUTORIAL!\nCUIDADO QUE SE ACERCAN MAS <color=#FF5151><size=60>EXAMENES!!</size></color>";
 
+    private float distanciaCamaraRecorrida = 0f;
     private bool profeHaDisparado = false;
     private bool alumnoColocado = false;
     private bool alumnoBorrado = false;
@@ -44,7 +47,6 @@ public class GestorTutorial : MonoBehaviour
     void Start()
     {
         if (flechaIndicacion != null) flechaIndicacion.SetActive(false);
-        // Iniciamos con el texto invisible
         if (textoTutorial != null)
         {
             Color c = textoTutorial.color;
@@ -65,23 +67,41 @@ public class GestorTutorial : MonoBehaviour
 
     IEnumerator SecuenciaTutorial()
     {
+        // Bloqueo inicial total (incluida la cámara)
         if (generadorExamenes != null) generadorExamenes.generacionActiva = false;
         if (botonAlumno != null) botonAlumno.bloqueadoPorTutorial = true;
         if (botonBasura != null) botonBasura.bloqueadoPorTutorial = true;
         if (profe != null) profe.bloqueadoPorTutorial = true;
+        if (ControladorJuego.instancia != null) ControladorJuego.instancia.camaraBloqueadaPorTutorial = true;
 
         yield return new WaitForSeconds(1.5f);
 
+        // Bienvenida (con la cámara aún bloqueada)
         yield return StartCoroutine(MostrarTexto(msgBienvenida, Color.white));
-        yield return new WaitForSeconds(4.5f); // Tiempo para leerlo
+        yield return new WaitForSeconds(4.5f);
         yield return StartCoroutine(OcultarTexto());
         yield return new WaitForSeconds(1.5f);
 
-        if (profe != null) profe.bloqueadoPorTutorial = false; // ¡Desbloqueamos el disparo!
+        // --- PASO 1: MOVER LA CÁMARA ---
+        if (ControladorJuego.instancia != null) ControladorJuego.instancia.camaraBloqueadaPorTutorial = false;
+        yield return StartCoroutine(MostrarTexto(msgMoverCamara, Color.white));
+        
+        distanciaCamaraRecorrida = 0f;
+        // Esperamos a que el jugador haya desplazado la cámara lo suficiente (2.5 unidades)
+        yield return new WaitUntil(() => distanciaCamaraRecorrida >= 2.5f);
+        yield return StartCoroutine(EfectoObjetivoCumplido());
+        
+        yield return StartCoroutine(MostrarTexto(msgExplicacionCamara, Color.white));
+        yield return new WaitForSeconds(4.5f);
+        yield return StartCoroutine(OcultarTexto());
+        yield return new WaitForSeconds(1.5f);
+
+        // --- PASO 2: DISPARAR CON EL PROFE ---
+        if (profe != null) profe.bloqueadoPorTutorial = false;
 
         yield return StartCoroutine(MostrarTexto(msgDisparar, Color.white));
         profeHaDisparado = false;
-        yield return new WaitUntil(() => profeHaDisparado); // Espera el disparo
+        yield return new WaitUntil(() => profeHaDisparado);
         yield return StartCoroutine(EfectoObjetivoCumplido());
         yield return StartCoroutine(MostrarTexto(msgExplicacionProfe, Color.white));
         yield return new WaitForSeconds(4.5f);
@@ -89,7 +109,8 @@ public class GestorTutorial : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        if (botonAlumno != null) botonAlumno.bloqueadoPorTutorial = false; // Desbloqueamos solo el alumno
+        // --- PASO 3: COLOCAR UN ALUMNO ---
+        if (botonAlumno != null) botonAlumno.bloqueadoPorTutorial = false;
         yield return StartCoroutine(MostrarTexto(msgPlantarAlumno, Color.white));
 
         if (flechaIndicacion != null)
@@ -101,7 +122,7 @@ public class GestorTutorial : MonoBehaviour
         }
         
         alumnoColocado = false;
-        yield return new WaitUntil(() => alumnoColocado); // Espera a que lo plante en el suelo
+        yield return new WaitUntil(() => alumnoColocado);
 
         if (flechaIndicacion != null) flechaIndicacion.SetActive(false);
         
@@ -113,6 +134,7 @@ public class GestorTutorial : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
+        // --- PASO 4: OLEADA DE 5 EXÁMENES ---
         yield return StartCoroutine(MostrarTexto(msgAlertaExamenes, Color.white));
         
         examenesMuertos = 0;
@@ -125,10 +147,10 @@ public class GestorTutorial : MonoBehaviour
         
         yield return StartCoroutine(OcultarTexto());
 
-        // Esperamos hasta que los 5 exámenes hayan muerto
         yield return new WaitUntil(() => examenesMuertos >= 5);
 
-        if (botonBasura != null) botonBasura.bloqueadoPorTutorial = false; // Desbloqueamos solo la basura
+        // --- PASO 5: USAR LA BASURA ---
+        if (botonBasura != null) botonBasura.bloqueadoPorTutorial = false;
         yield return StartCoroutine(MostrarTexto(msgUsarBasura, Color.white));
 
         if (flechaIndicacion != null)
@@ -140,7 +162,7 @@ public class GestorTutorial : MonoBehaviour
         }
 
         alumnoBorrado = false;
-        yield return new WaitUntil(() => alumnoBorrado); // Espera a que borre al alumno
+        yield return new WaitUntil(() => alumnoBorrado);
 
         if (flechaIndicacion != null) flechaIndicacion.SetActive(false);
         
@@ -152,12 +174,12 @@ public class GestorTutorial : MonoBehaviour
         yield return StartCoroutine(OcultarTexto());
         yield return new WaitForSeconds(1.5f);
 
+        // --- PASO 6: FIN DEL TUTORIAL ---
         yield return StartCoroutine(MostrarTexto(msgFinal, Color.white));
         textoTutorial.transform.localScale = new Vector3(tamañoZoomExito, tamañoZoomExito, 1f);
         yield return new WaitForSeconds(4.5f);
         yield return StartCoroutine(OcultarTexto());
 
-        // Liberamos todos los botones y activamos el generador infinito
         if (botonAlumno != null) botonAlumno.bloqueadoPorTutorial = false;
         if (botonBasura != null) botonBasura.bloqueadoPorTutorial = false;
         if (generadorExamenes != null) generadorExamenes.generacionActiva = true;
@@ -206,6 +228,7 @@ public class GestorTutorial : MonoBehaviour
         yield return StartCoroutine(OcultarTexto());
     }
 
+    public void RegistrarMovimientoCamara(float cantidad) { distanciaCamaraRecorrida += cantidad; }
     public void RegistrarDisparoProfe() { profeHaDisparado = true; }
     public void RegistrarAlumnoColocado() { alumnoColocado = true; }
     public void RegistrarAlumnoBorrado() { alumnoBorrado = true; }

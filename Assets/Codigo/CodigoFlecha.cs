@@ -5,7 +5,6 @@ public class CodigoFlecha : MonoBehaviour
 {
     private float velocidadFlote = 2.5f;
     private float alturaFlote = 11f;
-    private float opacidadFinal = 0.8f;
     private float duracionFade = 1f;
     private Image miImagen;
     private float posY_Base;
@@ -40,7 +39,7 @@ public class CodigoFlecha : MonoBehaviour
         {
             Color c = miImagen.color;
             float progresoFade = duracionFade > 0f ? tiempoFade / duracionFade : 1f;
-            c.a = Mathf.SmoothStep(0f, opacidadFinal, Mathf.Clamp01(progresoFade));
+            c.a = Mathf.SmoothStep(0f, 0.9f, Mathf.Clamp01(progresoFade));
             miImagen.color = c;
         }
 

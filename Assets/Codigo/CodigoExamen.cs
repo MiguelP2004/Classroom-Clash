@@ -8,13 +8,13 @@ public class codigoExamen : MonoBehaviour
     public float vida = 3f; 
     private float vidaMaxima;
     public float velocidad = 2f; 
-    private bool estaMuriendo = false; // Nueva variable de estado
+    private bool estaMuriendo = false;
 
     [Header("Interfaz de Vida")]
     public GameObject canvasBarraVida;
     public Image imagenRellenoVida;
-    public Color colorVidaLleno = Color.green; // Color para vida alta
-    public Color colorVidaVacio = Color.red;   // Color para vida baja
+    public Color colorVidaLleno = Color.green;
+    public Color colorVidaVacio = Color.red;
 
     [Header("Balanceo")]
     public float inclinacionMaxima = 7f;
@@ -28,6 +28,10 @@ public class codigoExamen : MonoBehaviour
     [HideInInspector]
     public float distanciaRecorrida = 0f; 
 
+    private EdgeCollider2D ruta;
+    private int indicePuntoActual = 0;
+    private Vector3 desvioCamino;
+
     private SpriteRenderer[] todosLosSprites;
     private Color[] coloresBase;
     private Coroutine rutinaGolpe;
@@ -35,6 +39,9 @@ public class codigoExamen : MonoBehaviour
     void Awake()
     {
         vidaMaxima = vida;
+
+        // ¡NUEVO!: Desvío más amplio en la Y (-0.2 a 0.2) para ocupar todo el ancho del camino
+        desvioCamino = new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.2f, 0.2f), 0f);
 
         todosLosSprites = GetComponentsInChildren<SpriteRenderer>();
         coloresBase = new Color[todosLosSprites.Length];
@@ -44,29 +51,51 @@ public class codigoExamen : MonoBehaviour
             coloresBase[i] = todosLosSprites[i].color;
         }
 
-        // Ocultamos la barra de vida al nacer para que no aparezca al 100%
         if (canvasBarraVida != null) canvasBarraVida.SetActive(false);
+    }
+
+    public void AsignarRuta(EdgeCollider2D nuevaRuta)
+    {
+        ruta = nuevaRuta;
+        indicePuntoActual = 0;
     }
 
     void Update()
     {
         if (estaMuriendo) return;
 
-        Vector3 movimiento = Vector3.right * velocidad * Time.deltaTime;
-        transform.Translate(movimiento, Space.World);
-        distanciaRecorrida += movimiento.magnitude;
+        // Si tiene una línea asignada, sigue sus puntos uno por uno
+        if (ruta != null && ruta.pointCount > 0 && indicePuntoActual < ruta.pointCount)
+        {
+            Vector3 puntoDestino = ruta.transform.TransformPoint(ruta.points[indicePuntoActual]) + desvioCamino;
+            puntoDestino.z = 0f;
+
+            Vector3 posAnterior = transform.position;
+            transform.position = Vector3.MoveTowards(transform.position, puntoDestino, velocidad * Time.deltaTime);
+            distanciaRecorrida += Vector3.Distance(posAnterior, transform.position);
+
+            if (Vector2.Distance(transform.position, puntoDestino) < 0.05f)
+            {
+                indicePuntoActual++;
+            }
+        }
+        else
+        {
+            // Movimiento hacia la derecha al terminar la ruta (o si no hay ruta asignada)
+            Vector3 movimiento = Vector3.right * velocidad * Time.deltaTime;
+            transform.Translate(movimiento, Space.World);
+            distanciaRecorrida += movimiento.magnitude;
+        }
     }
 
     void LateUpdate()
     {
         if (estaMuriendo) return;
 
-        // 1. Aplicamos el balanceo al examen
         tiempoBalanceo += Time.deltaTime;
         float anguloActual = inclinacionMaxima * Mathf.Sin(tiempoBalanceo * velocidadBalanceo);
         transform.rotation = Quaternion.Euler(0, 0, anguloActual);
 
-        // 2. Contrarrestamos el balanceo en la barra de vida para que siempre esté recta
         if (canvasBarraVida != null && canvasBarraVida.activeSelf)
         {
             canvasBarraVida.transform.rotation = Quaternion.identity;
@@ -78,7 +107,7 @@ public class codigoExamen : MonoBehaviour
         if (estaMuriendo) return;
 
         vida -= danoRecibido;
-        ActualizarBarraVida(); // Llamamos al nuevo método de la UI
+        ActualizarBarraVida();
 
         if (vida > 0)
         {
@@ -115,11 +144,8 @@ public class codigoExamen : MonoBehaviour
 
         if (imagenRellenoVida != null)
         {
-            // Calculamos el porcentaje (0 a 1)
             float porcentaje = Mathf.Clamp01(vida / vidaMaxima);
             imagenRellenoVida.fillAmount = porcentaje;
-            
-            // Lerp mezcla los colores suavemente (0 = vacío/rojo, 1 = lleno/verde)
             imagenRellenoVida.color = Color.Lerp(colorVidaVacio, colorVidaLleno, porcentaje);
         }
     }
@@ -168,7 +194,6 @@ public class codigoExamen : MonoBehaviour
             {
                 if (todosLosSprites[i] != null)
                 {
-                    // Usa siempre el color original (sin tono rojo) y solo modifica su Alpha
                     Color c = coloresBase[i]; 
                     float alphaActual = Mathf.Lerp(c.a, 0f, t);
                     todosLosSprites[i].color = new Color(c.r, c.g, c.b, alphaActual);

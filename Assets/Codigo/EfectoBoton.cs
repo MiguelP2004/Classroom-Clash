@@ -7,6 +7,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [Header("Configuración")]
     public int coste = 20;
     [HideInInspector] public bool bloqueadoPorTutorial = false;
+    [HideInInspector] public bool forzadoActivo = false;
 
     [Header("Escala")]
     public float tamañoNormal = 1f;
@@ -76,12 +77,19 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         // Gestión de la escala (no crecerá si el tutorial lo bloquea o está recargando)
         Vector3 objetivo = new Vector3(tamañoNormal, tamañoNormal, 0f);
         
-        if (!bloqueadoPorTutorial && !enCooldown && puedeComprar && (ratonEncima || estaSeleccionado))
+        if (!bloqueadoPorTutorial && !enCooldown && puedeComprar && (ratonEncima || estaSeleccionado || forzadoActivo))
         {
             objetivo = new Vector3(tamañoAgrandado, tamañoAgrandado, 0f);
         }
         
         transform.localScale += (objetivo - transform.localScale) / 25f;
+        if (forzadoActivo && EventSystem.current != null)
+        {
+            if (EventSystem.current.currentSelectedGameObject != gameObject)
+            {
+                miBoton.Select(); 
+            }
+        }
     }
 
     public void IniciarCooldown()

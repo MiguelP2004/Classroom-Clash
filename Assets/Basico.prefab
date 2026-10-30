@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1539086927875553109}
   - component: {fileID: 6679328373148991207}
   - component: {fileID: 94919014779483575}
+  - component: {fileID: 8985603717315856154}
   m_Layer: 0
   m_Name: Canvas Barra Vida
   m_TagString: Untagged
@@ -102,6 +103,20 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &8985603717315856154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2882683708302377588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0efee3a39f28c3b4c854de18b3cb108a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrdenarCapas
+  offset: 1.5
+  ignorarEjeY: 0
 --- !u!1 &4590902806433182344
 GameObject:
   m_ObjectHideFlags: 0
@@ -207,7 +222,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.158922, y: 0.150093, z: 0}
+  m_LocalScale: {x: 0.13430417, y: 0.12684281, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4403923186940642608}
@@ -382,7 +397,7 @@ RectTransform:
   m_GameObject: {fileID: 7009063562164768941}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6491031888295398812}

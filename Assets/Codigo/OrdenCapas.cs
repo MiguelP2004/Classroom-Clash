@@ -1,32 +1,26 @@
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
 public class OrdenarCapas : MonoBehaviour
 {
     [Header("Configuración")]
-    public int offset = 0;
+    public float offset = 0;
     public bool ignorarEjeY = false;
 
     private SpriteRenderer sr;
+    private Canvas canvasUI;
 
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
+        canvasUI = GetComponent<Canvas>(); 
     }
 
     void LateUpdate()
     {
-        if (sr == null) return;
+        int ordenBase = Mathf.RoundToInt(offset * 1000f);
+        int ordenFinal = ignorarEjeY ? ordenBase : ordenBase - Mathf.RoundToInt(transform.position.y * 100f);
 
-        int ordenBase = offset * 1000;
-
-        if (ignorarEjeY)
-        {
-            sr.sortingOrder = ordenBase;
-        }
-        else
-        {
-            sr.sortingOrder = ordenBase - Mathf.RoundToInt(transform.position.y * 100f);
-        }
+        if (sr != null) sr.sortingOrder = ordenFinal;
+        if (canvasUI != null) canvasUI.sortingOrder = ordenFinal;
     }
 }
