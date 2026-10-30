@@ -14,14 +14,25 @@ public class ControladorJuego : MonoBehaviour
     [Header("Cámara")]
     public Camera camaraPrincipal;
     [HideInInspector] public bool camaraBloqueadaPorTutorial = false;
-
+    
     private float velocidadCamara = 7f;
     private float suavizadoCamara = 12f;
-    private float margenBorde = 0.2f;
-    private float limiteIzquierdo = -4.05f; 
+    private float margenBorde = 0.15f;
+    private float limiteIzquierdo = -5.4f; 
     private float limiteDerecho = 0f;
 
     private Vector3 posicionObjetivoCamara;
+
+    [Header("Pausa")]
+    public GameObject botonPausa; 
+    public GameObject panelPausa; 
+    public RectTransform panelBarrido; 
+    private float posicionY_Oculta = 1200f; 
+    private float posicionY_Visible = 0f;  
+    
+    private bool juegoPausado = false;
+    private bool animandoBarrido = false;
+    private float velocidadBarrido = 0f;
 
     void Awake()
     {
@@ -30,15 +41,50 @@ public class ControladorJuego : MonoBehaviour
         
         if (camaraPrincipal == null) camaraPrincipal = Camera.main;
         if (camaraPrincipal != null) posicionObjetivoCamara = camaraPrincipal.transform.position;
+
+        Time.timeScale = 1f;
+        if (panelPausa != null) panelPausa.SetActive(false);
+        if (panelBarrido != null)
+        {
+            Vector2 pos = panelBarrido.anchoredPosition;
+            pos.y = posicionY_Oculta;
+            panelBarrido.anchoredPosition = pos;
+            panelBarrido.gameObject.SetActive(false);
+        }
+        if (botonPausa != null) botonPausa.SetActive(true);
     }
 
     void Update()
     {
-        ManejarCamara();
+        if (!juegoPausado)
+        {
+            ManejarCamara();
+        }
+
+        if (panelBarrido != null && animandoBarrido)
+        {
+            float objetivoY = juegoPausado ? posicionY_Visible : posicionY_Oculta;
+            Vector2 posActual = panelBarrido.anchoredPosition;
+            
+            posActual.y = Mathf.SmoothDamp(posActual.y, objetivoY, ref velocidadBarrido, 0.15f, Mathf.Infinity, Time.unscaledDeltaTime);
+            panelBarrido.anchoredPosition = posActual;
+
+            if (Mathf.Abs(posActual.y - objetivoY) < 1f)
+            {
+                posActual.y = objetivoY;
+                panelBarrido.anchoredPosition = posActual;
+
+                if (!juegoPausado) 
+                {
+                    panelBarrido.gameObject.SetActive(false);
+                }
+                animandoBarrido = false;
+            }
+        }
 
         if (textoEnergia != null)
         {
-            textoEnergia.transform.localScale += (Vector3.one - textoEnergia.transform.localScale) / 40f;
+            textoEnergia.transform.localScale += (Vector3.one - textoEnergia.transform.localScale) * (Time.unscaledDeltaTime * 10f);
         }
     }
 
@@ -46,19 +92,23 @@ public class ControladorJuego : MonoBehaviour
     {
         if (camaraPrincipal == null || Mouse.current == null) return;
 
-        // Si el tutorial bloquea la cámara, no permitimos mover el objetivo con el ratón
         if (!camaraBloqueadaPorTutorial)
         {
             Vector2 posRaton = Mouse.current.position.ReadValue();
             float anchoPantalla = Screen.width;
+            float altoPantalla = Screen.height; // Obtenemos la altura total de la pantalla actual
 
-            if (posRaton.x < anchoPantalla * margenBorde)
+            // Comprobamos que el ratón esté dentro de la franja Y permitida antes de mover la cámara
+            if (posRaton.y < (altoPantalla * 0.8f) && posRaton.y > (altoPantalla * 0.2f))
             {
-                posicionObjetivoCamara.x -= velocidadCamara * Time.deltaTime; 
-            }
-            else if (posRaton.x > anchoPantalla * (1f - margenBorde))
-            {
-                posicionObjetivoCamara.x += velocidadCamara * Time.deltaTime;
+                if (posRaton.x < anchoPantalla * margenBorde)
+                {
+                    posicionObjetivoCamara.x -= velocidadCamara * Time.deltaTime; 
+                }
+                else if (posRaton.x > anchoPantalla * (1f - margenBorde))
+                {
+                    posicionObjetivoCamara.x += velocidadCamara * Time.deltaTime;
+                }
             }
 
             posicionObjetivoCamara.x = Mathf.Clamp(posicionObjetivoCamara.x, limiteIzquierdo, limiteDerecho);
@@ -70,11 +120,50 @@ public class ControladorJuego : MonoBehaviour
         posicionActual.x = Mathf.Lerp(posicionActual.x, posicionObjetivoCamara.x, Time.deltaTime * suavizadoCamara); 
         camaraPrincipal.transform.position = posicionActual;
 
-        // Avisamos al tutorial de cuánto se ha movido la cámara realmente
         float desplazamiento = Mathf.Abs(posicionActual.x - posXAnterior);
         if (!camaraBloqueadaPorTutorial && desplazamiento > 0.001f && GestorTutorial.instancia != null)
         {
             GestorTutorial.instancia.RegistrarMovimientoCamara(desplazamiento);
+        }
+    }
+
+    public void AlternarPausa()
+    {
+        if (juegoPausado) ReanudarJuego();
+        else PausarJuego();
+    }
+
+    private void PausarJuego()
+    {
+        juegoPausado = true;
+        Time.timeScale = 0f; 
+        
+        if (botonPausa != null) botonPausa.SetActive(false);
+        if (panelPausa != null) panelPausa.SetActive(true); 
+        
+        if (panelBarrido != null)
+        {
+            panelBarrido.gameObject.SetActive(true);
+            Vector2 pos = panelBarrido.anchoredPosition;
+            pos.y = posicionY_Oculta;
+            panelBarrido.anchoredPosition = pos;
+            
+            velocidadBarrido = 0f; 
+            animandoBarrido = true;
+        }
+    }
+
+    private void ReanudarJuego()
+    {
+        juegoPausado = false;
+        Time.timeScale = 1f; 
+        
+        if (panelPausa != null) panelPausa.SetActive(false); 
+        if (botonPausa != null) botonPausa.SetActive(true);
+        if (panelBarrido != null) 
+        {
+            velocidadBarrido = 0f;
+            animandoBarrido = true; 
         }
     }
 

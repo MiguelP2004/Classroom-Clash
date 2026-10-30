@@ -25,6 +25,8 @@ public class CodigoProfe : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0f) return;
+
         if (Mouse.current == null || Camera.main == null) return;
 
         Vector3 posicionRaton = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());

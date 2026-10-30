@@ -67,7 +67,6 @@ public class GestorColocacion : MonoBehaviour
 
     private bool EsPosicionValida(Vector2 posicion)
     {
-        // 1. Comprobamos si toca la línea invisible del camino
         if (colliderCamino != null)
         {
             Vector2 puntoMasCercano = colliderCamino.ClosestPoint(posicion);
@@ -77,11 +76,11 @@ public class GestorColocacion : MonoBehaviour
             }
         }
 
-        // 2. Comprobamos que no se plante encima de otro alumno ya colocado
         Collider2D[] solapados = Physics2D.OverlapCircleAll(posicion, radioOcupacionAlumno);
         foreach (Collider2D col in solapados)
         {
             if (col.gameObject == objetoEnRaton) continue;
+            if (col.CompareTag("Obstaculo")) return false;
 
             CodigoAlumno otroAlumno = col.GetComponent<CodigoAlumno>();
             if (otroAlumno != null && otroAlumno.estaColocado)
