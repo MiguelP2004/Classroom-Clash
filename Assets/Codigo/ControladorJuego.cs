@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using System.Collections;
 using TMPro;
 
@@ -44,18 +45,25 @@ public class ControladorJuego : MonoBehaviour
     [Header("Game Over y Transición")]
     public GameObject panelGameOver;
     public GameObject panelTransicion;
-    private float duracionFadeOscurecer = 1f; // De 0 a 255 alpha en 1 segundo
-    private float duracionFadeAclarar = 0.8f;  // De 255 a 0 alpha en 0.8 segundos
+    public AudioClip sonidoGameOver;
+    
+    private float duracionFadeOscurecer = 1f;
+    private float duracionFadeAclarar = 0.8f;
+
+    public AudioClip pausar;
 
     [HideInInspector] public bool esGameOver = false;
+    [HideInInspector] public bool enTransicion = false;
     private Image imagenTransicion;
-    private bool enTransicion = false;
 
     private static bool viniendoDeReinicio = false;
 
     void Awake()
     {
         if (instancia == null) instancia = this;
+        
+        AudioListener.pause = false; 
+
         ActualizarTextoEnergia();
         ActualizarTextoVidas();
         
@@ -132,13 +140,11 @@ public class ControladorJuego : MonoBehaviour
             }
         }
 
-        // Efecto rebote de la Energía
         if (textoEnergia != null)
         {
             textoEnergia.transform.localScale += (Vector3.one - textoEnergia.transform.localScale) * (Time.unscaledDeltaTime * 5f);
         }
 
-        // Efecto rebote de las Vidas
         if (textoVidas != null)
         {
             textoVidas.transform.localScale += (Vector3.one - textoVidas.transform.localScale) * (Time.unscaledDeltaTime * 5f);
@@ -185,10 +191,16 @@ public class ControladorJuego : MonoBehaviour
 
     public void AlternarPausa()
     {
+        CodigoProfe.BloquearDisparoHastaSoltar();
+
         if (esGameOver || enTransicion) return;
 
         if (juegoPausado) ReanudarJuego();
-        else PausarJuego();
+        else
+        {
+            if (pausar != null) AudioSource.PlayClipAtPoint(pausar, Camera.main.transform.position);
+            PausarJuego();
+        }
     }
 
     private void PausarJuego()
@@ -284,20 +296,40 @@ public class ControladorJuego : MonoBehaviour
     private void ActivarGameOver()
     {
         esGameOver = true;
+        AudioListener.pause = true; 
 
         if (botonPausa != null) botonPausa.SetActive(false);
 
-        if (GestorColocacion.instancia != null)
-        {
-            GestorColocacion.instancia.CancelarAccion();
-        }
+        if (GestorColocacion.instancia != null) GestorColocacion.instancia.CancelarAccion();
 
         if (panelGameOver != null) panelGameOver.SetActive(true);
+
+        if (sonidoGameOver != null)
+        {
+            GameObject audioTemporal = new GameObject("Sonido_GameOver");
+            AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+            fuenteAudio.clip = sonidoGameOver;
+            fuenteAudio.spatialBlend = 0f; 
+            fuenteAudio.ignoreListenerPause = true;
+            fuenteAudio.Play();
+            Destroy(audioTemporal, sonidoGameOver.length + 0.1f);
+        }
     }
 
     public void ReiniciarPartida()
     {
         if (enTransicion) return;
+
+        if (EfectoBoton.ultimoBotonPulsado != null)
+        {
+            EfectoBoton.ultimoBotonPulsado.forzadoActivo = true;
+        }
+        else if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
+        {
+            EfectoBoton ef = EventSystem.current.currentSelectedGameObject.GetComponent<EfectoBoton>();
+            if (ef != null) ef.forzadoActivo = true;
+        }
+
         StartCoroutine(RutinaOscurecerYReiniciar());
     }
 
@@ -354,7 +386,6 @@ public class ControladorJuego : MonoBehaviour
             imagenTransicion.color = c;
             panelTransicion.SetActive(false);
         }
-
         enTransicion = false;
     }
 }

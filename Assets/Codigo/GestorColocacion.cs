@@ -22,9 +22,17 @@ public class GestorColocacion : MonoBehaviour
     private CodigoAlumno alumnoEnPuntoDeMira;
     private Color colorOriginalAlumno = Color.white;
 
+    public AudioClip colocar;
+    public AudioClip seleccionar;
+
     void Awake()
     {
         if (instancia == null) instancia = this;
+    }
+
+    public bool EstaOcupado()
+    {
+        return modoActual != ModoGestor.Nada;
     }
 
     void Update()
@@ -105,8 +113,11 @@ public class GestorColocacion : MonoBehaviour
 
     public void IniciarColocacion(EfectoBoton botonQueLlama)
     {
+        CodigoProfe.BloquearDisparoHastaSoltar();
+
         if (ControladorJuego.instancia != null && ControladorJuego.instancia.esGameOver) return;
         if (!ControladorJuego.instancia.PuedeComprar(costeAlumno1)) return;
+        if (seleccionar != null) AudioSource.PlayClipAtPoint(seleccionar, Camera.main.transform.position);
 
         if (modoActual == ModoGestor.Colocando)
         {
@@ -124,7 +135,10 @@ public class GestorColocacion : MonoBehaviour
 
     public void IniciarBorrado()
     {
+        CodigoProfe.BloquearDisparoHastaSoltar();
+
         if (ControladorJuego.instancia != null && ControladorJuego.instancia.esGameOver) return;
+        if (seleccionar != null) AudioSource.PlayClipAtPoint(seleccionar, Camera.main.transform.position);
 
         if (modoActual == ModoGestor.Borrando)
         {
@@ -148,6 +162,8 @@ public class GestorColocacion : MonoBehaviour
 
     private void ColocarAlumno()
     {
+        CodigoProfe.BloquearDisparoHastaSoltar();
+
         SpriteRenderer sr = objetoEnRaton.GetComponent<SpriteRenderer>();
         if (sr != null) sr.color = Color.white;
 
@@ -156,6 +172,7 @@ public class GestorColocacion : MonoBehaviour
         modoActual = ModoGestor.Nada;
 
         ControladorJuego.instancia.GastarEnergia(costeAlumno1);
+        if (colocar != null) AudioSource.PlayClipAtPoint(colocar, Camera.main.transform.position);
 
         if (GestorTutorial.instancia != null) GestorTutorial.instancia.RegistrarAlumnoColocado();
 
@@ -201,6 +218,7 @@ public class GestorColocacion : MonoBehaviour
 
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
+                CodigoProfe.BloquearDisparoHastaSoltar();
                 Destroy(alumnoEnPuntoDeMira.gameObject);
                 alumnoEnPuntoDeMira = null;
                 CancelarAccion(); 

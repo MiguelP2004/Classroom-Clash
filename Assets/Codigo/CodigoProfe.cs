@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 public class CodigoProfe : MonoBehaviour
@@ -18,9 +19,17 @@ public class CodigoProfe : MonoBehaviour
     private Coroutine rutinaRetroceso;
     private Vector3 posicionOriginal;
 
+    private static bool esperandoSoltarClick = false;
+
+    public static void BloquearDisparoHastaSoltar()
+    {
+        esperandoSoltarClick = true;
+    }
+
     void Start()
     {
         posicionOriginal = transform.position;
+        esperandoSoltarClick = false;
     }
 
     void Update()
@@ -37,6 +46,23 @@ public class CodigoProfe : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, 0f, angulo);
 
         temporizadorDisparo += Time.deltaTime;
+
+        bool ratonSobreUI = (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject());
+        bool gestorOcupado = (GestorColocacion.instancia != null && GestorColocacion.instancia.EstaOcupado());
+
+        if (ratonSobreUI || gestorOcupado) return;
+
+        if (esperandoSoltarClick)
+        {
+            if (!Mouse.current.leftButton.isPressed)
+            {
+                esperandoSoltarClick = false;
+            }
+            else
+            {
+                return;
+            }
+        }
 
         if (!bloqueadoPorTutorial && Mouse.current.leftButton.isPressed && temporizadorDisparo >= cadenciaFuego)
         {

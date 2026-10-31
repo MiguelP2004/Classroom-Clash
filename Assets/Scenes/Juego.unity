@@ -173,6 +173,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
+  sonidoError: {fileID: 0}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   "tama\xF1oNormal": 1
@@ -226,6 +228,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1357628376}
         m_TargetAssemblyTypeName: ControladorJuego, Assembly-CSharp
         m_MethodName: AlternarPausa
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 9045586}
+        m_TargetAssemblyTypeName: EfectoBoton, Assembly-CSharp
+        m_MethodName: ReproducirSonidoClic
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1228,7 +1242,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1272772587}
+  - {fileID: 1327405508}
   m_Father: {fileID: 812923202}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1250,6 +1264,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
+  sonidoError: {fileID: 0}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   "tama\xF1oNormal": 1
@@ -1303,6 +1319,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1357628376}
         m_TargetAssemblyTypeName: ControladorJuego, Assembly-CSharp
         m_MethodName: ReiniciarPartida
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 538180241}
+        m_TargetAssemblyTypeName: EfectoBoton, Assembly-CSharp
+        m_MethodName: ReproducirSonidoClic
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1671,7 +1699,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &812923202
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1784,6 +1812,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
+  sonidoError: {fileID: 0}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   "tama\xF1oNormal": 1
@@ -1837,6 +1867,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1357628376}
         m_TargetAssemblyTypeName: ControladorJuego, Assembly-CSharp
         m_MethodName: AlternarPausa
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 938603287}
+        m_TargetAssemblyTypeName: EfectoBoton, Assembly-CSharp
+        m_MethodName: ReproducirSonidoClic
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1993,6 +2035,8 @@ MonoBehaviour:
   costeAlumno1: 20
   colliderCamino: {fileID: 118624235}
   radioOcupacionAlumno: 0.35
+  colocar: {fileID: 8300000, guid: f3ef5c6968a692f45ac51e5ab72f44ed, type: 3}
+  seleccionar: {fileID: 8300000, guid: f08fc662c6f19f94e8516640f230190d, type: 3}
 --- !u!4 &1008751282
 Transform:
   m_ObjectHideFlags: 0
@@ -2476,8 +2520,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4283519487
-  m_fontColor: {r: 1, g: 0.31764707, b: 0.31764707, a: 1}
+    rgba: 4278190335
+  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2696,6 +2740,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 20
   esMenu: 0
+  sonidoBoton: {fileID: 0}
+  sonidoError: {fileID: 8300000, guid: f7e415fc8bc223840bfe892e256d284e, type: 3}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   "tama\xF1oNormal": 1
@@ -2935,7 +2981,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1272772586
+--- !u!1 &1327405507
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2943,9 +2989,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1272772587}
-  - component: {fileID: 1272772589}
-  - component: {fileID: 1272772588}
+  - component: {fileID: 1327405508}
+  - component: {fileID: 1327405510}
+  - component: {fileID: 1327405509}
   m_Layer: 5
   m_Name: Texto
   m_TagString: Untagged
@@ -2953,13 +2999,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &1272772587
+--- !u!224 &1327405508
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1272772586}
+  m_GameObject: {fileID: 1327405507}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -2969,16 +3015,16 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000015258789}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -83.954956, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1272772588
+--- !u!114 &1327405509
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1272772586}
+  m_GameObject: {fileID: 1327405507}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
@@ -2994,8 +3040,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: jugar de nuevo
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6015cbcffa3e7a44da88a8aacb8c3c49, type: 2}
-  m_sharedMaterial: {fileID: 7911857864314645245, guid: 6015cbcffa3e7a44da88a8aacb8c3c49, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 79af24f3564f423458215148de6e67fa, type: 2}
+  m_sharedMaterial: {fileID: 7911857864314645245, guid: 79af24f3564f423458215148de6e67fa, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3064,13 +3110,13 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &1272772589
+--- !u!222 &1327405510
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1272772586}
+  m_GameObject: {fileID: 1327405507}
   m_CullTransparentMesh: 1
 --- !u!1 &1357628375
 GameObject:
@@ -3113,7 +3159,10 @@ MonoBehaviour:
   panelBarrido: {fileID: 1948230782}
   panelGameOver: {fileID: 812923201}
   panelTransicion: {fileID: 555812093}
+  sonidoGameOver: {fileID: 8300000, guid: 01449ba613ac6d144aebf79fac2135a9, type: 3}
+  pausar: {fileID: 8300000, guid: febff119d40129c489d6937c20285cd9, type: 3}
   esGameOver: 0
+  enTransicion: 0
 --- !u!4 &1357628377
 Transform:
   m_ObjectHideFlags: 0
@@ -3203,6 +3252,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
+  sonidoError: {fileID: 0}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   "tama\xF1oNormal": 1
@@ -3256,6 +3307,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1357628376}
         m_TargetAssemblyTypeName: ControladorJuego, Assembly-CSharp
         m_MethodName: ReiniciarPartida
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1360576900}
+        m_TargetAssemblyTypeName: EfectoBoton, Assembly-CSharp
+        m_MethodName: ReproducirSonidoClic
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3589,6 +3652,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 0
+  sonidoBoton: {fileID: 0}
+  sonidoError: {fileID: 0}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   "tama\xF1oNormal": 1
@@ -3867,8 +3932,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: jugar de nuevo
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6015cbcffa3e7a44da88a8aacb8c3c49, type: 2}
-  m_sharedMaterial: {fileID: 7911857864314645245, guid: 6015cbcffa3e7a44da88a8aacb8c3c49, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 79af24f3564f423458215148de6e67fa, type: 2}
+  m_sharedMaterial: {fileID: 7911857864314645245, guid: 79af24f3564f423458215148de6e67fa, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4416,8 +4481,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: REANUDAR
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6015cbcffa3e7a44da88a8aacb8c3c49, type: 2}
-  m_sharedMaterial: {fileID: 7911857864314645245, guid: 6015cbcffa3e7a44da88a8aacb8c3c49, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 79af24f3564f423458215148de6e67fa, type: 2}
+  m_sharedMaterial: {fileID: 7911857864314645245, guid: 79af24f3564f423458215148de6e67fa, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

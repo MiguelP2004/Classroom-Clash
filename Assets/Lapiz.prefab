@@ -180,9 +180,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdb58db43d7eb44469e382e7aee1f98b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CodigoLapiz
-  velocidad: 15
+  velocidad: 13
   "da\xF1o": 1
   prefabImpacto: {fileID: 2240418902598651553, guid: e93f42a4524e4ac4ea9afda92f7555ef, type: 3}
+  golpes:
+  - {fileID: 8300000, guid: e4df6e295c942f54f8474e161aab2859, type: 3}
+  - {fileID: 8300000, guid: 439ff5b317e82b849931e4c887a226ac, type: 3}
+  - {fileID: 8300000, guid: a3183ecdddc89e045a0a4b52b8c68a9e, type: 3}
+  disparos:
+  - {fileID: 8300000, guid: 72ed7ec1ba846b9409cc6850ca371db6, type: 3}
+  - {fileID: 8300000, guid: 8a0065c09a2e3a44684fbeb128f2ec03, type: 3}
 --- !u!114 &-6642101921711778510
 MonoBehaviour:
   m_ObjectHideFlags: 0

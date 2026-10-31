@@ -11,8 +11,15 @@ public class CodigoLapiz : MonoBehaviour
     private Transform objetivo;
     private codigoExamen scriptObjetivo;
 
+    public AudioClip[] golpes;
+    public AudioClip[] disparos;
+
     void Start()
     {
+        if (disparos.Length > 0)
+        {
+            AudioSource.PlayClipAtPoint(disparos[Random.Range(0, disparos.Length)], Camera.main.transform.position);
+        }
         transform.Rotate(0, 0, -90f);
         Destroy(gameObject, tiempoDeVida);
     }
@@ -50,6 +57,11 @@ public class CodigoLapiz : MonoBehaviour
                 if (prefabImpacto != null)
                 {
                     Instantiate(prefabImpacto, transform.position, Quaternion.identity);
+                }
+
+                if (golpes.Length > 0)
+                {
+                    AudioSource.PlayClipAtPoint(golpes[Random.Range(0, golpes.Length)], Camera.main.transform.position);
                 }
 
                 Destroy(gameObject);
