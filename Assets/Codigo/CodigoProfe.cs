@@ -26,6 +26,7 @@ public class CodigoProfe : MonoBehaviour
     void Update()
     {
         if (Time.timeScale == 0f) return;
+        if (ControladorJuego.instancia != null && ControladorJuego.instancia.esGameOver) return;
 
         if (Mouse.current == null || Camera.main == null) return;
 

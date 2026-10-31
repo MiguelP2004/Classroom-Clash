@@ -309,6 +309,7 @@ MonoBehaviour:
   velocidadBalanceo: 3
   duracionGolpe: 0.15
   tiempoDesvanecer: 0.5
+  prefabSombra: {fileID: 618877210029439292, guid: f9ba77707a29c2b45a8d359edeba7bb2, type: 3}
   distanciaRecorrida: 0
 --- !u!61 &-6117750600930581100
 BoxCollider2D:

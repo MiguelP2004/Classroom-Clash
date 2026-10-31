@@ -38,7 +38,6 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         transform.localScale = new Vector3(tamañoNormal, tamañoNormal, 0f);
     }
 
-    // Asegura que al ocultar un botón (ej: desaparecer el de Pausa) no se quede grande ni seleccionado
     void OnDisable()
     {
         ratonEncima = false;
@@ -58,7 +57,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             temporizador -= Time.deltaTime;
             
             if (imagenCooldown != null) imagenCooldown.fillAmount = temporizador / tiempoCooldown;
-            if (miImagenBase != null) miImagenBase.color = new Color(0.6f, 0.6f, 0.6f, 1f);
+            if (miImagenBase != null) miImagenBase.color = new Color(0.7f, 0.7f, 0.7f, 1f);
             if (miBoton != null) miBoton.interactable = false;
 
             if (temporizador <= 0f) enCooldown = false;
@@ -68,7 +67,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             if (bloqueadoPorTutorial || !puedeComprar || bloqueadoPorPausa)
             {
                 if (imagenCooldown != null) imagenCooldown.fillAmount = 0f; 
-                if (miImagenBase != null) miImagenBase.color = (!puedeComprar) ? new Color(0.6f, 0.6f, 0.6f, 1f) : Color.white; 
+                if (miImagenBase != null) miImagenBase.color = (!puedeComprar) ? new Color(0.7f, 0.7f, 0.7f, 1f) : Color.white; 
                 if (miBoton != null) miBoton.interactable = false; 
                 
                 ratonEncima = false;
@@ -108,7 +107,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         
         if (miBoton != null) miBoton.interactable = false; 
         if (imagenCooldown != null) imagenCooldown.fillAmount = 1f; 
-        if (miImagenBase != null) miImagenBase.color = new Color(0.6f, 0.6f, 0.6f, 1f); 
+        if (miImagenBase != null) miImagenBase.color = new Color(0.7f, 0.7f, 0.7f, 1f); 
         
         ratonEncima = false;
         estaSeleccionado = false;

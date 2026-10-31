@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using System.Collections;
 using TMPro;
 
 public class ControladorJuego : MonoBehaviour
@@ -9,7 +12,11 @@ public class ControladorJuego : MonoBehaviour
     [Header("Energía")]
     public int energia = 50;
     public TextMeshProUGUI textoEnergia; 
-    public float tamañoAgrandado = 1.1f;
+    private float tamañoAgrandado = 1.4f;
+
+    [Header("Vidas")]
+    public int vidas = 12;
+    public TextMeshProUGUI textoVidas;
 
     [Header("Cámara")]
     public Camera camaraPrincipal;
@@ -34,16 +41,31 @@ public class ControladorJuego : MonoBehaviour
     private bool animandoBarrido = false;
     private float velocidadBarrido = 0f;
 
+    [Header("Game Over y Transición")]
+    public GameObject panelGameOver;
+    public GameObject panelTransicion;
+    private float duracionFadeOscurecer = 1f; // De 0 a 255 alpha en 1 segundo
+    private float duracionFadeAclarar = 0.8f;  // De 255 a 0 alpha en 0.8 segundos
+
+    [HideInInspector] public bool esGameOver = false;
+    private Image imagenTransicion;
+    private bool enTransicion = false;
+
+    private static bool viniendoDeReinicio = false;
+
     void Awake()
     {
         if (instancia == null) instancia = this;
-        ActualizarTexto();
+        ActualizarTextoEnergia();
+        ActualizarTextoVidas();
         
         if (camaraPrincipal == null) camaraPrincipal = Camera.main;
         if (camaraPrincipal != null) posicionObjetivoCamara = camaraPrincipal.transform.position;
 
         Time.timeScale = 1f;
         if (panelPausa != null) panelPausa.SetActive(false);
+        if (panelGameOver != null) panelGameOver.SetActive(false);
+
         if (panelBarrido != null)
         {
             Vector2 pos = panelBarrido.anchoredPosition;
@@ -52,6 +74,34 @@ public class ControladorJuego : MonoBehaviour
             panelBarrido.gameObject.SetActive(false);
         }
         if (botonPausa != null) botonPausa.SetActive(true);
+
+        if (panelTransicion != null)
+        {
+            imagenTransicion = panelTransicion.GetComponent<Image>();
+            if (viniendoDeReinicio)
+            {
+                panelTransicion.SetActive(true);
+                if (imagenTransicion != null)
+                {
+                    Color c = imagenTransicion.color;
+                    c.a = 1f;
+                    imagenTransicion.color = c;
+                }
+            }
+            else
+            {
+                panelTransicion.SetActive(false);
+            }
+        }
+    }
+
+    void Start()
+    {
+        if (viniendoDeReinicio)
+        {
+            viniendoDeReinicio = false;
+            StartCoroutine(RutinaAclararTransicion());
+        }
     }
 
     void Update()
@@ -82,9 +132,16 @@ public class ControladorJuego : MonoBehaviour
             }
         }
 
+        // Efecto rebote de la Energía
         if (textoEnergia != null)
         {
-            textoEnergia.transform.localScale += (Vector3.one - textoEnergia.transform.localScale) * (Time.unscaledDeltaTime * 10f);
+            textoEnergia.transform.localScale += (Vector3.one - textoEnergia.transform.localScale) * (Time.unscaledDeltaTime * 5f);
+        }
+
+        // Efecto rebote de las Vidas
+        if (textoVidas != null)
+        {
+            textoVidas.transform.localScale += (Vector3.one - textoVidas.transform.localScale) * (Time.unscaledDeltaTime * 5f);
         }
     }
 
@@ -96,9 +153,8 @@ public class ControladorJuego : MonoBehaviour
         {
             Vector2 posRaton = Mouse.current.position.ReadValue();
             float anchoPantalla = Screen.width;
-            float altoPantalla = Screen.height; // Obtenemos la altura total de la pantalla actual
+            float altoPantalla = Screen.height; 
 
-            // Comprobamos que el ratón esté dentro de la franja Y permitida antes de mover la cámara
             if (posRaton.y < (altoPantalla * 0.8f) && posRaton.y > (altoPantalla * 0.2f))
             {
                 if (posRaton.x < anchoPantalla * margenBorde)
@@ -129,6 +185,8 @@ public class ControladorJuego : MonoBehaviour
 
     public void AlternarPausa()
     {
+        if (esGameOver || enTransicion) return;
+
         if (juegoPausado) ReanudarJuego();
         else PausarJuego();
     }
@@ -179,10 +237,7 @@ public class ControladorJuego : MonoBehaviour
         EfectoCambioEnergia();
     }
 
-    public bool PuedeComprar(int coste)
-    {
-        return energia >= coste;
-    }
+    public bool PuedeComprar(int coste) { return energia >= coste; }
 
     private void EfectoCambioEnergia()
     {
@@ -193,8 +248,113 @@ public class ControladorJuego : MonoBehaviour
         }
     }
 
-    private void ActualizarTexto()
+    private void ActualizarTextoEnergia()
     {
         if (textoEnergia != null) textoEnergia.text = energia.ToString();
+    }
+
+    public void RestarVida(int cantidad)
+    {
+        if (esGameOver) return;
+
+        vidas -= cantidad;
+        if (vidas < 0) vidas = 0;
+        EfectoCambioVidas();
+
+        if (vidas == 0)
+        {
+            ActivarGameOver();
+        }
+    }
+
+    private void EfectoCambioVidas()
+    {
+        if (textoVidas != null)
+        {
+            textoVidas.text = vidas.ToString();
+            textoVidas.transform.localScale = new Vector3(tamañoAgrandado, tamañoAgrandado, 1f);
+        }
+    }
+
+    private void ActualizarTextoVidas()
+    {
+        if (textoVidas != null) textoVidas.text = vidas.ToString();
+    }
+
+    private void ActivarGameOver()
+    {
+        esGameOver = true;
+
+        if (botonPausa != null) botonPausa.SetActive(false);
+
+        if (GestorColocacion.instancia != null)
+        {
+            GestorColocacion.instancia.CancelarAccion();
+        }
+
+        if (panelGameOver != null) panelGameOver.SetActive(true);
+    }
+
+    public void ReiniciarPartida()
+    {
+        if (enTransicion) return;
+        StartCoroutine(RutinaOscurecerYReiniciar());
+    }
+
+    private IEnumerator RutinaOscurecerYReiniciar()
+    {
+        enTransicion = true;
+
+        if (panelTransicion != null && imagenTransicion != null)
+        {
+            panelTransicion.SetActive(true);
+            Color c = imagenTransicion.color;
+            c.a = 0f;
+            imagenTransicion.color = c;
+
+            float tiempo = 0f;
+            while (tiempo < duracionFadeOscurecer)
+            {
+                tiempo += Time.unscaledDeltaTime;
+                c.a = Mathf.Clamp01(tiempo / duracionFadeOscurecer);
+                imagenTransicion.color = c;
+                yield return null;
+            }
+
+            c.a = 1f;
+            imagenTransicion.color = c;
+        }
+
+        yield return new WaitForSecondsRealtime(1.5f);
+
+        viniendoDeReinicio = true;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private IEnumerator RutinaAclararTransicion()
+    {
+        enTransicion = true;
+
+        if (panelTransicion != null && imagenTransicion != null)
+        {
+            Color c = imagenTransicion.color;
+            c.a = 1f;
+            imagenTransicion.color = c;
+
+            float tiempo = 0f;
+            while (tiempo < duracionFadeAclarar)
+            {
+                tiempo += Time.unscaledDeltaTime;
+                c.a = 1f - Mathf.Clamp01(tiempo / duracionFadeAclarar);
+                imagenTransicion.color = c;
+                yield return null;
+            }
+
+            c.a = 0f;
+            imagenTransicion.color = c;
+            panelTransicion.SetActive(false);
+        }
+
+        enTransicion = false;
     }
 }

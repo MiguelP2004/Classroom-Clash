@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 
 public class GestorColocacion : MonoBehaviour
 {
+    public static GestorColocacion instancia;
+
     public enum ModoGestor { Nada, Colocando, Borrando }
 
     public GameObject alumnoPrefab;
@@ -10,8 +12,8 @@ public class GestorColocacion : MonoBehaviour
     public int costeAlumno1 = 20;
 
     [Header("Restricción de Camino")]
-    public Collider2D colliderCamino; // Arrastra aquí el objeto Camino (con EdgeCollider2D)
-    public float radioOcupacionAlumno = 0.35f; // Margen del cuerpo del alumno
+    public Collider2D colliderCamino;
+    public float radioOcupacionAlumno = 0.35f;
 
     private ModoGestor modoActual = ModoGestor.Nada;
     private GameObject objetoEnRaton; 
@@ -20,9 +22,20 @@ public class GestorColocacion : MonoBehaviour
     private CodigoAlumno alumnoEnPuntoDeMira;
     private Color colorOriginalAlumno = Color.white;
 
+    void Awake()
+    {
+        if (instancia == null) instancia = this;
+    }
+
     void Update()
     {
         if (modoActual == ModoGestor.Nada) return;
+
+        if (ControladorJuego.instancia != null && ControladorJuego.instancia.esGameOver)
+        {
+            CancelarAccion();
+            return;
+        }
 
         Vector2 posicionPantalla = Mouse.current.position.ReadValue();
         Vector3 posicionRaton = Camera.main.ScreenToWorldPoint(posicionPantalla);
@@ -43,7 +56,6 @@ public class GestorColocacion : MonoBehaviour
         {
             bool puedePlantarAqui = EsPosicionValida(posicionRaton);
 
-            // Cambiamos el color a rojo si pisa el camino o a otro alumno, y blanco si es válido
             if (objetoEnRaton != null)
             {
                 SpriteRenderer sr = objetoEnRaton.GetComponent<SpriteRenderer>();
@@ -53,7 +65,6 @@ public class GestorColocacion : MonoBehaviour
                 }
             }
 
-            // Solo permite plantar si la posición es válida
             if (Mouse.current.leftButton.wasPressedThisFrame && puedePlantarAqui)
             {
                 ColocarAlumno();
@@ -94,6 +105,7 @@ public class GestorColocacion : MonoBehaviour
 
     public void IniciarColocacion(EfectoBoton botonQueLlama)
     {
+        if (ControladorJuego.instancia != null && ControladorJuego.instancia.esGameOver) return;
         if (!ControladorJuego.instancia.PuedeComprar(costeAlumno1)) return;
 
         if (modoActual == ModoGestor.Colocando)
@@ -112,6 +124,8 @@ public class GestorColocacion : MonoBehaviour
 
     public void IniciarBorrado()
     {
+        if (ControladorJuego.instancia != null && ControladorJuego.instancia.esGameOver) return;
+
         if (modoActual == ModoGestor.Borrando)
         {
             CancelarAccion();
@@ -135,7 +149,7 @@ public class GestorColocacion : MonoBehaviour
     private void ColocarAlumno()
     {
         SpriteRenderer sr = objetoEnRaton.GetComponent<SpriteRenderer>();
-        if (sr != null) sr.color = Color.white; // Aseguramos su color normal al soltarlo
+        if (sr != null) sr.color = Color.white;
 
         objetoEnRaton.GetComponent<CodigoAlumno>().estaColocado = true;
         objetoEnRaton = null; 
@@ -159,7 +173,6 @@ public class GestorColocacion : MonoBehaviour
 
     private void GestionarBorrado(Vector3 posicionRaton)
     {
-        // Usamos OverlapPointAll para que el collider del camino nunca estorbe al borrar un alumno
         Collider2D[] tocados = Physics2D.OverlapPointAll(posicionRaton);
         CodigoAlumno alumnoTocado = null;
 

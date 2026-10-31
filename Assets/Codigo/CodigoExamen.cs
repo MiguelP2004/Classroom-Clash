@@ -25,6 +25,9 @@ public class codigoExamen : MonoBehaviour
     public float duracionGolpe = 0.15f;
     public float tiempoDesvanecer = 0.5f;
 
+    [Header("Sombra")]
+    public GameObject prefabSombra;
+
     [HideInInspector]
     public float distanciaRecorrida = 0f; 
 
@@ -40,7 +43,6 @@ public class codigoExamen : MonoBehaviour
     {
         vidaMaxima = vida;
 
-        // ¡NUEVO!: Desvío más amplio en la Y (-0.2 a 0.2) para ocupar todo el ancho del camino
         desvioCamino = new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.2f, 0.2f), 0f);
 
         todosLosSprites = GetComponentsInChildren<SpriteRenderer>();
@@ -54,6 +56,20 @@ public class codigoExamen : MonoBehaviour
         if (canvasBarraVida != null) canvasBarraVida.SetActive(false);
     }
 
+    void Start()
+    {
+        if (prefabSombra != null && todosLosSprites.Length > 0)
+        {
+            GameObject miSombra = Instantiate(prefabSombra, transform.position, Quaternion.identity);
+            SombraExamen scriptSombra = miSombra.GetComponent<SombraExamen>();
+            
+            if (scriptSombra != null)
+            {
+                scriptSombra.Inicializar(this.transform, todosLosSprites[0]);
+            }
+        }
+    }
+
     public void AsignarRuta(EdgeCollider2D nuevaRuta)
     {
         ruta = nuevaRuta;
@@ -64,7 +80,7 @@ public class codigoExamen : MonoBehaviour
     {
         if (estaMuriendo) return;
 
-        // Si tiene una línea asignada, sigue sus puntos uno por uno
+        // Movimiento
         if (ruta != null && ruta.pointCount > 0 && indicePuntoActual < ruta.pointCount)
         {
             Vector3 puntoDestino = ruta.transform.TransformPoint(ruta.points[indicePuntoActual]) + desvioCamino;
@@ -81,10 +97,24 @@ public class codigoExamen : MonoBehaviour
         }
         else
         {
-            // Movimiento hacia la derecha al terminar la ruta (o si no hay ruta asignada)
             Vector3 movimiento = Vector3.right * velocidad * Time.deltaTime;
             transform.Translate(movimiento, Space.World);
             distanciaRecorrida += movimiento.magnitude;
+        }
+
+        if (transform.position.x > 9.3f)
+        {
+            estaMuriendo = true; // Bloquea cualquier otra acción
+            if (ControladorJuego.instancia != null)
+            {
+                ControladorJuego.instancia.RestarVida(1);
+            }
+            if (GestorTutorial.instancia != null)
+            {
+                GestorTutorial.instancia.RegistrarMuerteExamen();
+            }
+            Destroy(gameObject); // Desaparece al instante
+            return;
         }
     }
 
