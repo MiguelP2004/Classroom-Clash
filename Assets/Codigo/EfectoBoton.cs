@@ -194,6 +194,8 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             fuenteAudio.clip = sonidoBoton;
             fuenteAudio.spatialBlend = 0f; 
             fuenteAudio.ignoreListenerPause = true;
+
+            if (ConfiguracionAudio.Instancia != null) ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
             
             fuenteAudio.Play();
             

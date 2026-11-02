@@ -198,7 +198,19 @@ public class ControladorJuego : MonoBehaviour
         if (juegoPausado) ReanudarJuego();
         else
         {
-            if (pausar != null) AudioSource.PlayClipAtPoint(pausar, Camera.main.transform.position);
+            if (pausar != null)
+            {
+                GameObject audioTemporal = new GameObject("Sonido_Pausa");
+                AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+                fuenteAudio.clip = pausar;
+                fuenteAudio.spatialBlend = 0f;
+                if (ConfiguracionAudio.Instancia != null)
+                {
+                    ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
+                }
+                fuenteAudio.Play();
+                Destroy(audioTemporal, pausar.length + 0.1f);
+            }
             PausarJuego();
         }
     }
@@ -311,6 +323,10 @@ public class ControladorJuego : MonoBehaviour
             fuenteAudio.clip = sonidoGameOver;
             fuenteAudio.spatialBlend = 0f; 
             fuenteAudio.ignoreListenerPause = true;
+            if (ConfiguracionAudio.Instancia != null)
+            {
+                ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
+            }
             fuenteAudio.Play();
             Destroy(audioTemporal, sonidoGameOver.length + 0.1f);
         }

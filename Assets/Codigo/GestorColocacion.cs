@@ -117,7 +117,21 @@ public class GestorColocacion : MonoBehaviour
 
         if (ControladorJuego.instancia != null && ControladorJuego.instancia.esGameOver) return;
         if (!ControladorJuego.instancia.PuedeComprar(costeAlumno1)) return;
-        if (seleccionar != null) AudioSource.PlayClipAtPoint(seleccionar, Camera.main.transform.position);
+        if (seleccionar != null)
+        {
+            GameObject audioTemporal = new GameObject("Sonido_Seleccionar");
+            AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+            fuenteAudio.clip = seleccionar;
+            fuenteAudio.spatialBlend = 0f;
+
+            if (ConfiguracionAudio.Instancia != null)
+            {
+                ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
+            }
+
+            fuenteAudio.Play();
+            Destroy(audioTemporal, seleccionar.length + 0.1f);
+        }
 
         if (modoActual == ModoGestor.Colocando)
         {
@@ -138,7 +152,21 @@ public class GestorColocacion : MonoBehaviour
         CodigoProfe.BloquearDisparoHastaSoltar();
 
         if (ControladorJuego.instancia != null && ControladorJuego.instancia.esGameOver) return;
-        if (seleccionar != null) AudioSource.PlayClipAtPoint(seleccionar, Camera.main.transform.position);
+        if (seleccionar != null)
+        {
+            GameObject audioTemporal = new GameObject("Sonido_Seleccionar");
+            AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+            fuenteAudio.clip = seleccionar;
+            fuenteAudio.spatialBlend = 0f;
+
+            if (ConfiguracionAudio.Instancia != null)
+            {
+                ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
+            }
+
+            fuenteAudio.Play();
+            Destroy(audioTemporal, seleccionar.length + 0.1f);
+        }
 
         if (modoActual == ModoGestor.Borrando)
         {
@@ -172,7 +200,21 @@ public class GestorColocacion : MonoBehaviour
         modoActual = ModoGestor.Nada;
 
         ControladorJuego.instancia.GastarEnergia(costeAlumno1);
-        if (colocar != null) AudioSource.PlayClipAtPoint(colocar, Camera.main.transform.position);
+        if (colocar != null)
+        {
+            GameObject audioTemporal = new GameObject("Sonido_Colocar");
+            AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+            fuenteAudio.clip = colocar;
+            fuenteAudio.spatialBlend = 0f;
+
+            if (ConfiguracionAudio.Instancia != null)
+            {
+                ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
+            }
+
+            fuenteAudio.Play();
+            Destroy(audioTemporal, colocar.length + 0.1f);
+        }
 
         if (GestorTutorial.instancia != null) GestorTutorial.instancia.RegistrarAlumnoColocado();
 

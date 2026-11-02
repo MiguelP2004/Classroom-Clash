@@ -18,7 +18,20 @@ public class CodigoLapiz : MonoBehaviour
     {
         if (disparos.Length > 0)
         {
-            AudioSource.PlayClipAtPoint(disparos[Random.Range(0, disparos.Length)], Camera.main.transform.position);
+            AudioClip disparo = disparos[Random.Range(0, disparos.Length)];
+
+            GameObject audioTemporal = new GameObject("Sonido_Disparo");
+            AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+            fuenteAudio.clip = disparo;
+            fuenteAudio.spatialBlend = 0f;
+
+            if (ConfiguracionAudio.Instancia != null)
+            {
+                ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
+            }
+
+            fuenteAudio.Play();
+            Destroy(audioTemporal, disparo.length + 0.1f);
         }
         transform.Rotate(0, 0, -90f);
         Destroy(gameObject, tiempoDeVida);
@@ -61,7 +74,20 @@ public class CodigoLapiz : MonoBehaviour
 
                 if (golpes.Length > 0)
                 {
-                    AudioSource.PlayClipAtPoint(golpes[Random.Range(0, golpes.Length)], Camera.main.transform.position);
+                    AudioClip golpe = golpes[Random.Range(0, golpes.Length)];
+
+                    GameObject audioTemporal = new GameObject("Sonido_Golpe");
+                    AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+                    fuenteAudio.clip = golpe;
+                    fuenteAudio.spatialBlend = 0f;
+
+                    if (ConfiguracionAudio.Instancia != null)
+                    {
+                        ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
+                    }
+
+                    fuenteAudio.Play();
+                    Destroy(audioTemporal, golpe.length + 0.1f);
                 }
 
                 Destroy(gameObject);
