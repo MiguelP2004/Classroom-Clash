@@ -31,9 +31,7 @@ public class GestorTutorial : MonoBehaviour
     private string msgAlertaExamenes = "<color=#FF5151><size=60>CUIDADO!!\n</size></color> SE ACERCA UN GRUPO DE EXAMENES!!\nACABA CON ELLOS!";
     private string msgUsarBasura = "PERFECTO! ZONA LIMPIA. <color=#F3FF00><size=60>BUEN TRABAJO!!</size></color>\nUSA EL <color=#FF5151><size=60>BOTON DE LA BASURA</size></color> PARA RECOGER AL ALUMNO Y QUITARLO DEL AULA";
     private string msgExplicacionBasura = "LA <color=#51DBFF><size=60>BASURA</size></color> ES GRATIS Y TE PERMITE RECOGER A LOS ALUMNOS PARA ORGANIZAR MEJOR TUS DEFENSAS";
-    private string msgFinal = "<color=#F3FF00><size=60>ENHORABUENA</size></color>\nHAS APRENDIDO LO BÁSICO\nCUIDADO QUE SE ACERCAN MAS! PON EN PRÁCTICA TUS HABILIDADES! <color=#FF5151><size=60>EXAMENES!!</size></color>";
-    private string msgVictoria = "<color=#F3FF00><size=60>ENHORABUENA</size></color>\nHAS GANADO EL TUTORIAL!";
-    private string msgProximamente = "<color=#51DBFF><size=60>PRONTO SALDRÁ</size></color>\nEL JUEGO COMPLETO";
+    private string msgFinal = "<color=#F3FF00><size=60>ENHORABUENA</size></color>\nHAS TERMINADO EL TUTORIAL!\nCUIDADO QUE SE ACERCAN MAS <color=#FF5151><size=60>EXAMENES!!</size></color>";
 
     private float distanciaCamaraRecorrida = 0f;
     private bool profeHaDisparado = false;
@@ -89,6 +87,7 @@ public class GestorTutorial : MonoBehaviour
         yield return StartCoroutine(MostrarTexto(msgMoverCamara, Color.white));
         
         distanciaCamaraRecorrida = 0f;
+        // Esperamos a que el jugador haya desplazado la cámara lo suficiente (2.5 unidades)
         yield return new WaitUntil(() => distanciaCamaraRecorrida >= 2.5f);
         yield return StartCoroutine(EfectoObjetivoCumplido());
         
@@ -175,58 +174,15 @@ public class GestorTutorial : MonoBehaviour
         yield return StartCoroutine(OcultarTexto());
         yield return new WaitForSeconds(1.5f);
 
-        // --- PASO 6: FIN DEL TUTORIAL Y COMIENZO DE LOS 2 MINUTOS ---
+        // --- PASO 6: FIN DEL TUTORIAL ---
         yield return StartCoroutine(MostrarTexto(msgFinal, Color.white));
         textoTutorial.transform.localScale = new Vector3(tamañoZoomExito, tamañoZoomExito, 1f);
         yield return new WaitForSeconds(4.5f);
         yield return StartCoroutine(OcultarTexto());
-        yield return new WaitForSeconds(1f);
 
-        // Desbloqueamos temporalmente botones y activamos la oleada de 2 minutos
         if (botonAlumno != null) botonAlumno.bloqueadoPorTutorial = false;
         if (botonBasura != null) botonBasura.bloqueadoPorTutorial = false;
-        
         if (generadorExamenes != null) generadorExamenes.generacionActiva = true;
-
-        float tiempoRestante = 120f; // 2 minutos
-        float temporizadorGeneracion = 0f;
-        float intervaloGeneracion = 1.5f;
-
-        while (tiempoRestante > 0f)
-        {
-            tiempoRestante -= Time.deltaTime;
-            temporizadorGeneracion += Time.deltaTime;
-
-            if (temporizadorGeneracion >= intervaloGeneracion)
-            {
-                temporizadorGeneracion = 0f;
-                if (generadorExamenes != null) generadorExamenes.GenerarExamen();
-            }
-
-            yield return null;
-        }
-
-        // Se acaban los 2 minutos: dejamos de generar nuevos exámenes
-        if (generadorExamenes != null) generadorExamenes.generacionActiva = false;
-
-        // Esperar a que no queden enemigos con la etiqueta "Examen" en pantalla
-        yield return new WaitUntil(() => GameObject.FindGameObjectsWithTag("Examen").Length == 0);
-
-        // --- PASO 7: MENSAJES DE VICTORIA FINAL ---
-        yield return StartCoroutine(MostrarTexto(msgVictoria, Color.white));
-        textoTutorial.transform.localScale = new Vector3(tamañoZoomExito, tamañoZoomExito, 1f);
-        yield return new WaitForSeconds(4.5f);
-        yield return StartCoroutine(OcultarTexto());
-        yield return new WaitForSeconds(1f);
-
-        yield return StartCoroutine(MostrarTexto(msgProximamente, Color.white));
-        textoTutorial.transform.localScale = new Vector3(tamañoZoomExito, tamañoZoomExito, 1f);
-        yield return new WaitForSeconds(4.5f);
-        yield return StartCoroutine(OcultarTexto());
-
-        // --- PASO 8: BLOQUEO FINAL DE CONTROLES ---
-        if (botonAlumno != null) botonAlumno.bloqueadoPorTutorial = true;
-        if (botonBasura != null) botonBasura.bloqueadoPorTutorial = true;
     }
 
     IEnumerator MostrarTexto(string mensaje, Color colorTexto)
