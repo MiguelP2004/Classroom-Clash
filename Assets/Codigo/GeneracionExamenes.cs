@@ -1,9 +1,9 @@
+using System.Collections;
 using UnityEngine;
 
 public class generacionExamenes : MonoBehaviour
 {
     public GameObject prefabExamen;
-    public float tiempoAparicion = 2f;
     [HideInInspector] public bool generacionActiva = false;
 
     [Header("Aparición y Ruta")]
@@ -11,17 +11,51 @@ public class generacionExamenes : MonoBehaviour
     public float posY_Aparicion = 0.2f;
     public EdgeCollider2D rutaCamino;    // Arrastra aquí el mismo objeto Camino
 
-    float temporizador;
+    private float intervaloEntreExamenes = 0.75f;
+    private Coroutine rutinaGeneracion;
+
+    private void OnDisable()
+    {
+        rutinaGeneracion = null;
+    }
 
     void Update()
     {
-        if (!generacionActiva) return;
-
-        temporizador += Time.deltaTime;
-        if (temporizador >= tiempoAparicion)
+        if (generacionActiva)
         {
-            temporizador = 0f;
+            if (rutinaGeneracion == null)
+            {
+                rutinaGeneracion = StartCoroutine(RutinaGeneracion());
+            }
+        }
+        else if (rutinaGeneracion != null)
+        {
+            StopCoroutine(rutinaGeneracion);
+            rutinaGeneracion = null;
+        }
+    }
+
+    private IEnumerator RutinaGeneracion()
+    {
+        while (true)
+        {
+            yield return StartCoroutine(GenerarRacha(6));
+            yield return new WaitForSeconds(4f);
+
+            yield return StartCoroutine(GenerarRacha(4));
+            yield return new WaitForSeconds(4f);
+        }
+    }
+
+    private IEnumerator GenerarRacha(int cantidad)
+    {
+        for (int i = 0; i < cantidad; i++)
+        {
             GenerarExamen();
+            if (i < cantidad - 1)
+            {
+                yield return new WaitForSeconds(intervaloEntreExamenes);
+            }
         }
     }
 

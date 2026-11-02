@@ -222,6 +222,7 @@ public class GestorColocacion : MonoBehaviour
                 Destroy(alumnoEnPuntoDeMira.gameObject);
                 alumnoEnPuntoDeMira = null;
                 CancelarAccion(); 
+                if (colocar != null) AudioSource.PlayClipAtPoint(colocar, Camera.main.transform.position);
                 if (GestorTutorial.instancia != null) GestorTutorial.instancia.RegistrarAlumnoBorrado();
             }
         }
