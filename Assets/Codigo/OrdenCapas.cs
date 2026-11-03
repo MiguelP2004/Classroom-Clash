@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class OrdenarCapas : MonoBehaviour
 {
@@ -8,11 +9,13 @@ public class OrdenarCapas : MonoBehaviour
 
     private SpriteRenderer sr;
     private Canvas canvasUI;
+    private SortingGroup sg;
 
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
         canvasUI = GetComponent<Canvas>(); 
+        sg = GetComponent<SortingGroup>();
     }
 
     void LateUpdate()
@@ -20,7 +23,9 @@ public class OrdenarCapas : MonoBehaviour
         int ordenBase = Mathf.RoundToInt(offset * 1000f);
         int ordenFinal = ignorarEjeY ? ordenBase : ordenBase - Mathf.RoundToInt(transform.position.y * 100f);
 
-        if (sr != null) sr.sortingOrder = ordenFinal;
+        if (sg != null) sg.sortingOrder = ordenFinal;
+        else if (sr != null) sr.sortingOrder = ordenFinal;
+
         if (canvasUI != null) canvasUI.sortingOrder = ordenFinal;
     }
 }

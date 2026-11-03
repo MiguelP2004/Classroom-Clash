@@ -5,10 +5,11 @@ using System.Collections;
 public class codigoExamen : MonoBehaviour
 {
     [Header("Estadísticas")]
-    public float vida = 3f; 
+    public float vida = 4f; 
     private float vidaMaxima;
-    public float velocidad = 2f; 
+    public float velocidad = 1.2f; 
     private bool estaMuriendo = false;
+    public int energiaRecibida = 3;
 
     [Header("Interfaz de Vida")]
     public GameObject canvasBarraVida;
@@ -154,7 +155,7 @@ public class codigoExamen : MonoBehaviour
             
             if (ControladorJuego.instancia != null)
             {
-                ControladorJuego.instancia.SumarEnergia(3);
+                ControladorJuego.instancia.SumarEnergia(energiaRecibida);
             }
             if (GestorTutorial.instancia != null)
             {

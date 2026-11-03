@@ -68,7 +68,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (compradoPermanente)
         {
             if (imagenCooldown != null) imagenCooldown.fillAmount = 0f;
-            colorEstado = new Color(0.5f, 0.5f, 0.5f, 1f);
+            colorEstado = new Color(0.65f, 0.65f, 0.65f, 1f);
             if (miBoton != null) miBoton.interactable = false;
             ratonEncima = false;
             estaSeleccionado = false;

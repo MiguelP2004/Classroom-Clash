@@ -31,10 +31,12 @@ public class ControladorJuego : MonoBehaviour
 
     private Vector3 posicionObjetivoCamara;
 
-    [Header("Pausa")]
+    [Header("Pausa y Audio")]
     public GameObject botonPausa; 
     public GameObject panelPausa; 
     public RectTransform panelBarrido; 
+    public Slider sliderSonidoFX;
+    
     private float posicionY_Oculta = 1200f; 
     private float posicionY_Visible = 0f;  
     
@@ -57,12 +59,14 @@ public class ControladorJuego : MonoBehaviour
     private Image imagenTransicion;
 
     private static bool viniendoDeReinicio = false;
+    private static float volumenGuardado = 1f; // Mantiene el volumen entre reinicios
 
     void Awake()
     {
         if (instancia == null) instancia = this;
         
         AudioListener.pause = false; 
+        AudioListener.volume = volumenGuardado;
 
         ActualizarTextoEnergia();
         ActualizarTextoVidas();
@@ -100,6 +104,12 @@ public class ControladorJuego : MonoBehaviour
             {
                 panelTransicion.SetActive(false);
             }
+        }
+        
+        if (sliderSonidoFX != null)
+        {
+            sliderSonidoFX.value = volumenGuardado;
+            sliderSonidoFX.onValueChanged.AddListener(CambiarVolumenFX);
         }
     }
 
@@ -149,6 +159,12 @@ public class ControladorJuego : MonoBehaviour
         {
             textoVidas.transform.localScale += (Vector3.one - textoVidas.transform.localScale) * (Time.unscaledDeltaTime * 5f);
         }
+    }
+
+    public void CambiarVolumenFX(float nuevoValor)
+    {
+        AudioListener.volume = nuevoValor;
+        volumenGuardado = nuevoValor;
     }
 
     private void ManejarCamara()
@@ -311,6 +327,9 @@ public class ControladorJuego : MonoBehaviour
             fuenteAudio.clip = sonidoGameOver;
             fuenteAudio.spatialBlend = 0f; 
             fuenteAudio.ignoreListenerPause = true;
+            
+            fuenteAudio.volume = volumenGuardado; 
+            
             fuenteAudio.Play();
             Destroy(audioTemporal, sonidoGameOver.length + 0.1f);
         }
