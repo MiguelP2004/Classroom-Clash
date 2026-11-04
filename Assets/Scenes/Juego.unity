@@ -432,9 +432,10 @@ EdgeCollider2D:
   m_Offset: {x: 0, y: 0}
   m_EdgeRadius: 0.35
   m_Points:
-  - {x: -9.625507, y: 0.2702818}
-  - {x: -9.036193, y: 0.26776397}
-  - {x: -8.49362, y: 0.26036114}
+  - {x: -10.232565, y: 0.28219944}
+  - {x: -9.579306, y: 0.26144356}
+  - {x: -8.984242, y: 0.26199532}
+  - {x: -8.444917, y: 0.2661298}
   - {x: -7.994058, y: 0.30888164}
   - {x: -7.519496, y: 0.3924295}
   - {x: -7.3589506, y: 0.43628317}
@@ -848,7 +849,7 @@ MonoBehaviour:
   examenPesado: {fileID: 5661411276649858762, guid: 98502edf4df71314f8f389e82c1c3143, type: 3}
   generacionActiva: 0
   posX_Aparicion: -14.6
-  posY_Aparicion: 0.4
+  posY_Aparicion: 0.5
   rutaCamino: {fileID: 118624235}
 --- !u!1 &246839416
 GameObject:
@@ -1822,7 +1823,7 @@ RectTransform:
   m_Father: {fileID: 1969099866}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2505,8 +2506,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 160, y: 40}
-  m_SizeDelta: {x: 400, y: 140}
+  m_AnchoredPosition: {x: 127.6, y: 29.244}
+  m_SizeDelta: {x: 338.5388, y: 118.4886}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1022580825
 MonoBehaviour:
@@ -4212,7 +4213,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -293, y: 0}
+  m_AnchoredPosition: {x: -247.3, y: 0}
   m_SizeDelta: {x: -74.865845, y: -39.32422}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1417902846
@@ -4262,8 +4263,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45
-  m_fontSizeBase: 45
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
@@ -4927,8 +4928,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000002861, y: 40}
-  m_SizeDelta: {x: 772.3927, y: 167.1603}
+  m_AnchoredPosition: {x: 0, y: 29.244}
+  m_SizeDelta: {x: 633.8152, y: 167.1603}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1774849439
 MonoBehaviour:
@@ -4943,7 +4944,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.50980395}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.47058824}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5304,7 +5305,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1948230782
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5572,9 +5573,9 @@ RectTransform:
   m_Father: {fileID: 1994716842}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.0000076293945}
-  m_SizeDelta: {x: 88.6407, y: -71.279}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0.000015258789}
+  m_SizeDelta: {x: 77.4264, y: -62.5516}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1985862939
 MonoBehaviour:
@@ -5648,7 +5649,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -60, y: 0}
+  m_SizeDelta: {x: -58, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2146500185
 GameObject:

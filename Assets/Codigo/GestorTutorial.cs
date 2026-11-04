@@ -66,7 +66,7 @@ public class GestorTutorial : MonoBehaviour
     {
         if (textoTutorial != null)
         {
-            textoTutorial.transform.localScale += (Vector3.one - textoTutorial.transform.localScale) / 50f;
+            textoTutorial.transform.localScale = Vector3.Lerp(textoTutorial.transform.localScale, Vector3.one, Time.unscaledDeltaTime * 15f);
         }
     }
 

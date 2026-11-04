@@ -13,7 +13,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public AudioClip sonidoError;
     [HideInInspector] public bool bloqueadoPorTutorial = false;
     [HideInInspector] public bool forzadoActivo = false;
-    [HideInInspector] public bool compradoPermanente = false; // ¡NUEVO!: Desactiva el botón para siempre tras comprarlo
+    [HideInInspector] public bool compradoPermanente = false;
 
     [Header("Escala")]
     public float tamañoNormal = 1f;
@@ -123,7 +123,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             objetivo = new Vector3(tamañoAgrandado, tamañoAgrandado, 0f);
         }
         
-        transform.localScale += (objetivo - transform.localScale) / 25f;
+        transform.localScale = Vector3.Lerp(transform.localScale, objetivo, Time.unscaledDeltaTime * 15f);
 
         if (forzadoActivo && EventSystem.current != null)
         {
@@ -145,6 +145,13 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         }
     }
 
+    public void ForzarDeseleccion()
+    {
+        forzadoActivo = false;
+        estaSeleccionado = false;
+        ratonEncima = false;
+    }
+
     public void IniciarCooldown()
     {
         enCooldown = true;
@@ -163,7 +170,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (eventData.button != PointerEventData.InputButton.Left) return;
 
         CodigoProfe.BloquearDisparoHastaSoltar();
-        if (compradoPermanente) return; // Ignora cualquier clic o sonido de error si ya está comprado
+        if (compradoPermanente) return;
 
         ultimoBotonPulsado = this;
 
