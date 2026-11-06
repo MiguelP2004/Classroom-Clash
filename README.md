@@ -71,8 +71,9 @@ Para las siguientes iteraciones quedan los jefes (las asignaturas), el menú pri
 - Álvaro Bravo Rodríguez
 
 ## Cómo puedo jugar
-1- Dirígete a la sección `Releases`.
-2- Dentro, verás una carpeta llamada `Demo.del.juego.-.Classroom.Clash.zip`.
-3- Descárgala y extraela.
-4- Al abrirla encontrarás el ejecutable llamado `Classroom Clash - A Tower Defense Game.exe`.
-5- Ejecútalo y disfruta.
+
+1- Dirígete a la sección `Releases`.<br>
+2- Dentro, verás una carpeta llamada `Demo.del.juego.-.Classroom.Clash.zip`.<br>
+3- Descárgala y extraela.<br>
+4- Al abrirla encontrarás el ejecutable llamado `Classroom Clash - A Tower Defense Game.exe`.<br>
+5- Ejecútalo y disfruta.<br>
