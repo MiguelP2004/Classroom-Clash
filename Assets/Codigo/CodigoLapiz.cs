@@ -24,11 +24,7 @@ public class CodigoLapiz : MonoBehaviour
             AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
             fuenteAudio.clip = disparo;
             fuenteAudio.spatialBlend = 0f;
-
-            if (ConfiguracionAudio.Instancia != null)
-            {
-                ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
-            }
+            fuenteAudio.volume = ControladorJuego.volumenSFXGuardado;
 
             fuenteAudio.Play();
             Destroy(audioTemporal, disparo.length + 0.1f);
@@ -80,11 +76,7 @@ public class CodigoLapiz : MonoBehaviour
                     AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
                     fuenteAudio.clip = golpe;
                     fuenteAudio.spatialBlend = 0f;
-
-                    if (ConfiguracionAudio.Instancia != null)
-                    {
-                        ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
-                    }
+                    fuenteAudio.volume = ControladorJuego.volumenSFXGuardado;
 
                     fuenteAudio.Play();
                     Destroy(audioTemporal, golpe.length + 0.1f);

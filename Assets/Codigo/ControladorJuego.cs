@@ -64,11 +64,15 @@ public class ControladorJuego : MonoBehaviour
     private Image imagenTransicion;
 
     private static bool viniendoDeReinicio = false;
+    
+    public static float volumenSFXGuardado = 1f;
+    private static float volumenMusicaGuardada = 1f;
 
     void Awake()
     {
         if (instancia == null) instancia = this;
         
+        // NO tocamos AudioListener.volume aquí para no interferir con la música
         AudioListener.pause = false; 
 
         ActualizarTextoEnergia();
@@ -112,37 +116,35 @@ public class ControladorJuego : MonoBehaviour
 
     void Start()
     {
+        // Configuración de la música
         if (musicaJuego != null)
         {
             fuenteMusica = gameObject.AddComponent<AudioSource>();
-
             fuenteMusica.clip = musicaJuego;
             fuenteMusica.loop = true;
             fuenteMusica.playOnAwake = false;
             fuenteMusica.spatialBlend = 0f;
-
-            if (ConfiguracionAudio.Instancia != null)
-            {
-                ConfiguracionAudio.Instancia.ConfigurarFuenteMusica(fuenteMusica);
-            }
-
+            
+            // Asignamos directamente el volumen de la música
+            fuenteMusica.volume = volumenMusicaGuardada;
+            fuenteMusica.ignoreListenerPause = true; 
+            
             fuenteMusica.Play();
         }
+
+        // Configuración de los Sliders
         if (sliderSonidoFX != null)
         {
+            sliderSonidoFX.value = volumenSFXGuardado;
             sliderSonidoFX.onValueChanged.AddListener(CambiarVolumenFX);
-            sliderSonidoFX.value = ConfiguracionAudio.Instancia != null
-                ? ConfiguracionAudio.Instancia.ObtenerVolumenSFX()
-                : 1f;
         }
 
         if (sliderMusica != null)
         {
+            sliderMusica.value = volumenMusicaGuardada;
             sliderMusica.onValueChanged.AddListener(CambiarVolumenMusica);
-            sliderMusica.value = ConfiguracionAudio.Instancia != null
-                ? ConfiguracionAudio.Instancia.ObtenerVolumenMusica()
-                : 1f;
         }
+
         if (viniendoDeReinicio)
         {
             viniendoDeReinicio = false;
@@ -191,17 +193,16 @@ public class ControladorJuego : MonoBehaviour
 
     public void CambiarVolumenFX(float nuevoValor)
     {
-        if (ConfiguracionAudio.Instancia != null)
-        {
-            ConfiguracionAudio.Instancia.CambiarVolumenSFX(nuevoValor);
-        }
+        volumenSFXGuardado = nuevoValor;
+        // Ya NO modificamos AudioListener.volume aquí
     }
 
     public void CambiarVolumenMusica(float nuevoValor)
     {
-        if (ConfiguracionAudio.Instancia != null)
+        volumenMusicaGuardada = nuevoValor;
+        if (fuenteMusica != null)
         {
-            ConfiguracionAudio.Instancia.CambiarVolumenMusica(nuevoValor);
+            fuenteMusica.volume = nuevoValor;
         }
     }
 
@@ -259,11 +260,9 @@ public class ControladorJuego : MonoBehaviour
 
                 fuenteAudio.clip = pausar;
                 fuenteAudio.spatialBlend = 0f;
-
-                if (ConfiguracionAudio.Instancia != null)
-                {
-                    ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
-                }
+                // Aplicamos el volumen del slider SFX al audio generado
+                fuenteAudio.volume = volumenSFXGuardado;
+                fuenteAudio.ignoreListenerPause = true;
 
                 fuenteAudio.Play();
                 Destroy(audioTemporal, pausar.length + 0.1f);
@@ -278,6 +277,13 @@ public class ControladorJuego : MonoBehaviour
         juegoPausado = true;
         Time.timeScale = 0f; 
         
+        if (fuenteMusica != null)
+        {
+            fuenteMusica.Pause();
+        }
+
+        AudioListener.pause = true; 
+
         if (botonPausa != null) botonPausa.SetActive(false);
         if (panelPausa != null) panelPausa.SetActive(true); 
         
@@ -298,6 +304,13 @@ public class ControladorJuego : MonoBehaviour
         juegoPausado = false;
         Time.timeScale = 1f; 
         
+        if (fuenteMusica != null)
+        {
+            fuenteMusica.UnPause();
+        }
+
+        AudioListener.pause = false;
+
         if (panelPausa != null) panelPausa.SetActive(false); 
         if (botonPausa != null) botonPausa.SetActive(true);
         if (panelBarrido != null) 
@@ -366,6 +379,8 @@ public class ControladorJuego : MonoBehaviour
     private void ActivarGameOver()
     {
         esGameOver = true;
+        
+        if (fuenteMusica != null) fuenteMusica.Pause();
         AudioListener.pause = true; 
 
         if (botonPausa != null) botonPausa.SetActive(false);
@@ -382,11 +397,8 @@ public class ControladorJuego : MonoBehaviour
             fuenteAudio.clip = sonidoGameOver;
             fuenteAudio.spatialBlend = 0f;
             fuenteAudio.ignoreListenerPause = true;
-
-            if (ConfiguracionAudio.Instancia != null)
-            {
-                ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
-            }
+            // Aplicamos el volumen del slider SFX
+            fuenteAudio.volume = volumenSFXGuardado; 
 
             fuenteAudio.Play();
             Destroy(audioTemporal, sonidoGameOver.length + 0.1f);

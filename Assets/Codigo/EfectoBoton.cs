@@ -194,12 +194,8 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
                     fuenteAudio.clip = clip;
                     fuenteAudio.spatialBlend = 0f;
+                    fuenteAudio.volume = ControladorJuego.volumenSFXGuardado;
                     fuenteAudio.ignoreListenerPause = true;
-
-                    if (ConfiguracionAudio.Instancia != null)
-                    {
-                        ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
-                    }
 
                     fuenteAudio.Play();
                     Destroy(audioTemporal, clip.length + 0.1f);
@@ -224,14 +220,12 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             
             fuenteAudio.clip = sonidoBoton;
             fuenteAudio.spatialBlend = 0f; 
+            fuenteAudio.volume = ControladorJuego.volumenSFXGuardado;
             fuenteAudio.ignoreListenerPause = true;
 
-            if (ConfiguracionAudio.Instancia != null) ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
-            
             fuenteAudio.Play();
             
             DontDestroyOnLoad(audioTemporal); 
-            
             Destroy(audioTemporal, sonidoBoton.length + 0.1f);
         }
     }

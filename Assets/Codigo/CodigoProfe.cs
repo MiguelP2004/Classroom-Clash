@@ -134,11 +134,7 @@ public class CodigoProfe : MonoBehaviour
 
             fuenteAudio.clip = sonidoMejora;
             fuenteAudio.spatialBlend = 0f;
-
-            if (ConfiguracionAudio.Instancia != null)
-            {
-                ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
-            }
+            fuenteAudio.volume = ControladorJuego.volumenSFXGuardado;
 
             fuenteAudio.Play();
             Destroy(audioTemporal, sonidoMejora.length + 0.1f);

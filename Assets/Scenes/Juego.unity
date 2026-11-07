@@ -288,53 +288,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9045584}
   m_CullTransparentMesh: 1
---- !u!1 &12025068
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 12025070}
-  - component: {fileID: 12025069}
-  m_Layer: 0
-  m_Name: ConfiguracionAudio
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &12025069
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 12025068}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b7eea95e111551439647872685f7a9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ConfiguracionAudio
-  mezcladorAudio: {fileID: 24100000, guid: 47c72597de7e42246a9d096b20c7dfcb, type: 2}
-  grupoSFX: {fileID: 4532710391631148512, guid: 47c72597de7e42246a9d096b20c7dfcb, type: 2}
-  grupoMusica: {fileID: -7204354940149799819, guid: 47c72597de7e42246a9d096b20c7dfcb, type: 2}
---- !u!4 &12025070
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 12025068}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.43246, y: 0.13715, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &117513546
 GameObject:
   m_ObjectHideFlags: 0
@@ -2173,7 +2126,7 @@ RectTransform:
   m_Father: {fileID: 931623405}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0.000015258789}
   m_SizeDelta: {x: 77.4264, y: -62.5516}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2248,7 +2201,7 @@ RectTransform:
   m_Father: {fileID: 1969099866}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -4135,7 +4088,7 @@ MonoBehaviour:
   panelBarrido: {fileID: 1948230782}
   sliderSonidoFX: {fileID: 1022580825}
   sliderMusica: {fileID: 344047704}
-  musicaJuego: {fileID: 8300000, guid: 6e42b74592f41134e96734745e98acb4, type: 3}
+  musicaJuego: {fileID: 8300000, guid: a279dce8dc4489748ac60acdcbae280f, type: 3}
   panelGameOver: {fileID: 812923201}
   panelTransicion: {fileID: 555812093}
   sonidoGameOver: {fileID: 8300000, guid: 01449ba613ac6d144aebf79fac2135a9, type: 3}
@@ -5025,7 +4978,7 @@ RectTransform:
   m_Father: {fileID: 1873464647}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5879,7 +5832,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1948230782
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6148,7 +6101,7 @@ RectTransform:
   m_Father: {fileID: 1994716842}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0.000015258789}
   m_SizeDelta: {x: 77.4264, y: -62.5516}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6379,4 +6332,3 @@ SceneRoots:
   - {fileID: 638287160}
   - {fileID: 1769146108}
   - {fileID: 1078388932}
-  - {fileID: 12025070}
