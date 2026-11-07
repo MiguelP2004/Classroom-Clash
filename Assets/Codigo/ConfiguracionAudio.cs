@@ -33,11 +33,11 @@ public class ConfiguracionAudio : MonoBehaviour
 
     private void Start()
     {
-        CambiarVolumenSFX(
-            PlayerPrefs.GetFloat(GUARDADO_SFX, 0.75f));
+        PlayerPrefs.DeleteKey(GUARDADO_SFX);
+        PlayerPrefs.DeleteKey(GUARDADO_MUSICA);
 
-        CambiarVolumenMusica(
-            PlayerPrefs.GetFloat(GUARDADO_MUSICA, 0.75f));
+        CambiarVolumenSFX(PlayerPrefs.GetFloat(GUARDADO_SFX, 1f));
+        CambiarVolumenMusica(PlayerPrefs.GetFloat(GUARDADO_MUSICA, 1f));
     }
 
     public void CambiarVolumenSFX(float volumen)
@@ -86,5 +86,14 @@ public class ConfiguracionAudio : MonoBehaviour
         {
             fuente.outputAudioMixerGroup = grupoMusica;
         }
+    }
+    public float ObtenerVolumenSFX()
+    {
+        return PlayerPrefs.GetFloat(GUARDADO_SFX, 0.75f);
+    }
+
+    public float ObtenerVolumenMusica()
+    {
+        return PlayerPrefs.GetFloat(GUARDADO_MUSICA, 0.75f);
     }
 }

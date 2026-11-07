@@ -267,7 +267,22 @@ public class GestorColocacion : MonoBehaviour
                 Destroy(alumnoEnPuntoDeMira.gameObject);
                 alumnoEnPuntoDeMira = null;
                 CancelarAccion(); 
-                if (colocar != null) AudioSource.PlayClipAtPoint(colocar, Camera.main.transform.position);
+                if (colocar != null)
+                {
+                    GameObject audioTemporal = new GameObject("Sonido_Borrar");
+                    AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+
+                    fuenteAudio.clip = colocar;
+                    fuenteAudio.spatialBlend = 0f;
+
+                    if (ConfiguracionAudio.Instancia != null)
+                    {
+                        ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
+                    }
+
+                    fuenteAudio.Play();
+                    Destroy(audioTemporal, colocar.length + 0.1f);
+                }
                 if (GestorTutorial.instancia != null) GestorTutorial.instancia.RegistrarAlumnoBorrado();
             }
         }

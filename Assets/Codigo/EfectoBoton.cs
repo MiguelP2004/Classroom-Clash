@@ -187,9 +187,22 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             {
                 tiempoParpadeoError = duracionError;
                 AudioClip clip = (sonidoError != null) ? sonidoError : sonidoBoton;
-                if (clip != null && Camera.main != null)
+                if (clip != null)
                 {
-                    AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position);
+                    GameObject audioTemporal = new GameObject("Sonido_Error");
+                    AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+
+                    fuenteAudio.clip = clip;
+                    fuenteAudio.spatialBlend = 0f;
+                    fuenteAudio.ignoreListenerPause = true;
+
+                    if (ConfiguracionAudio.Instancia != null)
+                    {
+                        ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
+                    }
+
+                    fuenteAudio.Play();
+                    Destroy(audioTemporal, clip.length + 0.1f);
                 }
             }
         }

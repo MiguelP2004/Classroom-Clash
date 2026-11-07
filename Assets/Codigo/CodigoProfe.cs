@@ -127,9 +127,21 @@ public class CodigoProfe : MonoBehaviour
         ControladorJuego.instancia.GastarEnergia(costeMejora);
         tieneDisparoDoble = true;
 
-        if (sonidoMejora != null && Camera.main != null)
+        if (sonidoMejora != null)
         {
-            AudioSource.PlayClipAtPoint(sonidoMejora, Camera.main.transform.position);
+            GameObject audioTemporal = new GameObject("Sonido_Mejora");
+            AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+
+            fuenteAudio.clip = sonidoMejora;
+            fuenteAudio.spatialBlend = 0f;
+
+            if (ConfiguracionAudio.Instancia != null)
+            {
+                ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
+            }
+
+            fuenteAudio.Play();
+            Destroy(audioTemporal, sonidoMejora.length + 0.1f);
         }
 
         if (botonQueLlama != null)
