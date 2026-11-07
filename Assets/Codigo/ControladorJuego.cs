@@ -13,7 +13,7 @@ public class ControladorJuego : MonoBehaviour
     [Header("Energía")]
     public int energia = 50;
     public TextMeshProUGUI textoEnergia; 
-    private float tamañoAgrandado = 1.4f;
+    private float tamañoAgrandado = 1.35f;
 
     [Header("Vidas")]
     public int vidas = 12;
@@ -31,10 +31,12 @@ public class ControladorJuego : MonoBehaviour
 
     private Vector3 posicionObjetivoCamara;
 
-    [Header("Pausa")]
+    [Header("Pausa y Audio")]
     public GameObject botonPausa; 
     public GameObject panelPausa; 
     public RectTransform panelBarrido; 
+    public Slider sliderSonidoFX;
+    
     private float posicionY_Oculta = 1200f; 
     private float posicionY_Visible = 0f;  
     
@@ -57,12 +59,14 @@ public class ControladorJuego : MonoBehaviour
     private Image imagenTransicion;
 
     private static bool viniendoDeReinicio = false;
+    private static float volumenGuardado = 1f;
 
     void Awake()
     {
         if (instancia == null) instancia = this;
         
         AudioListener.pause = false; 
+        AudioListener.volume = volumenGuardado;
 
         ActualizarTextoEnergia();
         ActualizarTextoVidas();
@@ -101,6 +105,12 @@ public class ControladorJuego : MonoBehaviour
                 panelTransicion.SetActive(false);
             }
         }
+        
+        if (sliderSonidoFX != null)
+        {
+            sliderSonidoFX.value = volumenGuardado;
+            sliderSonidoFX.onValueChanged.AddListener(CambiarVolumenFX);
+        }
     }
 
     void Start()
@@ -124,7 +134,7 @@ public class ControladorJuego : MonoBehaviour
             float objetivoY = juegoPausado ? posicionY_Visible : posicionY_Oculta;
             Vector2 posActual = panelBarrido.anchoredPosition;
             
-            posActual.y = Mathf.SmoothDamp(posActual.y, objetivoY, ref velocidadBarrido, 0.15f, Mathf.Infinity, Time.unscaledDeltaTime);
+            posActual.y = Mathf.SmoothDamp(posActual.y, objetivoY, ref velocidadBarrido, 0.1f, Mathf.Infinity, Time.unscaledDeltaTime);
             panelBarrido.anchoredPosition = posActual;
 
             if (Mathf.Abs(posActual.y - objetivoY) < 1f)
@@ -142,13 +152,19 @@ public class ControladorJuego : MonoBehaviour
 
         if (textoEnergia != null)
         {
-            textoEnergia.transform.localScale += (Vector3.one - textoEnergia.transform.localScale) * (Time.unscaledDeltaTime * 5f);
+            textoEnergia.transform.localScale = Vector3.Lerp(textoEnergia.transform.localScale, Vector3.one, Time.unscaledDeltaTime * 15f);
         }
 
         if (textoVidas != null)
         {
-            textoVidas.transform.localScale += (Vector3.one - textoVidas.transform.localScale) * (Time.unscaledDeltaTime * 5f);
+            textoVidas.transform.localScale = Vector3.Lerp(textoVidas.transform.localScale, Vector3.one, Time.unscaledDeltaTime * 15f);
         }
+    }
+
+    public void CambiarVolumenFX(float nuevoValor)
+    {
+        AudioListener.volume = nuevoValor;
+        volumenGuardado = nuevoValor;
     }
 
     private void ManejarCamara()
@@ -198,19 +214,7 @@ public class ControladorJuego : MonoBehaviour
         if (juegoPausado) ReanudarJuego();
         else
         {
-            if (pausar != null)
-            {
-                GameObject audioTemporal = new GameObject("Sonido_Pausa");
-                AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
-                fuenteAudio.clip = pausar;
-                fuenteAudio.spatialBlend = 0f;
-                if (ConfiguracionAudio.Instancia != null)
-                {
-                    ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
-                }
-                fuenteAudio.Play();
-                Destroy(audioTemporal, pausar.length + 0.1f);
-            }
+            if (pausar != null) AudioSource.PlayClipAtPoint(pausar, Camera.main.transform.position);
             PausarJuego();
         }
     }
@@ -323,10 +327,9 @@ public class ControladorJuego : MonoBehaviour
             fuenteAudio.clip = sonidoGameOver;
             fuenteAudio.spatialBlend = 0f; 
             fuenteAudio.ignoreListenerPause = true;
-            if (ConfiguracionAudio.Instancia != null)
-            {
-                ConfiguracionAudio.Instancia.ConfigurarFuenteSFX(fuenteAudio);
-            }
+            
+            fuenteAudio.volume = volumenGuardado; 
+            
             fuenteAudio.Play();
             Destroy(audioTemporal, sonidoGameOver.length + 0.1f);
         }

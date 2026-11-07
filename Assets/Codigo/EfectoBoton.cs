@@ -10,9 +10,10 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public int coste = 20;
     public bool esMenu = false; 
     public AudioClip sonidoBoton;
-    public AudioClip sonidoError; // Arrastra aquí tu error.wav para los botones de gameplay
+    public AudioClip sonidoError;
     [HideInInspector] public bool bloqueadoPorTutorial = false;
     [HideInInspector] public bool forzadoActivo = false;
+    [HideInInspector] public bool compradoPermanente = false;
 
     [Header("Escala")]
     public float tamañoNormal = 1f;
@@ -64,12 +65,20 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         Color colorEstado = Color.white;
 
-        if (enCooldown)
+        if (compradoPermanente)
+        {
+            if (imagenCooldown != null) imagenCooldown.fillAmount = 0f;
+            colorEstado = new Color(0.65f, 0.65f, 0.65f, 1f);
+            if (miBoton != null) miBoton.interactable = false;
+            ratonEncima = false;
+            estaSeleccionado = false;
+        }
+        else if (enCooldown)
         {
             temporizador -= Time.deltaTime;
             
             if (imagenCooldown != null) imagenCooldown.fillAmount = temporizador / tiempoCooldown;
-            colorEstado = new Color(0.7f, 0.7f, 0.7f, 1f);
+            colorEstado = new Color(0.8f, 0.8f, 0.8f, 1f);
             if (miBoton != null) miBoton.interactable = false;
 
             if (temporizador <= 0f) enCooldown = false;
@@ -79,7 +88,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             if (bloqueadoPorTutorial || !puedeComprar || bloqueadoPorPausa || bloqueadoPorTransicion)
             {
                 if (imagenCooldown != null) imagenCooldown.fillAmount = 0f; 
-                colorEstado = (!puedeComprar) ? new Color(0.7f, 0.7f, 0.7f, 1f) : Color.white; 
+                colorEstado = (!puedeComprar) ? new Color(0.8f, 0.8f, 0.8f, 1f) : Color.white; 
                 if (miBoton != null) miBoton.interactable = false; 
                 
                 ratonEncima = false;
@@ -93,7 +102,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             }
         }
 
-        if (tiempoParpadeoError > 0f)
+        if (tiempoParpadeoError > 0f && !compradoPermanente)
         {
             tiempoParpadeoError -= Time.deltaTime;
             int fase = Mathf.FloorToInt((tiempoParpadeoError / duracionError) * 4f);
@@ -109,12 +118,12 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         Vector3 objetivo = new Vector3(tamañoNormal, tamañoNormal, 0f);
         
-        if (!bloqueadoPorTutorial && !enCooldown && puedeComprar && !bloqueadoPorPausa && !bloqueadoPorTransicion && (ratonEncima || estaSeleccionado || forzadoActivo))
+        if (!compradoPermanente && !bloqueadoPorTutorial && !enCooldown && puedeComprar && !bloqueadoPorPausa && !bloqueadoPorTransicion && (ratonEncima || estaSeleccionado || forzadoActivo))
         {
             objetivo = new Vector3(tamañoAgrandado, tamañoAgrandado, 0f);
         }
         
-        transform.localScale += (objetivo - transform.localScale) / 25f;
+        transform.localScale = Vector3.Lerp(transform.localScale, objetivo, Time.unscaledDeltaTime * 15f);
 
         if (forzadoActivo && EventSystem.current != null)
         {
@@ -136,6 +145,13 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         }
     }
 
+    public void ForzarDeseleccion()
+    {
+        forzadoActivo = false;
+        estaSeleccionado = false;
+        ratonEncima = false;
+    }
+
     public void IniciarCooldown()
     {
         enCooldown = true;
@@ -143,7 +159,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         
         if (miBoton != null) miBoton.interactable = false; 
         if (imagenCooldown != null) imagenCooldown.fillAmount = 1f; 
-        if (miImagenBase != null) miImagenBase.color = new Color(0.7f, 0.7f, 0.7f, 1f); 
+        if (miImagenBase != null) miImagenBase.color = new Color(0.8f, 0.8f, 0.8f, 1f); 
         
         ratonEncima = false;
         estaSeleccionado = false;
@@ -154,6 +170,8 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (eventData.button != PointerEventData.InputButton.Left) return;
 
         CodigoProfe.BloquearDisparoHastaSoltar();
+        if (compradoPermanente) return;
+
         ultimoBotonPulsado = this;
 
         bool juegoPausado = (Time.timeScale == 0f);
@@ -177,9 +195,9 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData) { if (!bloqueadoPorTutorial) ratonEncima = true; }
+    public void OnPointerEnter(PointerEventData eventData) { if (!bloqueadoPorTutorial && !compradoPermanente) ratonEncima = true; }
     public void OnPointerExit(PointerEventData eventData) { ratonEncima = false; }
-    public void OnSelect(BaseEventData eventData) { if (!bloqueadoPorTutorial) estaSeleccionado = true; }
+    public void OnSelect(BaseEventData eventData) { if (!bloqueadoPorTutorial && !compradoPermanente) estaSeleccionado = true; }
     public void OnDeselect(BaseEventData eventData) { if (!forzadoActivo) estaSeleccionado = false; }
 
     public void ReproducirSonidoClic()

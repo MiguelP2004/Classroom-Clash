@@ -185,6 +185,9 @@ public class GestorColocacion : MonoBehaviour
             objetoEnRaton.transform.localScale = Vector3.one * 0.4f;
         }
 
+        botonSeleccionado = EfectoBoton.ultimoBotonPulsado;
+        if (botonSeleccionado != null) botonSeleccionado.forzadoActivo = true;
+
         modoActual = ModoGestor.Borrando;
     }
 
@@ -220,7 +223,7 @@ public class GestorColocacion : MonoBehaviour
 
         if (botonSeleccionado != null)
         {
-            botonSeleccionado.forzadoActivo = false;
+            botonSeleccionado.ForzarDeseleccion();
             if (UnityEngine.EventSystems.EventSystem.current != null)
             {
                 UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
@@ -264,6 +267,7 @@ public class GestorColocacion : MonoBehaviour
                 Destroy(alumnoEnPuntoDeMira.gameObject);
                 alumnoEnPuntoDeMira = null;
                 CancelarAccion(); 
+                if (colocar != null) AudioSource.PlayClipAtPoint(colocar, Camera.main.transform.position);
                 if (GestorTutorial.instancia != null) GestorTutorial.instancia.RegistrarAlumnoBorrado();
             }
         }
@@ -277,7 +281,7 @@ public class GestorColocacion : MonoBehaviour
     {
         if (botonSeleccionado != null) 
         {
-            botonSeleccionado.forzadoActivo = false; 
+            botonSeleccionado.ForzarDeseleccion();
             if (UnityEngine.EventSystems.EventSystem.current != null)
             {
                 UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
