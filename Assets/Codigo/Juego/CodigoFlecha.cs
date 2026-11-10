@@ -3,17 +3,21 @@ using UnityEngine.UI;
 
 public class CodigoFlecha : MonoBehaviour
 {
+    public bool esFlechaMenu = false; 
+
     private float velocidadFlote = 2.5f;
     private float alturaFlote = 11f;
     private float duracionFade = 1f;
     private Image miImagen;
     private float posY_Base;
+    private float posX_Base;
     private float tiempoFade;
 
     void Awake()
     {
         miImagen = GetComponent<Image>();
-        posY_Base = transform.localPosition.y; // Guardamos su altura base
+        posY_Base = transform.localPosition.y;
+        posX_Base = transform.localPosition.x;
     }
 
     void OnEnable()
@@ -25,6 +29,20 @@ public class CodigoFlecha : MonoBehaviour
             Color c = miImagen.color;
             c.a = 0f;
             miImagen.color = c;
+        }
+
+        if (esFlechaMenu)
+        {
+            int nivelActual = PlayerPrefs.GetInt("NivelActual", 1);
+            nivelActual = Mathf.Clamp(nivelActual, 1, 5); 
+
+            float nuevaPosX = (nivelActual - 1) * 300f - 600f;
+            
+            Vector3 pos = transform.localPosition;
+            pos.x = nuevaPosX;
+            transform.localPosition = pos;
+            
+            posX_Base = nuevaPosX; 
         }
     }
 
@@ -46,6 +64,9 @@ public class CodigoFlecha : MonoBehaviour
         float desplazamientoY = movimientoSuave * alturaFlote;
         
         Vector3 nuevaPosicion = transform.localPosition;
+        
+        if (esFlechaMenu) nuevaPosicion.x = posX_Base;
+        
         nuevaPosicion.y = posY_Base + desplazamientoY;
         transform.localPosition = nuevaPosicion;
     }

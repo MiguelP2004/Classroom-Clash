@@ -9,10 +9,17 @@ public class MostrarRango : MonoBehaviour
     private LineRenderer[] lineas = new LineRenderer[3];
     private CodigoAlumno scriptAlumno; 
     private int segmentos = 50;
+    private bool enMenuPrincipal = false;
 
     void Awake()
     {
         scriptAlumno = GetComponent<CodigoAlumno>();
+
+        if (Object.FindAnyObjectByType<MenuPrincipal>() != null)
+        {
+            enMenuPrincipal = true;
+            return;
+        }
 
         LineRenderer viejo = GetComponent<LineRenderer>();
         if (viejo != null) Destroy(viejo);
@@ -38,7 +45,7 @@ public class MostrarRango : MonoBehaviour
 
     void Update()
     {
-        if (scriptAlumno == null) return;
+        if (enMenuPrincipal || scriptAlumno == null) return;
 
         bool debeMostrar = (!scriptAlumno.estaColocado) || (scriptAlumno.seleccionado);
 

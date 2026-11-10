@@ -41,6 +41,7 @@ public class ControladorJuego : MonoBehaviour
     [Header("Música")]
     public AudioClip musicaJuego;
     private AudioSource fuenteMusica;
+    private float escalaMusicaActual = 0.8f;
     
     private float posicionY_Oculta = 1200f; 
     private float posicionY_Visible = 0f;  
@@ -62,17 +63,16 @@ public class ControladorJuego : MonoBehaviour
     [HideInInspector] public bool esGameOver = false;
     [HideInInspector] public bool enTransicion = false;
     private Image imagenTransicion;
-
-    private static bool viniendoDeReinicio = false;
     
     public static float volumenSFXGuardado = 1f;
-    private static float volumenMusicaGuardada = 1f;
+    public static float volumenMusicaGuardada = 1f;
+
+    private bool haciendoFadeMusica = false;
 
     void Awake()
     {
         if (instancia == null) instancia = this;
         
-        // NO tocamos AudioListener.volume aquí para no interferir con la música
         AudioListener.pause = false; 
 
         ActualizarTextoEnergia();
@@ -97,26 +97,20 @@ public class ControladorJuego : MonoBehaviour
         if (panelTransicion != null)
         {
             imagenTransicion = panelTransicion.GetComponent<Image>();
-            if (viniendoDeReinicio)
+            panelTransicion.SetActive(true);
+            if (imagenTransicion != null)
             {
-                panelTransicion.SetActive(true);
-                if (imagenTransicion != null)
-                {
-                    Color c = imagenTransicion.color;
-                    c.a = 1f;
-                    imagenTransicion.color = c;
-                }
-            }
-            else
-            {
-                panelTransicion.SetActive(false);
+                Color c = imagenTransicion.color;
+                c.a = 1f; 
+                imagenTransicion.color = c;
             }
         }
     }
 
     void Start()
     {
-        // Configuración de la música
+        escalaMusicaActual = 0.8f;
+
         if (musicaJuego != null)
         {
             fuenteMusica = gameObject.AddComponent<AudioSource>();
@@ -124,15 +118,11 @@ public class ControladorJuego : MonoBehaviour
             fuenteMusica.loop = true;
             fuenteMusica.playOnAwake = false;
             fuenteMusica.spatialBlend = 0f;
-            
-            // Asignamos directamente el volumen de la música
-            fuenteMusica.volume = volumenMusicaGuardada;
+            fuenteMusica.volume = volumenMusicaGuardada * escalaMusicaActual;
             fuenteMusica.ignoreListenerPause = true; 
-            
             fuenteMusica.Play();
         }
 
-        // Configuración de los Sliders
         if (sliderSonidoFX != null)
         {
             sliderSonidoFX.value = volumenSFXGuardado;
@@ -145,11 +135,7 @@ public class ControladorJuego : MonoBehaviour
             sliderMusica.onValueChanged.AddListener(CambiarVolumenMusica);
         }
 
-        if (viniendoDeReinicio)
-        {
-            viniendoDeReinicio = false;
-            StartCoroutine(RutinaAclararTransicion());
-        }
+        StartCoroutine(RutinaAclararTransicionInicial());
     }
 
     void Update()
@@ -194,16 +180,55 @@ public class ControladorJuego : MonoBehaviour
     public void CambiarVolumenFX(float nuevoValor)
     {
         volumenSFXGuardado = nuevoValor;
-        // Ya NO modificamos AudioListener.volume aquí
     }
 
     public void CambiarVolumenMusica(float nuevoValor)
     {
         volumenMusicaGuardada = nuevoValor;
-        if (fuenteMusica != null)
+        
+        if (fuenteMusica != null && !haciendoFadeMusica)
         {
-            fuenteMusica.volume = nuevoValor;
+            fuenteMusica.volume = volumenMusicaGuardada * escalaMusicaActual;
         }
+    }
+
+    public void CambiarMusicaFondo(AudioClip nuevaMusica)
+    {
+        if (fuenteMusica == null || nuevaMusica == null) return;
+        StartCoroutine(RutinaCambioMusica(nuevaMusica));
+    }
+
+    private IEnumerator RutinaCambioMusica(AudioClip nuevaMusica)
+    {
+        float tiempoFadeOut = 1.5f;
+        float tiempoFadeIn = 1.5f;
+        
+        haciendoFadeMusica = true;
+
+        float tiempo = 0f;
+        while (tiempo < tiempoFadeOut)
+        {
+            tiempo += Time.unscaledDeltaTime;
+            float volObjetivoAnterior = volumenMusicaGuardada * escalaMusicaActual;
+            fuenteMusica.volume = Mathf.Lerp(volObjetivoAnterior, 0f, tiempo / tiempoFadeOut);
+            yield return null;
+        }
+        
+        escalaMusicaActual = 0.6f;
+        fuenteMusica.clip = nuevaMusica;
+        fuenteMusica.Play();
+        
+        tiempo = 0f;
+        while (tiempo < tiempoFadeIn)
+        {
+            tiempo += Time.unscaledDeltaTime;
+            float volObjetivoNuevo = volumenMusicaGuardada * escalaMusicaActual;
+            fuenteMusica.volume = Mathf.Lerp(0f, volObjetivoNuevo, tiempo / tiempoFadeIn);
+            yield return null;
+        }
+        
+        fuenteMusica.volume = volumenMusicaGuardada * escalaMusicaActual; 
+        haciendoFadeMusica = false;
     }
 
     private void ManejarCamara()
@@ -260,7 +285,6 @@ public class ControladorJuego : MonoBehaviour
 
                 fuenteAudio.clip = pausar;
                 fuenteAudio.spatialBlend = 0f;
-                // Aplicamos el volumen del slider SFX al audio generado
                 fuenteAudio.volume = volumenSFXGuardado;
                 fuenteAudio.ignoreListenerPause = true;
 
@@ -397,7 +421,6 @@ public class ControladorJuego : MonoBehaviour
             fuenteAudio.clip = sonidoGameOver;
             fuenteAudio.spatialBlend = 0f;
             fuenteAudio.ignoreListenerPause = true;
-            // Aplicamos el volumen del slider SFX
             fuenteAudio.volume = volumenSFXGuardado; 
 
             fuenteAudio.Play();
@@ -405,10 +428,8 @@ public class ControladorJuego : MonoBehaviour
         }
     }
 
-    public void ReiniciarPartida()
+    private void BloquearBotonPulsado()
     {
-        if (enTransicion) return;
-
         if (EfectoBoton.ultimoBotonPulsado != null)
         {
             EfectoBoton.ultimoBotonPulsado.forzadoActivo = true;
@@ -418,11 +439,23 @@ public class ControladorJuego : MonoBehaviour
             EfectoBoton ef = EventSystem.current.currentSelectedGameObject.GetComponent<EfectoBoton>();
             if (ef != null) ef.forzadoActivo = true;
         }
-
-        StartCoroutine(RutinaOscurecerYReiniciar());
     }
 
-    private IEnumerator RutinaOscurecerYReiniciar()
+    public void ReiniciarPartida()
+    {
+        if (enTransicion) return;
+        BloquearBotonPulsado();
+        StartCoroutine(RutinaOscurecerYCargarEscena(SceneManager.GetActiveScene().name));
+    }
+
+    public void VolverAlMenu()
+    {
+        if (enTransicion) return;
+        BloquearBotonPulsado();
+        StartCoroutine(RutinaOscurecerYCargarEscena("MenuPrincipal"));
+    }
+
+    private IEnumerator RutinaOscurecerYCargarEscena(string nombreEscena)
     {
         enTransicion = true;
 
@@ -446,15 +479,23 @@ public class ControladorJuego : MonoBehaviour
             imagenTransicion.color = c;
         }
 
-        yield return new WaitForSecondsRealtime(1.5f);
+        yield return new WaitForSecondsRealtime(0.5f);
 
-        viniendoDeReinicio = true;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        AsyncOperation operacionCarga = SceneManager.LoadSceneAsync(nombreEscena);
+        
+        while (!operacionCarga.isDone)
+        {
+            yield return null;
+        }
     }
 
-    private IEnumerator RutinaAclararTransicion()
+    private IEnumerator RutinaAclararTransicionInicial()
     {
         enTransicion = true;
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
 
         if (panelTransicion != null && imagenTransicion != null)
         {

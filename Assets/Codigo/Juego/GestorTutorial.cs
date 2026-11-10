@@ -19,6 +19,9 @@ public class GestorTutorial : MonoBehaviour
     public float tamañoZoomExito = 1.2f;
 
     public GameObject flechaIndicacion;
+    
+    [Header("Música de Combate")]
+    public AudioClip musicaGameplay;
 
     private string msgBienvenida = "BIENVENIDO A <color=#F3FF00><size=60>CLASSROOM CLASH</size></color>\nVAMOS A APRENDER LOS CONCEPTOS BASICOS!"; 
     private string msgMoverCamara = "UTILIZA EL <color=#FF5151><size=60>MOUSE</size></color> EN LOS BORDES PARA DESPLAZARTE A LA DERECHA E IZQUIERDA DEL MAPA";
@@ -221,17 +224,20 @@ public class GestorTutorial : MonoBehaviour
         yield return StartCoroutine(OcultarTexto());
         yield return new WaitForSeconds(1f);
 
+        if (ControladorJuego.instancia != null && musicaGameplay != null)
+        {
+            ControladorJuego.instancia.CambiarMusicaFondo(musicaGameplay);
+        }
+
         if (botonAlumno != null) botonAlumno.bloqueadoPorTutorial = false;
         if (botonBasura != null) botonBasura.bloqueadoPorTutorial = false;
-        
-        // Activamos la generación, esperamos el minuto, y la apagamos limpiamente
-        if (generadorExamenes != null) generadorExamenes.generacionActiva = true;
+        yield return new WaitForSeconds(1f);
 
+        if (generadorExamenes != null) generadorExamenes.generacionActiva = true;
         yield return new WaitForSeconds(60f);
 
         if (generadorExamenes != null) generadorExamenes.generacionActiva = false;
 
-        // Esperamos a que los que queden vivos en la pantalla mueran
         yield return new WaitUntil(() => GameObject.FindGameObjectsWithTag("Examen").Length == 0);
 
         yield return StartCoroutine(MostrarTexto(msgVictoria, Color.white));

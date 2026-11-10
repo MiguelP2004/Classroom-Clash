@@ -16,7 +16,8 @@ public class CodigoLapiz : MonoBehaviour
 
     void Start()
     {
-        if (disparos.Length > 0)
+        // Solo reproduce sonido de disparo si NO estamos en el Menú Principal
+        if (MenuPrincipal.instancia == null && disparos.Length > 0)
         {
             AudioClip disparo = disparos[Random.Range(0, disparos.Length)];
 
@@ -68,7 +69,8 @@ public class CodigoLapiz : MonoBehaviour
                     Instantiate(prefabImpacto, transform.position, Quaternion.identity);
                 }
 
-                if (golpes.Length > 0)
+                // Solo reproduce sonido de golpe si NO estamos en el Menú Principal
+                if (MenuPrincipal.instancia == null && golpes.Length > 0)
                 {
                     AudioClip golpe = golpes[Random.Range(0, golpes.Length)];
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections; // Necesario para la corrutina del retroceso
+using System.Collections; 
 
 public class CodigoAlumno : MonoBehaviour
 {
@@ -20,7 +20,7 @@ public class CodigoAlumno : MonoBehaviour
     [HideInInspector] public bool seleccionado = false;
 
     private bool listoParaSeleccionar = false;
-    private bool inicializado = false; // Guarda la posición original al colocarlo
+    private bool inicializado = false;
 
     private Transform objetivoActual;
     private float temporizadorDisparo;
@@ -33,11 +33,10 @@ public class CodigoAlumno : MonoBehaviour
     {
         if (!estaColocado) return;
 
-        // Guardamos su posición final en el mapa nada más soltarlo para el retroceso
         if (!inicializado)
         {
             posicionOriginal = transform.position;
-            temporizadorDisparo = cadenciaFuego; // Listo para disparar al instante
+            temporizadorDisparo = cadenciaFuego; 
             inicializado = true;
         }
 
@@ -75,14 +74,11 @@ public class CodigoAlumno : MonoBehaviour
             temporizadorDisparo += Time.deltaTime;
             if (temporizadorDisparo >= cadenciaFuego)
             {
-                // 1. Calculamos el ángulo hacia el objetivo igual que al apuntar
                 Vector3 direccion = objetivoActual.position - transform.position;
                 float anguloObjetivo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
                 
-                // 2. Comprobamos la diferencia absoluta con nuestro ángulo actual
                 float diferencia = Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.z, anguloObjetivo));
 
-                // 3. ¡Condición nueva! Solo dispara si el desfase es menor o igual a 15 grados
                 if (diferencia <= 15f)
                 {
                     Disparar();
@@ -103,7 +99,6 @@ public class CodigoAlumno : MonoBehaviour
         {
             codigoExamen enemigo = col.GetComponent<codigoExamen>();
             
-            // Ignora a los enemigos que ya se están desvaneciendo
             if (enemigo != null && enemigo.vida > 0)
             {
                 if (enemigo.distanciaRecorrida > mayorProgreso)
@@ -130,10 +125,7 @@ public class CodigoAlumno : MonoBehaviour
 
     void Disparar()
     {
-        // Guardamos el lápiz recién creado en una variable
         GameObject lapizDisparado = Instantiate(proyectilPrefab, transform.position, transform.rotation);
-
-        // Le pasamos el objetivo actual al script del lápiz
         lapizDisparado.GetComponent<CodigoLapiz>().AsignarObjetivo(objetivoActual);
 
         if (rutinaRetroceso != null) StopCoroutine(rutinaRetroceso);
@@ -143,7 +135,6 @@ public class CodigoAlumno : MonoBehaviour
     IEnumerator EfectoRetrocesoVisual()
     {
         float tiempo = 0f;
-        // Calcula el retroceso en la dirección contraria a donde está mirando
         Vector3 posAtras = posicionOriginal - (transform.right * fuerzaRetroceso);
 
         while (tiempo < tiempoAtras)
@@ -168,7 +159,10 @@ public class CodigoAlumno : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = new Color(1f, 0.3f, 0.1f, 0.5f);
-        Gizmos.DrawWireSphere(transform.position, rangoAtaque);
+        if (Object.FindAnyObjectByType<MenuPrincipal>() == null)
+        {
+            Gizmos.color = new Color(1f, 0.3f, 0.1f, 0.5f);
+            Gizmos.DrawWireSphere(transform.position, rangoAtaque);
+        }
     }
 }
