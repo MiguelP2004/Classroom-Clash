@@ -7,6 +7,7 @@ using System.Collections;
 public class MenuPrincipal : MonoBehaviour
 {
     public static MenuPrincipal instancia;
+    public static int nivelElegido = 2; // Guarda el nivel seleccionado para la escena Juego
 
     [Header("Cámara")]
     public Camera camaraPrincipal;
@@ -36,6 +37,13 @@ public class MenuPrincipal : MonoBehaviour
     {
         if (instancia == null) instancia = this;
 
+        // Aseguramos que cualquier usuario tenga siempre al menos el Nivel 2 desbloqueado
+        if (PlayerPrefs.GetInt("NivelActual", 2) < 2)
+        {
+            PlayerPrefs.SetInt("NivelActual", 2);
+            PlayerPrefs.Save();
+        }
+
         Time.timeScale = 1f;
         AudioListener.pause = false;
 
@@ -51,9 +59,9 @@ public class MenuPrincipal : MonoBehaviour
             panelTransicion.SetActive(true);
             if (imagenTransicion != null)
             {
-                Color c = imagenTransicion.color;
-                c.a = 1f;
-                imagenTransicion.color = c;
+                Color colorInicial = ControladorJuego.vieneDeVictoriaBlanca ? Color.white : Color.black;
+                colorInicial.a = 1f;
+                imagenTransicion.color = colorInicial;
             }
         }
     }
@@ -109,6 +117,11 @@ public class MenuPrincipal : MonoBehaviour
 
         botonNivelActual = botonNivel;
         nivelSeleccionado = true;
+
+        if (botonNivel != null)
+        {
+            nivelElegido = botonNivel.numeroDeNivel;
+        }
     }
 
     private void ResetearSeleccionNivel()
@@ -172,7 +185,7 @@ public class MenuPrincipal : MonoBehaviour
 
         if (panelTransicion != null && imagenTransicion != null)
         {
-            Color c = imagenTransicion.color;
+            Color c = ControladorJuego.vieneDeVictoriaBlanca ? Color.white : Color.black;
             c.a = 1f;
             imagenTransicion.color = c;
 
@@ -185,11 +198,11 @@ public class MenuPrincipal : MonoBehaviour
                 yield return null;
             }
 
-            c.a = 0f;
-            imagenTransicion.color = c;
+            imagenTransicion.color = new Color(0f, 0f, 0f, 0f);
             panelTransicion.SetActive(false);
         }
 
+        ControladorJuego.vieneDeVictoriaBlanca = false;
         enTransicion = false;
     }
 
@@ -200,8 +213,7 @@ public class MenuPrincipal : MonoBehaviour
         if (panelTransicion != null && imagenTransicion != null)
         {
             panelTransicion.SetActive(true);
-            Color c = imagenTransicion.color;
-            c.a = 0f;
+            Color c = new Color(0f, 0f, 0f, 0f);
             imagenTransicion.color = c;
 
             float tiempo = 0f;
@@ -258,8 +270,7 @@ public class MenuPrincipal : MonoBehaviour
         if (panelTransicion != null && imagenTransicion != null)
         {
             panelTransicion.SetActive(true);
-            Color c = imagenTransicion.color;
-            c.a = 0f;
+            Color c = new Color(0f, 0f, 0f, 0f);
             imagenTransicion.color = c;
 
             float tiempo = 0f;
@@ -316,8 +327,7 @@ public class MenuPrincipal : MonoBehaviour
         if (panelTransicion != null && imagenTransicion != null)
         {
             panelTransicion.SetActive(true);
-            Color c = imagenTransicion.color;
-            c.a = 0f;
+            Color c = new Color(0f, 0f, 0f, 0f);
             imagenTransicion.color = c;
 
             float tiempo = 0f;
@@ -349,8 +359,7 @@ public class MenuPrincipal : MonoBehaviour
         if (panelTransicion != null && imagenTransicion != null)
         {
             panelTransicion.SetActive(true);
-            Color c = imagenTransicion.color;
-            c.a = 0f;
+            Color c = new Color(0f, 0f, 0f, 0f);
             imagenTransicion.color = c;
 
             float tiempo = 0f;

@@ -326,11 +326,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  nivelAparece: 1
   esNivel: 0
   numeroDeNivel: 1
   esBotonEmpezar: 0
+  spriteNivelCompletado: {fileID: 0}
+  spriteNivelCompletadoIlu: {fileID: 0}
   sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
   sonidoError: {fileID: 0}
+  beep: {fileID: 8300000, guid: 50463828564316343bd0ac6793bb915c, type: 3}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
@@ -582,11 +586,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  nivelAparece: 1
   esNivel: 0
   numeroDeNivel: 1
   esBotonEmpezar: 0
+  spriteNivelCompletado: {fileID: 0}
+  spriteNivelCompletadoIlu: {fileID: 0}
   sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
   sonidoError: {fileID: 0}
+  beep: {fileID: 8300000, guid: 50463828564316343bd0ac6793bb915c, type: 3}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
@@ -1116,11 +1124,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  nivelAparece: 1
   esNivel: 1
   numeroDeNivel: 1
   esBotonEmpezar: 0
+  spriteNivelCompletado: {fileID: -2086748514353705471, guid: 01817385406b07f49a3ddff0cf7eff00, type: 3}
+  spriteNivelCompletadoIlu: {fileID: 8614564961803315020, guid: d51a9b25beb6df84f80e63692892c318, type: 3}
   sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
   sonidoError: {fileID: 0}
+  beep: {fileID: 8300000, guid: 50463828564316343bd0ac6793bb915c, type: 3}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
@@ -1872,11 +1884,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  nivelAparece: 1
   esNivel: 1
   numeroDeNivel: 2
   esBotonEmpezar: 0
+  spriteNivelCompletado: {fileID: -2086748514353705471, guid: 01817385406b07f49a3ddff0cf7eff00, type: 3}
+  spriteNivelCompletadoIlu: {fileID: 8614564961803315020, guid: d51a9b25beb6df84f80e63692892c318, type: 3}
   sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
   sonidoError: {fileID: 0}
+  beep: {fileID: 8300000, guid: 50463828564316343bd0ac6793bb915c, type: 3}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
@@ -2910,11 +2926,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  nivelAparece: 1
   esNivel: 1
   numeroDeNivel: 4
   esBotonEmpezar: 0
+  spriteNivelCompletado: {fileID: 0}
+  spriteNivelCompletadoIlu: {fileID: 0}
   sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
   sonidoError: {fileID: 0}
+  beep: {fileID: 8300000, guid: 50463828564316343bd0ac6793bb915c, type: 3}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
@@ -3423,11 +3443,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  nivelAparece: 1
   esNivel: 1
   numeroDeNivel: 3
   esBotonEmpezar: 0
+  spriteNivelCompletado: {fileID: 0}
+  spriteNivelCompletadoIlu: {fileID: 0}
   sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
   sonidoError: {fileID: 0}
+  beep: {fileID: 8300000, guid: 50463828564316343bd0ac6793bb915c, type: 3}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
@@ -3558,7 +3582,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 081dc14617e5b7c4d86469d9705c1275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GeneradorSimulador
-  alumnoPrefab: {fileID: 1783917996244953036, guid: ca99e6558c915d04dbb564a4aa1d27cf, type: 3}
+  tiposDeAlumnos:
+  - {fileID: 1783917996244953036, guid: ca99e6558c915d04dbb564a4aa1d27cf, type: 3}
+  - {fileID: 1783917996244953036, guid: b1a8b5ac942e5ab48b01240c6cf6bcfb, type: 3}
   cantidadAlumnosAColocar: 5
   posiblesPosiciones:
   - x: -8.747
@@ -3580,6 +3606,7 @@ MonoBehaviour:
   tiposDeExamenes:
   - {fileID: 5661411276649858762, guid: 1a8127640cdd98e4b86ce2132a245cdc, type: 3}
   - {fileID: 5661411276649858762, guid: 98502edf4df71314f8f389e82c1c3143, type: 3}
+  - {fileID: 5661411276649858762, guid: 09deac0411fee6f44b71e9ed88ba2956, type: 3}
   posX_Aparicion: -12.3
   posY_Aparicion: 0.45
   rutaCamino: {fileID: 1331979907}
@@ -4079,11 +4106,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  nivelAparece: 1
   esNivel: 0
   numeroDeNivel: 1
   esBotonEmpezar: 0
+  spriteNivelCompletado: {fileID: 0}
+  spriteNivelCompletadoIlu: {fileID: 0}
   sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
   sonidoError: {fileID: 0}
+  beep: {fileID: 8300000, guid: 50463828564316343bd0ac6793bb915c, type: 3}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
@@ -4404,11 +4435,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  nivelAparece: 1
   esNivel: 1
   numeroDeNivel: 5
   esBotonEmpezar: 0
+  spriteNivelCompletado: {fileID: 0}
+  spriteNivelCompletadoIlu: {fileID: 0}
   sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
   sonidoError: {fileID: 0}
+  beep: {fileID: 8300000, guid: 50463828564316343bd0ac6793bb915c, type: 3}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
@@ -4916,11 +4951,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EfectoBoton
   coste: 0
   esMenu: 1
+  nivelAparece: 1
   esNivel: 0
   numeroDeNivel: 1
   esBotonEmpezar: 1
+  spriteNivelCompletado: {fileID: 0}
+  spriteNivelCompletadoIlu: {fileID: 0}
   sonidoBoton: {fileID: 8300000, guid: bc80ef34f457c1f4d89761e51ce07751, type: 3}
   sonidoError: {fileID: 0}
+  beep: {fileID: 8300000, guid: 50463828564316343bd0ac6793bb915c, type: 3}
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0

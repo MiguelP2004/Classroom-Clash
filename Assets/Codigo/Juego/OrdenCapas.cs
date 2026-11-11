@@ -10,12 +10,14 @@ public class OrdenarCapas : MonoBehaviour
     private SpriteRenderer sr;
     private Canvas canvasUI;
     private SortingGroup sg;
+    private ParticleSystemRenderer psr;
 
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
         canvasUI = GetComponent<Canvas>(); 
         sg = GetComponent<SortingGroup>();
+        psr = GetComponent<ParticleSystemRenderer>();
     }
 
     void LateUpdate()
@@ -25,6 +27,7 @@ public class OrdenarCapas : MonoBehaviour
 
         if (sg != null) sg.sortingOrder = ordenFinal;
         else if (sr != null) sr.sortingOrder = ordenFinal;
+        else if (psr != null) psr.sortingOrder = ordenFinal; // Aplica la profundidad al Particle System
 
         if (canvasUI != null) canvasUI.sortingOrder = ordenFinal;
     }

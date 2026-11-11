@@ -11,15 +11,19 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [Header("Configuración")]
     public int coste = 20;
     public bool esMenu = false; 
+    public int nivelAparece = 1;
     
     [Header("Niveles")]
     public bool esNivel = false;
     public int numeroDeNivel = 1;
     public bool esBotonEmpezar = false;
+    public Sprite spriteNivelCompletado;
+    public Sprite spriteNivelCompletadoIlu;
 
     [Header("Audio")]
     public AudioClip sonidoBoton;
     public AudioClip sonidoError;
+    public AudioClip beep;
     
     [HideInInspector] public bool bloqueadoPorTutorial = false;
     [HideInInspector] public bool forzadoActivo = false;
@@ -47,6 +51,8 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     
     private bool nivelBloqueado = false;
     
+    private Sprite spriteBasePendiente;
+    private Sprite spriteIluPendiente;
     private Sprite spriteNormalOriginal;
     private Sprite spriteIluminadoOriginal;
 
@@ -59,19 +65,26 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         if (miBoton != null)
         {
-            spriteNormalOriginal = miBoton.image.sprite;
-            spriteIluminadoOriginal = miBoton.spriteState.highlightedSprite;
+            spriteBasePendiente = miBoton.image.sprite;
+            spriteIluPendiente = miBoton.spriteState.highlightedSprite;
+            spriteNormalOriginal = spriteBasePendiente;
+            spriteIluminadoOriginal = spriteIluPendiente;
         }
+
+        VerificarVisibilidadEnPartida();
+        VerificarBloqueoNivel();
     }
 
     void Start()
     {
         transform.localScale = new Vector3(tamañoNormal, tamañoNormal, 0f);
+        VerificarVisibilidadEnPartida();
         VerificarBloqueoNivel();
     }
 
     void OnEnable()
     {
+        VerificarVisibilidadEnPartida();
         VerificarBloqueoNivel();
     }
 
@@ -96,13 +109,64 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             }
         }
     }
+
+    private void VerificarVisibilidadEnPartida()
+    {
+        if (esMenu || esNivel || esBotonEmpezar) return;
+        if (MenuPrincipal.instancia != null) return;
+
+        int nivelRequerido = nivelAparece;
+        if (gameObject.name.ToLower().Contains("hielo") && nivelRequerido < 2)
+        {
+            nivelRequerido = 2;
+        }
+
+        int nivelJugando = MenuPrincipal.nivelElegido;
+        if (nivelJugando < nivelRequerido)
+        {
+            gameObject.SetActive(false);
+        }
+    }
     
     private void VerificarBloqueoNivel()
     {
         if (esNivel)
         {
-            int progresoActual = PlayerPrefs.GetInt("NivelActual", 1);
+            int progresoActual = Mathf.Max(2, PlayerPrefs.GetInt("NivelActual", 2));
             nivelBloqueado = (numeroDeNivel > progresoActual);
+            bool nivelSuperado = (progresoActual > numeroDeNivel);
+
+            if (nivelSuperado)
+            {
+                spriteNormalOriginal = (spriteNivelCompletado != null) ? spriteNivelCompletado : spriteBasePendiente;
+                spriteIluminadoOriginal = (spriteNivelCompletadoIlu != null) ? spriteNivelCompletadoIlu : spriteIluPendiente;
+            }
+            else
+            {
+                spriteNormalOriginal = spriteBasePendiente;
+                spriteIluminadoOriginal = spriteIluPendiente;
+            }
+
+            if (miImagenBase != null && spriteNormalOriginal != null)
+            {
+                miImagenBase.sprite = spriteNormalOriginal;
+            }
+
+            if (miBoton != null)
+            {
+                SpriteState st = miBoton.spriteState;
+                if (spriteIluminadoOriginal != null)
+                {
+                    st.highlightedSprite = spriteIluminadoOriginal;
+                    st.pressedSprite = spriteIluminadoOriginal;
+                    st.selectedSprite = spriteIluminadoOriginal;
+                }
+                if (spriteNormalOriginal != null)
+                {
+                    st.disabledSprite = spriteNormalOriginal;
+                }
+                miBoton.spriteState = st;
+            }
         }
         else
         {
@@ -217,15 +281,13 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             objetivo = new Vector3(tamañoAgrandado, tamañoAgrandado, 0f);
             
-            // Forzamos el sprite iluminado por código solo para el nivel activo, ignorando el Sprite Swap
-            if (esElNivelActivo && miImagenBase != null && spriteIluminadoOriginal != null)
+            if (esNivel && miImagenBase != null && spriteIluminadoOriginal != null)
             {
                 miImagenBase.sprite = spriteIluminadoOriginal;
             }
         }
         else
         {
-            // Si no está activo y es un nivel, devolvemos el control al Sprite Swap de Unity restaurando el original
             if (esNivel && miImagenBase != null && spriteNormalOriginal != null)
             {
                 miImagenBase.sprite = spriteNormalOriginal;
@@ -250,6 +312,19 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             if (EventSystem.current.currentSelectedGameObject != gameObject)
             {
                 miBoton.Select();
+            }
+        }
+
+        if (esNivel && miImagenBase != null)
+        {
+            bool esElNivelActivo = (ultimoNivelSeleccionado == this);
+            if (esElNivelActivo || ratonEncima || estaSeleccionado)
+            {
+                if (spriteIluminadoOriginal != null) miImagenBase.sprite = spriteIluminadoOriginal;
+            }
+            else
+            {
+                if (spriteNormalOriginal != null) miImagenBase.sprite = spriteNormalOriginal;
             }
         }
     }
@@ -302,7 +377,6 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             if (ultimoNivelSeleccionado != null && ultimoNivelSeleccionado != this)
             {
                 ultimoNivelSeleccionado.estaSeleccionado = false;
-                // Devolvemos el sprite original al nivel deseleccionado
                 if (ultimoNivelSeleccionado.miImagenBase != null && ultimoNivelSeleccionado.spriteNormalOriginal != null)
                 {
                     ultimoNivelSeleccionado.miImagenBase.sprite = ultimoNivelSeleccionado.spriteNormalOriginal;
@@ -323,7 +397,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         bool enTransicion = EstaEnTransicionGlobal();
         bool esGameOver = (ControladorJuego.instancia != null && ControladorJuego.instancia.esGameOver);
 
-        if (!esMenu && !bloqueadoPorTutorial && !bloqueadoPorPausa && !enTransicion && !esGameOver)
+        if (!esMenu && !bloqueadoPorTutorial && !bloqueadoPorPausa && !enTransicion && !esGameOver && !esBotonEmpezar)
         {
             bool puedeComprar = (coste <= 0) || (ControladorJuego.instancia != null && ControladorJuego.instancia.PuedeComprar(coste));
 
@@ -352,7 +426,20 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     { 
         if (!EstaBloqueadoPorFaltaDeNivel() && !nivelBloqueado && !bloqueadoPorTutorial && !compradoPermanente && !EstaEnTransicionGlobal()) 
         {
-            ratonEncima = true; 
+            ratonEncima = true;
+            if (esMenu && beep != null && miBoton != null && miBoton.interactable)
+            {
+                GameObject audioTemporal = new GameObject("beep_UI");
+                AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+                
+                fuenteAudio.clip = beep;
+                fuenteAudio.spatialBlend = 0f; 
+                fuenteAudio.volume = ControladorJuego.volumenSFXGuardado * 0.7f; // Se escuchará un 70% de normal
+                fuenteAudio.ignoreListenerPause = true;
+
+                fuenteAudio.Play();
+                Destroy(audioTemporal, beep.length + 0.1f);
+            }
         }
     }
     
@@ -387,7 +474,7 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         if (EstaEnTransicionGlobal() && !forzadoActivo && !esBotonEmpezar) return;
 
-        if (esMenu && !nivelBloqueado && !EstaBloqueadoPorFaltaDeNivel() && sonidoBoton != null && miBoton != null && miBoton.interactable)
+        if ((esMenu || esBotonEmpezar) && !nivelBloqueado && !EstaBloqueadoPorFaltaDeNivel() && sonidoBoton != null && miBoton != null && miBoton.interactable)
         {
             GameObject audioTemporal = new GameObject("SonidoClic_UI");
             AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();

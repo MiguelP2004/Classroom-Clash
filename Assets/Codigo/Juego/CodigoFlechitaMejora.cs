@@ -24,7 +24,7 @@ public class codigoFlechitaMejora : MonoBehaviour
 
         if (transform.parent != null)
         {
-            // Calcula su posición arriba a la derecha ignorando cualquier rotación actual del Profe
+            // Calculamos su posición arriba a la derecha ignorando cualquier rotación actual del Profe
             Vector3 escalaPadre = transform.parent.localScale;
             Vector3 offsetSinRotacion = new Vector3(
                 transform.localPosition.x * escalaPadre.x,

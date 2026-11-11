@@ -62,18 +62,25 @@ public class ControladorJuego : MonoBehaviour
 
     [HideInInspector] public bool esGameOver = false;
     [HideInInspector] public bool enTransicion = false;
+    [HideInInspector] public bool transicionVictoria = false;
     private Image imagenTransicion;
     
     public static float volumenSFXGuardado = 1f;
     public static float volumenMusicaGuardada = 1f;
+    public static bool vieneDeVictoriaBlanca = false;
 
     private bool haciendoFadeMusica = false;
+    private Coroutine corrutinaMusica;
 
     void Awake()
     {
         if (instancia == null) instancia = this;
         
-        AudioListener.pause = false; 
+        AudioListener.pause = false;
+
+        // Tutorial: 90 de energia, sino 50
+        energia = (MenuPrincipal.nivelElegido <= 1) ? 90 : 50;
+        vidas = 12;
 
         ActualizarTextoEnergia();
         ActualizarTextoVidas();
@@ -100,9 +107,7 @@ public class ControladorJuego : MonoBehaviour
             panelTransicion.SetActive(true);
             if (imagenTransicion != null)
             {
-                Color c = imagenTransicion.color;
-                c.a = 1f; 
-                imagenTransicion.color = c;
+                imagenTransicion.color = new Color(0f, 0f, 0f, 1f);
             }
         }
     }
@@ -195,7 +200,8 @@ public class ControladorJuego : MonoBehaviour
     public void CambiarMusicaFondo(AudioClip nuevaMusica)
     {
         if (fuenteMusica == null || nuevaMusica == null) return;
-        StartCoroutine(RutinaCambioMusica(nuevaMusica));
+        if (corrutinaMusica != null) StopCoroutine(corrutinaMusica);
+        corrutinaMusica = StartCoroutine(RutinaCambioMusica(nuevaMusica));
     }
 
     private IEnumerator RutinaCambioMusica(AudioClip nuevaMusica)
@@ -231,11 +237,87 @@ public class ControladorJuego : MonoBehaviour
         haciendoFadeMusica = false;
     }
 
+    public void IniciarSecuenciaVictoria(AudioClip clipVictoria)
+    {
+        if (enTransicion || esGameOver || transicionVictoria) return;
+
+        if (corrutinaMusica != null) StopCoroutine(corrutinaMusica);
+        haciendoFadeMusica = false;
+        if (fuenteMusica != null) fuenteMusica.Stop();
+
+        enTransicion = true;
+        transicionVictoria = true; 
+        
+        if (GestorColocacion.instancia != null) GestorColocacion.instancia.CancelarAccion();
+        if (GestorTutorial.instancia != null && GestorTutorial.instancia.profe != null)
+        {
+            GestorTutorial.instancia.profe.bloqueadoPorTutorial = true;
+        }
+        if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+
+        int progresoActual = Mathf.Max(2, PlayerPrefs.GetInt("NivelActual", 2));
+        PlayerPrefs.SetInt("NivelActual", progresoActual);
+        PlayerPrefs.Save();
+
+        if (clipVictoria != null)
+        {
+            GameObject audioVictoria = new GameObject("Sonido_Victoria");
+            AudioSource fuente = audioVictoria.AddComponent<AudioSource>();
+            fuente.clip = clipVictoria;
+            fuente.spatialBlend = 0f;
+            fuente.volume = volumenSFXGuardado;
+            fuente.ignoreListenerPause = true;
+            fuente.Play();
+            Destroy(audioVictoria, clipVictoria.length + 0.2f);
+        }
+
+        StartCoroutine(RutinaTransicionVictoriaBlanca());
+    }
+
+    private IEnumerator RutinaTransicionVictoriaBlanca()
+    {
+        yield return new WaitForSecondsRealtime(7f);
+
+        float duracionBlancoLento = duracionFadeOscurecer * 3f;
+
+        if (panelTransicion != null && imagenTransicion != null)
+        {
+            panelTransicion.SetActive(true);
+            Color c = new Color(1f, 1f, 1f, 0f);
+            imagenTransicion.color = c;
+
+            float tiempo = 0f;
+            while (tiempo < duracionBlancoLento)
+            {
+                tiempo += Time.unscaledDeltaTime;
+                c.a = Mathf.Clamp01(tiempo / duracionBlancoLento);
+                imagenTransicion.color = c;
+                yield return null;
+            }
+
+            c.a = 1f;
+            imagenTransicion.color = c;
+        }
+
+        yield return new WaitForSecondsRealtime(1f);
+
+        vieneDeVictoriaBlanca = true;
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+
+        AsyncOperation operacionCarga = SceneManager.LoadSceneAsync("MenuPrincipal");
+        while (!operacionCarga.isDone)
+        {
+            yield return null;
+        }
+    }
+
     private void ManejarCamara()
     {
         if (camaraPrincipal == null || Mouse.current == null) return;
 
-        if (!camaraBloqueadaPorTutorial)
+        // ¡MODIFICADO! Permite mover la cámara si es la transición de victoria, ignorando enTransicion
+        if (!camaraBloqueadaPorTutorial && (!enTransicion || transicionVictoria))
         {
             Vector2 posRaton = Mouse.current.position.ReadValue();
             float anchoPantalla = Screen.width;
@@ -462,8 +544,7 @@ public class ControladorJuego : MonoBehaviour
         if (panelTransicion != null && imagenTransicion != null)
         {
             panelTransicion.SetActive(true);
-            Color c = imagenTransicion.color;
-            c.a = 0f;
+            Color c = new Color(0f, 0f, 0f, 0f);
             imagenTransicion.color = c;
 
             float tiempo = 0f;
@@ -499,8 +580,7 @@ public class ControladorJuego : MonoBehaviour
 
         if (panelTransicion != null && imagenTransicion != null)
         {
-            Color c = imagenTransicion.color;
-            c.a = 1f;
+            Color c = new Color(0f, 0f, 0f, 1f);
             imagenTransicion.color = c;
 
             float tiempo = 0f;

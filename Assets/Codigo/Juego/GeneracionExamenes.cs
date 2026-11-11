@@ -5,6 +5,7 @@ public class generacionExamenes : MonoBehaviour
 {
     public GameObject examenBasico;
     public GameObject examenPesado;
+    public GameObject examenVeloz;
     [HideInInspector] public bool generacionActiva = false;
 
     [Header("Aparición y Ruta")]
@@ -38,29 +39,44 @@ public class generacionExamenes : MonoBehaviour
 
     private IEnumerator RutinaGeneracion()
     {
-        while (true)
+        if (MenuPrincipal.nivelElegido <= 1)
         {
-            yield return StartCoroutine(GenerarRachaBasicos(6));
-            yield return new WaitForSeconds(4f);
+            while (true)
+            {
+                yield return StartCoroutine(GenerarRachaEspecifica(examenBasico, 6, intervaloEntreExamenes));
+                yield return new WaitForSeconds(4f);
 
-            GenerarUnExamen(examenPesado);
-            yield return new WaitForSeconds(intervaloEntreExamenes);
-            GenerarUnExamen(examenBasico);
-            yield return new WaitForSeconds(intervaloEntreExamenes);
-            GenerarUnExamen(examenPesado);
-            
-            yield return new WaitForSeconds(4f);
+                GenerarUnExamen(examenPesado);
+                yield return new WaitForSeconds(intervaloEntreExamenes);
+                GenerarUnExamen(examenBasico);
+                yield return new WaitForSeconds(intervaloEntreExamenes);
+                GenerarUnExamen(examenPesado);
+                
+                yield return new WaitForSeconds(4f);
+            }
+        }
+        else
+        {
+            while (true)
+            {
+                yield return StartCoroutine(GenerarRachaEspecifica(examenBasico, 5, 0.5f));
+                yield return new WaitForSeconds(2f);
+                yield return StartCoroutine(GenerarRachaEspecifica(examenPesado, 2, 0.5f));
+                yield return new WaitForSeconds(2f);
+                yield return StartCoroutine(GenerarRachaEspecifica(examenVeloz, 4, 0.25f));
+                yield return new WaitForSeconds(2f);
+            }
         }
     }
 
-    private IEnumerator GenerarRachaBasicos(int cantidad)
+    private IEnumerator GenerarRachaEspecifica(GameObject prefab, int cantidad, float intervalo)
     {
         for (int i = 0; i < cantidad; i++)
         {
-            GenerarUnExamen(examenBasico);
+            GenerarUnExamen(prefab);
             if (i < cantidad - 1)
             {
-                yield return new WaitForSeconds(intervaloEntreExamenes);
+                yield return new WaitForSeconds(intervalo);
             }
         }
     }

@@ -8,6 +8,7 @@ public class codigoExamen : MonoBehaviour
     public float vida = 4f; 
     private float vidaMaxima;
     public float velocidad = 1.2f; 
+    private float velocidadOriginal;
     private bool estaMuriendo = false;
     public int energiaRecibida = 3;
 
@@ -26,6 +27,13 @@ public class codigoExamen : MonoBehaviour
     public float duracionGolpe = 0.15f;
     public float tiempoDesvanecer = 0.5f;
 
+    [Header("Efecto Hielo")]
+    public ParticleSystem particulasHielo;
+    public AudioClip sonidoCongelacion;
+    private bool congelado = false;
+    private float tiempoRestanteCongelacion = 0f;
+    private Color colorCongelado = new Color(0f, 171f / 255f, 1f, 1f);
+
     [Header("Sombra")]
     public GameObject prefabSombra;
 
@@ -43,6 +51,7 @@ public class codigoExamen : MonoBehaviour
     void Awake()
     {
         vidaMaxima = vida;
+        velocidadOriginal = velocidad;
 
         desvioCamino = new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.2f, 0.2f), 0f);
 
@@ -55,6 +64,7 @@ public class codigoExamen : MonoBehaviour
         }
 
         if (canvasBarraVida != null) canvasBarraVida.SetActive(false);
+        if (particulasHielo != null) particulasHielo.Stop();
     }
 
     void Start()
@@ -81,6 +91,16 @@ public class codigoExamen : MonoBehaviour
     {
         if (estaMuriendo) return;
 
+        // Gestión del Hielo
+        if (congelado)
+        {
+            tiempoRestanteCongelacion -= Time.deltaTime;
+            if (tiempoRestanteCongelacion <= 0f)
+            {
+                Descongelar();
+            }
+        }
+
         // Movimiento
         if (ruta != null && ruta.pointCount > 0 && indicePuntoActual < ruta.pointCount)
         {
@@ -105,7 +125,7 @@ public class codigoExamen : MonoBehaviour
 
         if (transform.position.x > 9.3f)
         {
-            estaMuriendo = true; // Bloquea cualquier otra acción
+            estaMuriendo = true; 
             if (ControladorJuego.instancia != null)
             {
                 ControladorJuego.instancia.RestarVida(1);
@@ -114,7 +134,7 @@ public class codigoExamen : MonoBehaviour
             {
                 GestorTutorial.instancia.RegistrarMuerteExamen();
             }
-            Destroy(gameObject); // Desaparece al instante
+            Destroy(gameObject);
             return;
         }
     }
@@ -130,6 +150,63 @@ public class codigoExamen : MonoBehaviour
         if (canvasBarraVida != null && canvasBarraVida.activeSelf)
         {
             canvasBarraVida.transform.rotation = Quaternion.identity;
+        }
+    }
+
+    public void AplicarCongelacion()
+    {
+        if (estaMuriendo) return;
+
+        tiempoRestanteCongelacion = 8f; 
+
+        if (!congelado)
+        {
+            congelado = true;
+            velocidad = velocidadOriginal * 0.5f; 
+
+            if (particulasHielo != null) particulasHielo.Play();
+
+            if (MenuPrincipal.instancia == null && sonidoCongelacion != null)
+            {
+                GameObject audioTemporal = new GameObject("Sonido_Congelacion");
+                AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+                fuenteAudio.clip = sonidoCongelacion;
+                fuenteAudio.spatialBlend = 0f;
+                fuenteAudio.volume = ControladorJuego.volumenSFXGuardado * 0.5f; // Se escuchará un 50% de normal
+                fuenteAudio.Play();
+                Destroy(audioTemporal, sonidoCongelacion.length + 0.1f);
+            }
+
+            // Si el examen no está recibiendo daño (parpadeo rojo) en este instante, le pintamos el azul
+            if (rutinaGolpe == null)
+            {
+                for (int i = 0; i < todosLosSprites.Length; i++)
+                {
+                    if (todosLosSprites[i] != null)
+                    {
+                        todosLosSprites[i].color = Color.Lerp(coloresBase[i], colorCongelado, 0.65f);
+                    }
+                }
+            }
+        }
+    }
+
+    private void Descongelar()
+    {
+        congelado = false;
+        velocidad = velocidadOriginal;
+
+        if (particulasHielo != null) particulasHielo.Stop();
+
+        if (rutinaGolpe == null)
+        {
+            for (int i = 0; i < todosLosSprites.Length; i++)
+            {
+                if (todosLosSprites[i] != null)
+                {
+                    todosLosSprites[i].color = coloresBase[i];
+                }
+            }
         }
     }
 
@@ -151,6 +228,7 @@ public class codigoExamen : MonoBehaviour
             gameObject.tag = "Untagged"; 
             
             if (canvasBarraVida != null) canvasBarraVida.SetActive(false);
+            if (particulasHielo != null) particulasHielo.Stop();
             if (rutinaGolpe != null) StopCoroutine(rutinaGolpe); 
             
             if (ControladorJuego.instancia != null)
@@ -195,7 +273,9 @@ public class codigoExamen : MonoBehaviour
             {
                 if (todosLosSprites[i] != null)
                 {
-                    todosLosSprites[i].color = Color.Lerp(colorDanio, coloresBase[i], t);
+                    Color colorDestino = congelado ? Color.Lerp(coloresBase[i], colorCongelado, 0.7f) : coloresBase[i];
+                    // La mezcla va del ROJO PURO al color final (base o azulado)
+                    todosLosSprites[i].color = Color.Lerp(colorDanio, colorDestino, t);
                 }
             }
             yield return null;
@@ -205,7 +285,8 @@ public class codigoExamen : MonoBehaviour
         {
             if (todosLosSprites[i] != null)
             {
-                todosLosSprites[i].color = coloresBase[i];
+                Color colorDestino = congelado ? Color.Lerp(coloresBase[i], colorCongelado, 0.7f) : coloresBase[i];
+                todosLosSprites[i].color = colorDestino;
             }
         }
         
@@ -225,9 +306,9 @@ public class codigoExamen : MonoBehaviour
             {
                 if (todosLosSprites[i] != null)
                 {
-                    Color c = coloresBase[i]; 
-                    float alphaActual = Mathf.Lerp(c.a, 0f, t);
-                    todosLosSprites[i].color = new Color(c.r, c.g, c.b, alphaActual);
+                    Color colorDestino = congelado ? Color.Lerp(coloresBase[i], colorCongelado, 0.7f) : coloresBase[i];
+                    float alphaActual = Mathf.Lerp(colorDestino.a, 0f, t);
+                    todosLosSprites[i].color = new Color(colorDestino.r, colorDestino.g, colorDestino.b, alphaActual);
                 }
             }
             yield return null;

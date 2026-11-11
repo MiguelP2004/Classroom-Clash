@@ -6,6 +6,10 @@ public class CodigoLapiz : MonoBehaviour
     public float velocidad = 10f;
     public float daño = 1f; 
     private float tiempoDeVida = 3f;
+    
+    // ¡NUEVO!
+    public bool esHielo = false;
+    
     public GameObject prefabImpacto;
     
     private Transform objetivo;
@@ -16,7 +20,6 @@ public class CodigoLapiz : MonoBehaviour
 
     void Start()
     {
-        // Solo reproduce sonido de disparo si NO estamos en el Menú Principal
         if (MenuPrincipal.instancia == null && disparos.Length > 0)
         {
             AudioClip disparo = disparos[Random.Range(0, disparos.Length)];
@@ -62,6 +65,12 @@ public class CodigoLapiz : MonoBehaviour
             
             if (enemigo != null && enemigo.vida > 0)
             {
+                // ¡NUEVO! Aplicar ralentización antes de recibir daño por si muere del impacto
+                if (esHielo)
+                {
+                    enemigo.AplicarCongelacion();
+                }
+
                 enemigo.RecibirImpacto(daño); 
                 
                 if (prefabImpacto != null)
@@ -69,7 +78,6 @@ public class CodigoLapiz : MonoBehaviour
                     Instantiate(prefabImpacto, transform.position, Quaternion.identity);
                 }
 
-                // Solo reproduce sonido de golpe si NO estamos en el Menú Principal
                 if (MenuPrincipal.instancia == null && golpes.Length > 0)
                 {
                     AudioClip golpe = golpes[Random.Range(0, golpes.Length)];

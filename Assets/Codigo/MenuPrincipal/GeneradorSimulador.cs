@@ -12,7 +12,8 @@ public class GeneradorSimulador : MonoBehaviour
     }
 
     [Header("Simulación de Alumnos")]
-    public GameObject alumnoPrefab;
+    // ¡NUEVO! Array para meter a todos los tipos de alumnos posibles
+    public GameObject[] tiposDeAlumnos; 
     public int cantidadAlumnosAColocar = 5;
     public List<PosicionAlumno> posiblesPosiciones = new List<PosicionAlumno>();
 
@@ -33,24 +34,33 @@ public class GeneradorSimulador : MonoBehaviour
 
     private void ColocarAlumnosRandomDeGolpe()
     {
-        if (alumnoPrefab == null || posiblesPosiciones.Count == 0) return;
+        // Si no hay alumnos asignados en la lista, salimos para no dar error
+        if (tiposDeAlumnos == null || tiposDeAlumnos.Length == 0 || posiblesPosiciones.Count == 0) return;
 
         List<PosicionAlumno> bolsaPosiciones = new List<PosicionAlumno>(posiblesPosiciones);
         int cantidadReal = Mathf.Min(cantidadAlumnosAColocar, bolsaPosiciones.Count);
 
         for (int i = 0; i < cantidadReal; i++)
         {
+            // 1. Elegimos una posición al azar y la quitamos de la bolsa
             int indiceRandom = Random.Range(0, bolsaPosiciones.Count);
             PosicionAlumno posElegida = bolsaPosiciones[indiceRandom];
             bolsaPosiciones.RemoveAt(indiceRandom);
-
             Vector3 posicionFinal = new Vector3(posElegida.x, posElegida.y, 0f);
-            GameObject nuevoAlumno = Instantiate(alumnoPrefab, posicionFinal, Quaternion.identity);
 
-            CodigoAlumno scriptAlumno = nuevoAlumno.GetComponent<CodigoAlumno>();
-            if (scriptAlumno != null)
+            // 2. Elegimos un alumno al azar de la nueva lista
+            GameObject prefabElegido = tiposDeAlumnos[Random.Range(0, tiposDeAlumnos.Length)];
+
+            if (prefabElegido != null)
             {
-                scriptAlumno.estaColocado = true;
+                // 3. Lo instanciamos en la posición elegida
+                GameObject nuevoAlumno = Instantiate(prefabElegido, posicionFinal, Quaternion.identity);
+
+                CodigoAlumno scriptAlumno = nuevoAlumno.GetComponent<CodigoAlumno>();
+                if (scriptAlumno != null)
+                {
+                    scriptAlumno.estaColocado = true;
+                }
             }
         }
     }

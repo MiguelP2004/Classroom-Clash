@@ -33,7 +33,7 @@ public class CodigoFlecha : MonoBehaviour
 
         if (esFlechaMenu)
         {
-            int nivelActual = PlayerPrefs.GetInt("NivelActual", 1);
+            int nivelActual = Mathf.Max(2, PlayerPrefs.GetInt("NivelActual", 2));
             nivelActual = Mathf.Clamp(nivelActual, 1, 5); 
 
             float nuevaPosX = (nivelActual - 1) * 300f - 600f;

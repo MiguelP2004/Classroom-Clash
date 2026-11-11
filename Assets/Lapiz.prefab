@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.17624474, y: 0.15481289, z: 0}
+  m_LocalScale: {x: 0.17624474, y: 0.15481289, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -182,6 +182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CodigoLapiz
   velocidad: 13
   "da\xF1o": 1
+  esHielo: 0
   prefabImpacto: {fileID: 2240418902598651553, guid: e93f42a4524e4ac4ea9afda92f7555ef, type: 3}
   golpes:
   - {fileID: 8300000, guid: e4df6e295c942f54f8474e161aab2859, type: 3}

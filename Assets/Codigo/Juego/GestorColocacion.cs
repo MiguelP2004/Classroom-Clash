@@ -8,6 +8,7 @@ public class GestorColocacion : MonoBehaviour
     public enum ModoGestor { Nada, Colocando, Borrando }
 
     public GameObject alumnoPrefab;
+    public GameObject alumnoHieloPrefab;
     public Sprite spriteBasura; 
     public int costeAlumno1 = 20;
 
@@ -18,6 +19,7 @@ public class GestorColocacion : MonoBehaviour
     private ModoGestor modoActual = ModoGestor.Nada;
     private GameObject objetoEnRaton; 
     private EfectoBoton botonSeleccionado;
+    private int costeActualSeleccionado = 20;
 
     private CodigoAlumno alumnoEnPuntoDeMira;
     private Color colorOriginalAlumno = Color.white;
@@ -116,22 +118,32 @@ public class GestorColocacion : MonoBehaviour
         CodigoProfe.BloquearDisparoHastaSoltar();
 
         if (ControladorJuego.instancia != null && ControladorJuego.instancia.esGameOver) return;
-        if (!ControladorJuego.instancia.PuedeComprar(costeAlumno1)) return;
+
+        int costeRequerido = (botonQueLlama != null && botonQueLlama.coste > 0) ? botonQueLlama.coste : costeAlumno1;
+        if (!ControladorJuego.instancia.PuedeComprar(costeRequerido)) return;
         
         if (seleccionar != null)
         {
             AudioSource.PlayClipAtPoint(seleccionar, Camera.main.transform.position, ControladorJuego.volumenSFXGuardado);
         }
 
-        if (modoActual == ModoGestor.Colocando)
+        if (modoActual == ModoGestor.Colocando && botonSeleccionado == botonQueLlama)
         {
             CancelarAccion();
             return;
         }
 
-        CancelarAccion(); 
-        objetoEnRaton = Instantiate(alumnoPrefab);
+        CancelarAccion();
+
+        GameObject prefabAInstanciar = alumnoPrefab;
+        if (botonQueLlama != null && botonQueLlama.name.ToLower().Contains("hielo") && alumnoHieloPrefab != null)
+        {
+            prefabAInstanciar = alumnoHieloPrefab;
+        }
+
+        objetoEnRaton = Instantiate(prefabAInstanciar);
         modoActual = ModoGestor.Colocando;
+        costeActualSeleccionado = costeRequerido;
         
         botonSeleccionado = botonQueLlama;
         if (botonSeleccionado != null) botonSeleccionado.forzadoActivo = true;
@@ -182,7 +194,7 @@ public class GestorColocacion : MonoBehaviour
         objetoEnRaton = null; 
         modoActual = ModoGestor.Nada;
 
-        ControladorJuego.instancia.GastarEnergia(costeAlumno1);
+        ControladorJuego.instancia.GastarEnergia(costeActualSeleccionado);
         if (colocar != null)
         {
             AudioSource.PlayClipAtPoint(colocar, Camera.main.transform.position, ControladorJuego.volumenSFXGuardado);

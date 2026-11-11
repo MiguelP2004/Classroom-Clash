@@ -13,6 +13,7 @@ public class GestorTutorial : MonoBehaviour
     public EfectoBoton botonBasura;
     public generacionExamenes generadorExamenes;
     public CodigoProfe profe;
+    public GameObject objetoTrofeo;
 
     [Header("Para el tutorial")]
     public float velocidadFade = 2f;
@@ -38,7 +39,6 @@ public class GestorTutorial : MonoBehaviour
     private string msgExplicacionMejora = "LAS <color=#51DBFF><size=60>MEJORAS DEL PROFESOR</size></color> SON PERMANENTES Y MULTIPLICAN TU POTENCIA DE DISPARO PARA FRENAR GRANDES OLEADAS";
     private string msgFinal = "<color=#F3FF00><size=60>ENHORABUENA</size></color>\nHAS APRENDIDO LO BASICO\nCUIDADO QUE SE ACERCAN MAS <color=#FF5151><size=60>EXAMENES!</size></color>\nPON EN PRACTICA TUS HABILIDADES!";
     private string msgVictoria = "<color=#F3FF00><size=60>ENHORABUENA</size></color>\nHAS TERMINADO EL TUTORIAL!!";
-    private string msgProximamente = "<color=#51DBFF><size=60>PRONTO SALDRA</size></color>\nEL JUEGO COMPLETO";
 
     private float distanciaCamaraRecorrida = 0f;
     private bool profeHaDisparado = false;
@@ -50,6 +50,7 @@ public class GestorTutorial : MonoBehaviour
     void Awake()
     {
         if (instancia == null) instancia = this;
+        if (objetoTrofeo != null) objetoTrofeo.SetActive(false);
     }
 
     void Start()
@@ -62,7 +63,14 @@ public class GestorTutorial : MonoBehaviour
             textoTutorial.color = c;
         }
 
-        StartCoroutine(SecuenciaTutorial());
+        if (MenuPrincipal.nivelElegido <= 1)
+        {
+            StartCoroutine(SecuenciaTutorial());
+        }
+        else
+        {
+            StartCoroutine(SecuenciaNivelNormal());
+        }
     }
 
     void Update()
@@ -70,6 +78,48 @@ public class GestorTutorial : MonoBehaviour
         if (textoTutorial != null)
         {
             textoTutorial.transform.localScale = Vector3.Lerp(textoTutorial.transform.localScale, Vector3.one, Time.unscaledDeltaTime * 15f);
+        }
+    }
+
+    // Secuencia para el Nivel 2 (y posteriores): libertad total y cuenta atrás de 10 a 1
+    IEnumerator SecuenciaNivelNormal()
+    {
+        if (generadorExamenes != null) generadorExamenes.generacionActiva = false;
+        if (botonAlumno != null) botonAlumno.bloqueadoPorTutorial = false;
+        if (botonMejoraProfe != null) botonMejoraProfe.bloqueadoPorTutorial = false;
+        if (botonBasura != null) botonBasura.bloqueadoPorTutorial = false;
+        if (profe != null) profe.bloqueadoPorTutorial = false;
+        if (ControladorJuego.instancia != null) ControladorJuego.instancia.camaraBloqueadaPorTutorial = false;
+
+        yield return new WaitForSeconds(1f);
+
+        if (textoTutorial != null)
+        {
+            textoTutorial.text = "<color=#F3FF00><size=60>PREPARATE</size></color>\nLOS ENEMIGOS VENDRAN EN <color=#FF5151><size=60>10</size></color>";
+            yield return StartCoroutine(MostrarTexto(textoTutorial.text, Color.white));
+
+            for (int seg = 10; seg >= 1; seg--)
+            {
+                textoTutorial.text = "<color=#F3FF00><size=60>PREPARATE</size></color>\nLOS ENEMIGOS VENDRAN EN <color=#FF5151><size=60>" + seg + "</size></color>";
+                textoTutorial.transform.localScale = new Vector3(1.12f, 1.12f, 1f);
+                yield return new WaitForSeconds(1f);
+            }
+
+            yield return StartCoroutine(OcultarTexto());
+        }
+        else
+        {
+            yield return new WaitForSeconds(10f);
+        }
+
+        if (ControladorJuego.instancia != null && musicaGameplay != null)
+        {
+            ControladorJuego.instancia.CambiarMusicaFondo(musicaGameplay);
+        }
+
+        if (generadorExamenes != null)
+        {
+            generadorExamenes.generacionActiva = true;
         }
     }
 
@@ -122,7 +172,7 @@ public class GestorTutorial : MonoBehaviour
         {
             flechaIndicacion.SetActive(true);
             Vector3 pos = flechaIndicacion.transform.localPosition;
-            pos.x =  botonAlumno.transform.localPosition.x; 
+            pos.x = botonAlumno.transform.localPosition.x; 
             flechaIndicacion.transform.localPosition = pos;
         }
         
@@ -244,12 +294,12 @@ public class GestorTutorial : MonoBehaviour
         textoTutorial.transform.localScale = new Vector3(tamañoZoomExito, tamañoZoomExito, 1f);
         yield return new WaitForSeconds(4.5f);
         yield return StartCoroutine(OcultarTexto());
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
-        yield return StartCoroutine(MostrarTexto(msgProximamente, Color.white));
-        textoTutorial.transform.localScale = new Vector3(tamañoZoomExito, tamañoZoomExito, 1f);
-        yield return new WaitForSeconds(4.5f);
-        yield return StartCoroutine(OcultarTexto());
+        if (objetoTrofeo != null)
+        {
+            objetoTrofeo.SetActive(true);
+        }
     }
 
     IEnumerator MostrarTexto(string mensaje, Color colorTexto)

@@ -79,7 +79,7 @@ public class CodigoAlumno : MonoBehaviour
                 
                 float diferencia = Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.z, anguloObjetivo));
 
-                if (diferencia <= 15f)
+                if (diferencia <= 25f)
                 {
                     Disparar();
                     temporizadorDisparo = 0f;
