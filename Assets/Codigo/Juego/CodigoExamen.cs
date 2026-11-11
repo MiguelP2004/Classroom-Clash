@@ -48,6 +48,8 @@ public class codigoExamen : MonoBehaviour
     private Color[] coloresBase;
     private Coroutine rutinaGolpe;
 
+    private generacionExamenes generador;
+
     void Awake()
     {
         vidaMaxima = vida;
@@ -79,6 +81,11 @@ public class codigoExamen : MonoBehaviour
                 scriptSombra.Inicializar(this.transform, todosLosSprites[0]);
             }
         }
+    }
+
+    public void AsignarGenerador(generacionExamenes g)
+    {
+        generador = g;
     }
 
     public void AsignarRuta(EdgeCollider2D nuevaRuta)
@@ -133,6 +140,10 @@ public class codigoExamen : MonoBehaviour
             if (GestorTutorial.instancia != null)
             {
                 GestorTutorial.instancia.RegistrarMuerteExamen();
+            }
+            if (generador != null)
+            {
+                generador.EnemigoEliminado();
             }
             Destroy(gameObject);
             return;
@@ -239,7 +250,10 @@ public class codigoExamen : MonoBehaviour
             {
                 GestorTutorial.instancia.RegistrarMuerteExamen();
             }
-            
+            if (generador != null)
+            {
+                generador.EnemigoEliminado();
+            }
             StartCoroutine(EfectoDesvanecer());
         }
     }

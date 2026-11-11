@@ -296,10 +296,20 @@ public class GestorTutorial : MonoBehaviour
         yield return StartCoroutine(OcultarTexto());
         yield return new WaitForSeconds(0.5f);
 
-        if (objetoTrofeo != null)
-        {
-            objetoTrofeo.SetActive(true);
-        }
+        MostrarVictoria();
+    }
+
+    public IEnumerator MostrarAvisoOleada(int numeroOleada)
+    {
+        string mensaje = "<color=#F3FF00><size=60>OLEADA " 
+            + numeroOleada + "!</size></color>\n"
+            + "<color=#FF5151><size=40>ACABA CON LOS EXÁMENES</size></color>";
+
+        yield return StartCoroutine(MostrarTexto(mensaje, Color.white));
+
+        yield return new WaitForSeconds(2f);
+
+        yield return StartCoroutine(OcultarTexto());
     }
 
     IEnumerator MostrarTexto(string mensaje, Color colorTexto)
@@ -330,6 +340,15 @@ public class GestorTutorial : MonoBehaviour
             textoTutorial.color = new Color(c.r, c.g, c.b, Mathf.Clamp01(alpha));
             yield return null;
         }
+    }
+
+    public IEnumerator MostrarVictoria()
+    {
+        if (objetoTrofeo != null)
+        {
+            objetoTrofeo.SetActive(true);
+        }
+        yield return new WaitForSeconds(3f);
     }
 
     IEnumerator EfectoObjetivoCumplido()
