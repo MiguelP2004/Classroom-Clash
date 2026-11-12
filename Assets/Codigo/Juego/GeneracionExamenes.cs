@@ -15,12 +15,22 @@ public class generacionExamenes : MonoBehaviour
     public EdgeCollider2D rutaCamino;    
 
     [Header("Interfaz de oleadas")]
+    public GameObject panelOleadas;
     public TMP_Text textoOleada;
     public GestorTutorial gestorTutorial;
 
     private float intervaloEntreExamenes = 0.75f;
     private Coroutine rutinaGeneracion;
     private int enemigosVivos = 0;
+
+    private void Awake()
+    {
+        // Apagamos el panel de oleadas por defecto al inicio
+        if (panelOleadas != null)
+        {
+            panelOleadas.SetActive(false);
+        }
+    }
 
     private void OnDisable()
     {
@@ -47,11 +57,13 @@ public class generacionExamenes : MonoBehaviour
     {
         if (MenuPrincipal.nivelElegido <= 1)
         {
+            // En el tutorial, el panel de oleadas se asegura de estar apagado siempre
+            if (panelOleadas != null) panelOleadas.SetActive(false);
+
             while (true)
             {
                 yield return StartCoroutine(GenerarRachaEspecifica(examenBasico, 6, intervaloEntreExamenes));
                 yield return new WaitForSeconds(4f);
-
                 GenerarUnExamen(examenPesado);
                 yield return new WaitForSeconds(intervaloEntreExamenes);
                 GenerarUnExamen(examenBasico);
@@ -73,51 +85,57 @@ public class generacionExamenes : MonoBehaviour
         {
             if (textoOleada != null)
             {
-                textoOleada.text = "OLEADA " + oleada + " / 6";
+                textoOleada.text = "OLEADA " + oleada + "/6";
             }
-            // Mostrar aviso de inicio de oleada
             if (GestorTutorial.instancia != null)
             {
                 yield return StartCoroutine(
                     GestorTutorial.instancia.MostrarAvisoOleada(oleada)
                 );
             }
-            // Cada oleada aumenta 2 enemigos de cada tipo.
+            if (oleada == 1 && panelOleadas != null)
+            {
+                panelOleadas.SetActive(true);
+            }
+
+            yield return new WaitForSeconds(1f);
+            
+            // Cada oleada aumenta 2 enemigos de cada tipo
             int basicos = 5 + (oleada - 1) * 4;
             int pesados = 2 + (oleada - 1) * 4;
             int veloces = 4 + (oleada - 1) * 4;
-
-            // Primera tanda: básicos
-            yield return StartCoroutine(
-                GenerarRachaEspecifica(examenBasico, basicos, 0.5f));
-
-            yield return new WaitForSeconds(2f);
-
-            // Segunda tanda: pesados
-            yield return StartCoroutine(
-                GenerarRachaEspecifica(examenPesado, pesados, 0.5f));
-
-            yield return new WaitForSeconds(2f);
-
-            // Tercera tanda: veloces
-            yield return StartCoroutine(
-                GenerarRachaEspecifica(examenVeloz, veloces, 0.25f));
+            int nRachas = 1;
+            
+            if (oleada >= 3) nRachas = 2; // A partir de la oleada 3, 2 rachas de enemigos
+            if (oleada >= 5) nRachas = 3; // A partir de la oleada 5, 3 rachas de enemigos
+            
+            for (int i = 0; i < nRachas; i++) {
+                float cooldown = 1f - oleada * 0.2f;
+                if (cooldown < 0.5f) cooldown = 0.5f; // Limitar a un mínimo de 0.5 segundos siempre
+                
+                yield return StartCoroutine(GenerarRachaEspecifica(examenBasico, basicos, cooldown));
+                yield return new WaitForSeconds(2.4f - oleada * 0.1f);
+                
+                yield return StartCoroutine(GenerarRachaEspecifica(examenPesado, pesados, cooldown));
+                yield return new WaitForSeconds(2.4f - oleada * 0.1f);
+                
+                if (oleada >= 2) {
+                    yield return StartCoroutine(GenerarRachaEspecifica(examenVeloz, veloces, cooldown / 2f));
+                }
+            }
             
             while (enemigosVivos > 0)
             {
                 yield return null;
             }
-            
             // Descanso antes de la siguiente oleada
             yield return new WaitForSeconds(1f);
         }
+
         if (GestorTutorial.instancia != null)
         {
-            yield return StartCoroutine(
-                GestorTutorial.instancia.MostrarVictoria()
-            );
+            yield return StartCoroutine(GestorTutorial.instancia.MostrarVictoria());
         }
-        // Aquí terminan las 6 oleadas.
     }
 
     private IEnumerator GenerarRachaEspecifica(GameObject prefab, int cantidad, float intervalo)

@@ -238,6 +238,8 @@ public class codigoExamen : MonoBehaviour
             estaMuriendo = true;
             gameObject.tag = "Untagged"; 
             
+            CodigoTrofeo.posicionUltimaBaja = transform.position;
+
             if (canvasBarraVida != null) canvasBarraVida.SetActive(false);
             if (particulasHielo != null) particulasHielo.Stop();
             if (rutinaGolpe != null) StopCoroutine(rutinaGolpe); 
@@ -245,6 +247,7 @@ public class codigoExamen : MonoBehaviour
             if (ControladorJuego.instancia != null)
             {
                 ControladorJuego.instancia.SumarEnergia(energiaRecibida);
+                ControladorJuego.instancia.SumarBaja();
             }
             if (GestorTutorial.instancia != null)
             {

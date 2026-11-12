@@ -21,8 +21,8 @@ public class GestorTutorial : MonoBehaviour
 
     public GameObject flechaIndicacion;
     
-    [Header("Música de Combate")]
     public AudioClip musicaGameplay;
+    public AudioClip sirena;
 
     private string msgBienvenida = "BIENVENIDO A <color=#F3FF00><size=60>CLASSROOM CLASH</size></color>\nVAMOS A APRENDER LOS CONCEPTOS BASICOS!"; 
     private string msgMoverCamara = "UTILIZA EL <color=#FF5151><size=60>MOUSE</size></color> EN LOS BORDES PARA DESPLAZARTE A LA DERECHA E IZQUIERDA DEL MAPA";
@@ -81,7 +81,6 @@ public class GestorTutorial : MonoBehaviour
         }
     }
 
-    // Secuencia para el Nivel 2 (y posteriores): libertad total y cuenta atrás de 10 a 1
     IEnumerator SecuenciaNivelNormal()
     {
         if (generadorExamenes != null) generadorExamenes.generacionActiva = false;
@@ -290,25 +289,29 @@ public class GestorTutorial : MonoBehaviour
 
         yield return new WaitUntil(() => GameObject.FindGameObjectsWithTag("Examen").Length == 0);
 
-        yield return StartCoroutine(MostrarTexto(msgVictoria, Color.white));
-        textoTutorial.transform.localScale = new Vector3(tamañoZoomExito, tamañoZoomExito, 1f);
-        yield return new WaitForSeconds(4.5f);
-        yield return StartCoroutine(OcultarTexto());
-        yield return new WaitForSeconds(0.5f);
-
-        MostrarVictoria();
+        // ¡MODIFICADO! Usamos la rutina unificada para el final del nivel
+        yield return StartCoroutine(MostrarVictoria());
     }
 
     public IEnumerator MostrarAvisoOleada(int numeroOleada)
     {
         string mensaje = "<color=#F3FF00><size=60>OLEADA " 
             + numeroOleada + "!</size></color>\n"
-            + "<color=#FF5151><size=40>ACABA CON LOS EXÁMENES</size></color>";
+            + "<color=#FF5151><size=40>ACABA CON LOS EXAMENES</size></color>";
 
         yield return StartCoroutine(MostrarTexto(mensaje, Color.white));
-
         yield return new WaitForSeconds(2f);
-
+        if (sirena != null)
+        {
+            GameObject audioTemporal = new GameObject("Sonido_Sirena");
+            AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
+            fuenteAudio.clip = sirena;
+            fuenteAudio.spatialBlend = 0f;
+            fuenteAudio.volume = ControladorJuego.volumenSFXGuardado;
+            fuenteAudio.ignoreListenerPause = true;
+            fuenteAudio.Play();
+            Destroy(audioTemporal, sirena.length + 0.1f);
+        }
         yield return StartCoroutine(OcultarTexto());
     }
 
@@ -344,6 +347,13 @@ public class GestorTutorial : MonoBehaviour
 
     public IEnumerator MostrarVictoria()
     {
+        // ¡NUEVO! Respetamos el mensaje de Enhorabuena antes de soltar el trofeo
+        yield return StartCoroutine(MostrarTexto(msgVictoria, Color.white));
+        textoTutorial.transform.localScale = new Vector3(tamañoZoomExito, tamañoZoomExito, 1f);
+        yield return new WaitForSeconds(4.5f);
+        yield return StartCoroutine(OcultarTexto());
+        yield return new WaitForSeconds(0.5f);
+
         if (objetoTrofeo != null)
         {
             objetoTrofeo.SetActive(true);

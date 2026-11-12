@@ -11,18 +11,20 @@ public class CodigoTrofeo : MonoBehaviour
     private float alturaPrimerSalto = 1.3f;
     private float duracionPrimerSalto = 0.55f;
     
-    private Vector3 posicionAparicion = new Vector3(-4f, 0f, 0f);
+    private Vector3 posicionAparicion;
+    
+    public static Vector3 posicionUltimaBaja; 
 
     [Header("Flote y Brillo (Coseno)")]
     private float velocidadCoseno = 3.2f;
-    public float tamañoAgrandado = 1.15f; // Multiplicador de tamaño máximo
+    public float tamañoAgrandado = 1.15f; 
 
     private SpriteRenderer miRenderer;
     private bool puedeRecogerse = false;
     private bool recogido = false;
     private float tiempoCoseno = 0f;
     
-    private Vector3 escalaInicial; // Guarda el tamaño original puesto en el Editor
+    private Vector3 escalaInicial; 
 
     void Awake()
     {
@@ -34,7 +36,6 @@ public class CodigoTrofeo : MonoBehaviour
             col.radius = 0.8f;
         }
 
-        // Registramos el tamaño que le hayas puesto a mano en Unity
         escalaInicial = transform.localScale; 
     }
 
@@ -44,6 +45,17 @@ public class CodigoTrofeo : MonoBehaviour
         puedeRecogerse = false;
         tiempoCoseno = 0f;
 
+        if (MenuPrincipal.nivelElegido <= 1)
+        {
+            posicionAparicion = posicionUltimaBaja;
+            posicionAparicion.z = 1f;
+        }
+        else
+        {
+            posicionAparicion = posicionUltimaBaja;
+            posicionAparicion.z = 1f;
+        }
+
         transform.position = posicionAparicion;
         transform.localScale = escalaInicial;
 
@@ -52,11 +64,8 @@ public class CodigoTrofeo : MonoBehaviour
 
     private IEnumerator RutinaSaltoYRebote()
     {
-        // 1. Salto principal
         yield return StartCoroutine(ArcoRebote(alturaPrimerSalto, duracionPrimerSalto));
-        // 2. Primer rebote
         yield return StartCoroutine(ArcoRebote(alturaPrimerSalto * 0.35f, duracionPrimerSalto * 0.6f));
-        // 3. Segundo rebote pequeño
         yield return StartCoroutine(ArcoRebote(alturaPrimerSalto * 0.12f, duracionPrimerSalto * 0.4f));
 
         transform.position = posicionAparicion;
@@ -72,7 +81,6 @@ public class CodigoTrofeo : MonoBehaviour
             float progreso = Mathf.Clamp01(tiempo / duracion);
             float y = Mathf.Sin(progreso * Mathf.PI) * altura;
             
-            // Rebotamos usando la X base
             transform.position = new Vector3(posicionAparicion.x, posicionAparicion.y + y, 0f);
             yield return null;
         }
@@ -80,10 +88,12 @@ public class CodigoTrofeo : MonoBehaviour
 
     void Update()
     {
+        if (recogido || !puedeRecogerse || Time.timeScale == 0f) return;
+        if (ControladorJuego.instancia != null && (ControladorJuego.instancia.esGameOver || ControladorJuego.instancia.enTransicion)) return;
+
         tiempoCoseno += Time.deltaTime * velocidadCoseno;
         float ondaCoseno = (1f - Mathf.Cos(tiempoCoseno)) * 0.5f;
 
-        // Escala dinámica y proporcional al tamaño que le hayas puesto en el Editor
         transform.localScale = Vector3.Lerp(escalaInicial, escalaInicial * tamañoAgrandado, ondaCoseno);
 
         if (miRenderer != null)
@@ -91,9 +101,6 @@ public class CodigoTrofeo : MonoBehaviour
             float brillo = Mathf.Lerp(0.92f, 1.15f, ondaCoseno);
             miRenderer.color = new Color(1f, Mathf.Clamp01(brillo), Mathf.Clamp01(0.75f + ondaCoseno * 0.25f), 1f);
         }
-
-        if (recogido || !puedeRecogerse || Time.timeScale == 0f) return;
-        if (ControladorJuego.instancia != null && (ControladorJuego.instancia.esGameOver || ControladorJuego.instancia.enTransicion)) return;
 
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
@@ -120,5 +127,25 @@ public class CodigoTrofeo : MonoBehaviour
         {
             ControladorJuego.instancia.IniciarSecuenciaVictoria(sonidoVictoria);
         }
+        
+        // ¡NUEVO! Al hacer click, el trofeo se mueve suavemente hacia (-3, 0) siempre
+        StartCoroutine(MoverHaciaCentro(3f));
+    }
+
+    private IEnumerator MoverHaciaCentro(float duracion)
+    {
+        float tiempo = 0f;
+        Vector3 posInicial = transform.position;
+        Vector3 posDestino = new Vector3(-3f, 0f, 0f);
+
+        while (tiempo < duracion)
+        {
+            tiempo += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, tiempo / duracion);
+            transform.position = Vector3.Lerp(posInicial, posDestino, t);
+            yield return null;
+        }
+
+        transform.position = posDestino;
     }
 }

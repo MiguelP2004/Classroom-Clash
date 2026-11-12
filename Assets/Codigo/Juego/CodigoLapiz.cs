@@ -14,6 +14,7 @@ public class CodigoLapiz : MonoBehaviour
     
     private Transform objetivo;
     private codigoExamen scriptObjetivo;
+    private bool haImpactado = false;
 
     public AudioClip[] golpes;
     public AudioClip[] disparos;
@@ -56,16 +57,17 @@ public class CodigoLapiz : MonoBehaviour
         
         transform.Translate(Vector3.up * velocidad * Time.deltaTime, Space.Self);
     }
-
+    
     void OnTriggerEnter2D(Collider2D otro)
     {
+        if (haImpactado) return;
         if (otro.CompareTag("Examen"))
         {
             codigoExamen enemigo = otro.GetComponent<codigoExamen>();
             
             if (enemigo != null && enemigo.vida > 0)
             {
-                // ¡NUEVO! Aplicar ralentización antes de recibir daño por si muere del impacto
+                haImpactado = true;
                 if (esHielo)
                 {
                     enemigo.AplicarCongelacion();

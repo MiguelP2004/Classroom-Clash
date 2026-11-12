@@ -393,7 +393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45caad9711e72d24eb1dc191acb0bad2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::codigoExamen
-  vida: 8
+  vida: 10
   velocidad: 1.2
   energiaRecibida: 4
   canvasBarraVida: {fileID: 2882683708302377588}

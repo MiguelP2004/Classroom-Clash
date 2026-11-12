@@ -19,6 +19,10 @@ public class ControladorJuego : MonoBehaviour
     public int vidas = 12;
     public TextMeshProUGUI textoVidas;
 
+    [Header("Bajas")]
+    public int bajas = 0;
+    public TextMeshProUGUI textoBajas;
+
     [Header("Cámara")]
     public Camera camaraPrincipal;
     [HideInInspector] public bool camaraBloqueadaPorTutorial = false;
@@ -39,7 +43,7 @@ public class ControladorJuego : MonoBehaviour
     public Slider sliderMusica;
 
     [Header("Música")]
-    public AudioClip musicaJuego;
+    public AudioClip musicaJuego; // Esta es la música inicial (Menú/Tutorial)
     private AudioSource fuenteMusica;
     private float escalaMusicaActual = 0.8f;
     
@@ -78,12 +82,13 @@ public class ControladorJuego : MonoBehaviour
         
         AudioListener.pause = false;
 
-        // Tutorial: 90 de energia, sino 50
         energia = (MenuPrincipal.nivelElegido <= 1) ? 90 : 50;
         vidas = 12;
+        bajas = 0;
 
         ActualizarTextoEnergia();
         ActualizarTextoVidas();
+        ActualizarTextoBajas();
         
         if (camaraPrincipal == null) camaraPrincipal = Camera.main;
         if (camaraPrincipal != null) posicionObjetivoCamara = camaraPrincipal.transform.position;
@@ -180,6 +185,11 @@ public class ControladorJuego : MonoBehaviour
         {
             textoVidas.transform.localScale = Vector3.Lerp(textoVidas.transform.localScale, Vector3.one, Time.unscaledDeltaTime * 15f);
         }
+
+        if (textoBajas != null)
+        {
+            textoBajas.transform.localScale = Vector3.Lerp(textoBajas.transform.localScale, Vector3.one, Time.unscaledDeltaTime * 15f);
+        }
     }
 
     public void CambiarVolumenFX(float nuevoValor)
@@ -219,8 +229,15 @@ public class ControladorJuego : MonoBehaviour
             fuenteMusica.volume = Mathf.Lerp(volObjetivoAnterior, 0f, tiempo / tiempoFadeOut);
             yield return null;
         }
-        
-        escalaMusicaActual = 0.6f;
+        if (GestorTutorial.instancia != null && nuevaMusica == GestorTutorial.instancia.musicaGameplay)
+        {
+            escalaMusicaActual = 0.5f; // Gameplay más bajito
+        }
+        else
+        {
+            escalaMusicaActual = 0.8f; // Tutorial y menús normales
+        }
+
         fuenteMusica.clip = nuevaMusica;
         fuenteMusica.Play();
         
@@ -316,7 +333,6 @@ public class ControladorJuego : MonoBehaviour
     {
         if (camaraPrincipal == null || Mouse.current == null) return;
 
-        // ¡MODIFICADO! Permite mover la cámara si es la transición de victoria, ignorando enTransicion
         if (!camaraBloqueadaPorTutorial && (!enTransicion || transicionVictoria))
         {
             Vector2 posRaton = Mouse.current.position.ReadValue();
@@ -480,6 +496,28 @@ public class ControladorJuego : MonoBehaviour
     private void ActualizarTextoVidas()
     {
         if (textoVidas != null) textoVidas.text = vidas.ToString();
+    }
+
+    public void SumarBaja()
+    {
+        if (esGameOver) return;
+
+        bajas++;
+        EfectoCambioBajas();
+    }
+
+    private void EfectoCambioBajas()
+    {
+        if (textoBajas != null)
+        {
+            textoBajas.text = bajas.ToString();
+            textoBajas.transform.localScale = new Vector3(tamañoAgrandado, tamañoAgrandado, 1f);
+        }
+    }
+
+    private void ActualizarTextoBajas()
+    {
+        if (textoBajas != null) textoBajas.text = bajas.ToString();
     }
 
     private void ActivarGameOver()
