@@ -27,6 +27,10 @@ public class MenuPrincipal : MonoBehaviour
     private AudioSource fuenteMusica;
     private const float escalaVolumenMenu = 0.8f;
 
+    [Header("Ajustes de Audio")]
+    public Slider sliderMusica;
+    public Slider sliderSonidoFX;
+
     [HideInInspector] public bool enTransicion = false;
     [HideInInspector] public bool nivelSeleccionado = false;
     
@@ -68,6 +72,24 @@ public class MenuPrincipal : MonoBehaviour
 
     void Start()
     {
+        if (sliderMusica != null)
+        {
+            sliderMusica.value = ControladorJuego.volumenMusicaGuardada;
+
+            sliderMusica.onValueChanged.AddListener(
+                CambiarVolumenMusica
+            );
+        }
+
+        if (sliderSonidoFX != null)
+        {
+            sliderSonidoFX.value = ControladorJuego.volumenSFXGuardado;
+
+            sliderSonidoFX.onValueChanged.AddListener(
+                CambiarVolumenFX
+            );
+        }
+
         if (musicaMenu != null)
         {
             fuenteMusica = gameObject.AddComponent<AudioSource>();
@@ -318,6 +340,27 @@ public class MenuPrincipal : MonoBehaviour
         }
 
         enTransicion = false;
+    }
+
+    public void CambiarVolumenMusica(float valor)
+    {
+        ControladorJuego.volumenMusicaGuardada = valor;
+
+        PlayerPrefs.SetFloat("VolumenMusica", valor);
+        PlayerPrefs.Save();
+
+        if (fuenteMusica != null)
+        {
+            fuenteMusica.volume = valor * escalaVolumenMenu;
+        }
+    }
+
+    public void CambiarVolumenFX(float valor)
+    {
+        ControladorJuego.volumenSFXGuardado = valor;
+
+        PlayerPrefs.SetFloat("VolumenFX", valor);
+        PlayerPrefs.Save();
     }
 
     private IEnumerator RutinaOscurecerYEmpezar()

@@ -132,6 +132,11 @@ public class generacionExamenes : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
 
+        if (CodigoProfe.instancia != null)
+        {
+            CodigoProfe.instancia.bloqueadoPorTutorial = true;
+        }
+
         if (GestorTutorial.instancia != null)
         {
             yield return StartCoroutine(GestorTutorial.instancia.MostrarVictoria());

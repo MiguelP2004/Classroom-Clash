@@ -5,6 +5,8 @@ using System.Collections;
 
 public class CodigoProfe : MonoBehaviour
 {
+    public static CodigoProfe instancia;
+
     [Header("Disparo")]
     public GameObject proyectilPrefab;
     public float cadenciaFuego = 0.5f;
@@ -31,10 +33,16 @@ public class CodigoProfe : MonoBehaviour
     private Vector3 posicionOriginal;
 
     private static bool esperandoSoltarClick = false;
+    private bool disparoIniciado = false;
 
     public static void BloquearDisparoHastaSoltar()
     {
         esperandoSoltarClick = true;
+    }
+
+    void Awake()
+    {
+        if (instancia == null) instancia = this;
     }
 
     void Start()
@@ -62,14 +70,14 @@ public class CodigoProfe : MonoBehaviour
 
         bool ratonSobreUI = (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject());
         bool gestorOcupado = (GestorColocacion.instancia != null && GestorColocacion.instancia.EstaOcupado());
-
-        if (ratonSobreUI || gestorOcupado) return;
+        bool clickPulsado = Mouse.current.leftButton.isPressed;
 
         if (esperandoSoltarClick)
         {
-            if (!Mouse.current.leftButton.isPressed)
+            if (!clickPulsado)
             {
                 esperandoSoltarClick = false;
+                disparoIniciado = false;
             }
             else
             {
@@ -77,7 +85,22 @@ public class CodigoProfe : MonoBehaviour
             }
         }
 
-        if (!bloqueadoPorTutorial && Mouse.current.leftButton.isPressed && temporizadorDisparo >= cadenciaFuego)
+        if (!clickPulsado)
+        {
+            disparoIniciado = false;
+            return;
+        }
+
+        if (!disparoIniciado)
+        {
+            if (ratonSobreUI || gestorOcupado || bloqueadoPorTutorial) return;
+
+            disparoIniciado = true;
+        }
+
+        if (gestorOcupado || bloqueadoPorTutorial) return;
+
+        if (temporizadorDisparo >= cadenciaFuego)
         {
             Disparar();
             temporizadorDisparo = 0f;
