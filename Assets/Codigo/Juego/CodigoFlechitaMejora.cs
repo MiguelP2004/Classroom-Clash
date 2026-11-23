@@ -3,59 +3,80 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class codigoFlechitaMejora : MonoBehaviour
 {
+    [Header("Offsets de Posición")]
+    public Vector2 offsetProfe = Vector2.zero;
+    public Vector2 offsetAlumno = Vector2.zero;
+
     private float velocidadFlote = 2.2f;
-    private float alturaFlote = 0.05f; // Amplitud en unidades de mundo
+    private float alturaFlote = 0.05f;
 
     private SpriteRenderer miSprite;
-    private Vector3 posBaseMundo;
+    private Vector3 localPosPrefab;
+    private Vector3 localScalePrefab;
+    private Vector3 centroPadreBase;
+    private Vector3 offsetPrefabBase;
     private Vector3 escalaBaseMundo;
+    private bool esProfe = false;
     private bool inicializado = false;
 
     void Awake()
     {
-        InicializarPosicionFija();
+        miSprite = GetComponent<SpriteRenderer>();
+        localPosPrefab = transform.localPosition;
+        localScalePrefab = transform.localScale;
     }
 
-    public void InicializarPosicionFija()
+    public void Inicializar(Vector3 centroPadreMundo, Vector3 escalaPadreOriginal)
     {
-        if (inicializado) return;
+        if (miSprite == null) miSprite = GetComponent<SpriteRenderer>();
 
-        miSprite = GetComponent<SpriteRenderer>();
+        esProfe = (transform.parent != null && transform.parent.GetComponent<CodigoProfe>() != null);
+        centroPadreBase = centroPadreMundo;
 
-        if (transform.parent != null)
-        {
-            // Calculamos su posición arriba a la derecha ignorando cualquier rotación actual del Profe
-            Vector3 escalaPadre = transform.parent.localScale;
-            Vector3 offsetSinRotacion = new Vector3(
-                transform.localPosition.x * escalaPadre.x,
-                transform.localPosition.y * escalaPadre.y,
-                0f
-            );
+        offsetPrefabBase = new Vector3(
+            localPosPrefab.x * escalaPadreOriginal.x,
+            localPosPrefab.y * escalaPadreOriginal.y,
+            0f
+        );
 
-            posBaseMundo = transform.parent.position + offsetSinRotacion;
-            escalaBaseMundo = new Vector3(
-                transform.localScale.x * escalaPadre.x,
-                transform.localScale.y * escalaPadre.y,
-                1f
-            );
-        }
-        else
-        {
-            posBaseMundo = transform.position;
-            escalaBaseMundo = transform.localScale;
-        }
+        escalaBaseMundo = new Vector3(
+            localScalePrefab.x * escalaPadreOriginal.x,
+            localScalePrefab.y * escalaPadreOriginal.y,
+            1f
+        );
 
+        AplicarTransformacion(0f);
         inicializado = true;
     }
 
     void LateUpdate()
     {
-        if (!inicializado) InicializarPosicionFija();
+        if (!inicializado && transform.parent != null)
+        {
+            Inicializar(transform.parent.position, transform.parent.localScale);
+        }
 
         float onda = Mathf.Cos(Time.time * velocidadFlote);
+        AplicarTransformacion(onda * alturaFlote);
 
-        float desplazamientoY = onda * alturaFlote;
-        transform.position = new Vector3(posBaseMundo.x, posBaseMundo.y + desplazamientoY, posBaseMundo.z);
+        if (miSprite != null)
+        {
+            Color c = miSprite.color;
+            float t = (onda + 1f) * 0.5f;
+            c.a = Mathf.Lerp(0.85f, 1.0f, t);
+            miSprite.color = c;
+        }
+    }
+
+    private void AplicarTransformacion(float desplazamientoY)
+    {
+        Vector2 offsetExtra = esProfe ? offsetProfe : offsetAlumno;
+
+        transform.position = new Vector3(
+            centroPadreBase.x + offsetPrefabBase.x + offsetExtra.x,
+            centroPadreBase.y + offsetPrefabBase.y + offsetExtra.y + desplazamientoY,
+            0f
+        );
 
         transform.rotation = Quaternion.identity;
 
@@ -66,14 +87,6 @@ public class codigoFlechitaMejora : MonoBehaviour
                 escalaBaseMundo.y / transform.parent.localScale.y,
                 1f
             );
-        }
-
-        if (miSprite != null)
-        {
-            Color c = miSprite.color;
-            float t = (onda + 1f) * 0.5f;
-            c.a = Mathf.Lerp(0.85f, 1.0f, t);
-            miSprite.color = c;
         }
     }
 }

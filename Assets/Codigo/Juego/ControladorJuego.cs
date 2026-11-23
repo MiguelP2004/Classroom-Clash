@@ -82,9 +82,10 @@ public class ControladorJuego : MonoBehaviour
         
         AudioListener.pause = false;
 
-        energia = (MenuPrincipal.nivelElegido <= 1) ? 90 : 50;
+        energia = (MenuPrincipal.nivelElegido <= 1) ? 90 : 60;
         vidas = 12;
         bajas = 0;
+        // energia = 1000; // Para pruebas solo
 
         ActualizarTextoEnergia();
         ActualizarTextoVidas();

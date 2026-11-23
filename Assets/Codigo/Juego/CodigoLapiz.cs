@@ -7,9 +7,12 @@ public class CodigoLapiz : MonoBehaviour
     public float daño = 1f; 
     private float tiempoDeVida = 3f;
     
-    // ¡NUEVO!
+    [Header("Efecto Hielo")]
     public bool esHielo = false;
-    
+    private Color colorImpactoHielo = new Color(0.65f, 0.88f, 1f, 1f);
+    public GameObject prefabParticulasZonaHielo;
+    [HideInInspector] public float radioZonaHielo = 0f;
+
     public GameObject prefabImpacto;
     
     private Transform objetivo;
@@ -68,16 +71,31 @@ public class CodigoLapiz : MonoBehaviour
             if (enemigo != null && enemigo.vida > 0)
             {
                 haImpactado = true;
+
                 if (esHielo)
                 {
                     enemigo.AplicarCongelacion();
+
+                    if (radioZonaHielo > 0f)
+                    {
+                        AplicarZonaHielo(enemigo);
+                    }
                 }
 
+                // Solo hace daño al enemigo impactado directamente
                 enemigo.RecibirImpacto(daño); 
                 
                 if (prefabImpacto != null)
                 {
-                    Instantiate(prefabImpacto, transform.position, Quaternion.identity);
+                    GameObject impacto = Instantiate(prefabImpacto, transform.position, Quaternion.identity);
+                    if (esHielo)
+                    {
+                        GolpeImpacto scriptImpacto = impacto.GetComponent<GolpeImpacto>();
+                        if (scriptImpacto != null)
+                        {
+                            scriptImpacto.AplicarTinte(colorImpactoHielo);
+                        }
+                    }
                 }
 
                 if (MenuPrincipal.instancia == null && golpes.Length > 0)
@@ -95,6 +113,38 @@ public class CodigoLapiz : MonoBehaviour
                 }
 
                 Destroy(gameObject);
+            }
+        }
+    }
+
+    private void AplicarZonaHielo(codigoExamen enemigoImpactado)
+    {
+        if (prefabParticulasZonaHielo != null)
+        {
+            GameObject efectoZona = Instantiate(prefabParticulasZonaHielo, transform.position, Quaternion.identity);
+            ParticleSystem ps = efectoZona.GetComponent<ParticleSystem>();
+
+            if (ps != null)
+            {
+                ps.Play();
+                Destroy(efectoZona, ps.main.duration + ps.main.startLifetime.constantMax + 0.5f);
+            }
+            else
+            {
+                Destroy(efectoZona, 2f);
+            }
+        }
+
+        Collider2D[] cercanos = Physics2D.OverlapCircleAll(transform.position, radioZonaHielo);
+        foreach (Collider2D col in cercanos)
+        {
+            if (!col.CompareTag("Examen")) continue;
+
+            codigoExamen otroEnemigo = col.GetComponent<codigoExamen>();
+            if (otroEnemigo != null && otroEnemigo != enemigoImpactado && otroEnemigo.vida > 0)
+            {
+                // Congela sin aplicar daño
+                otroEnemigo.AplicarCongelacion();
             }
         }
     }

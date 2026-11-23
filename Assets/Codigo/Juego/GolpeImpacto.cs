@@ -8,10 +8,13 @@ public class GolpeImpacto : MonoBehaviour
 
     private SpriteRenderer sr;
 
-    void Start()
+    void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
+    }
 
+    void Start()
+    {
         transform.rotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
 
         if (sr != null)
@@ -22,6 +25,17 @@ public class GolpeImpacto : MonoBehaviour
         }
 
         StartCoroutine(SecuenciaImpacto());
+    }
+
+    public void AplicarTinte(Color nuevoColor)
+    {
+        if (sr == null) sr = GetComponent<SpriteRenderer>();
+
+        if (sr != null)
+        {
+            nuevoColor.a = 0.8f;
+            sr.color = nuevoColor;
+        }
     }
 
     IEnumerator SecuenciaImpacto()

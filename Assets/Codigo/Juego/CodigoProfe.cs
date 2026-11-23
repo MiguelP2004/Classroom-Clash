@@ -11,7 +11,7 @@ public class CodigoProfe : MonoBehaviour
 
     [Header("Mejora x2")]
     public Sprite spriteMejorado; 
-    public GameObject flechaMejora; // Arrastra aquí el objeto FlechaMejora
+    public GameObject prefabFlechaMejora; // Arrastra aquí el Prefab FlechaMejora
     public int costeMejora = 70;
     public AudioClip sonidoMejora;
 
@@ -43,14 +43,6 @@ public class CodigoProfe : MonoBehaviour
         escalaOriginal = transform.localScale;
         miSpriteRenderer = GetComponent<SpriteRenderer>();
         esperandoSoltarClick = false;
-
-        // Guardamos su posición inicial limpia y ocultamos la flecha hasta comprar la mejora
-        if (flechaMejora != null)
-        {
-            codigoFlechitaMejora scriptFlecha = flechaMejora.GetComponent<codigoFlechitaMejora>();
-            if (scriptFlecha != null) scriptFlecha.InicializarPosicionFija();
-            flechaMejora.SetActive(false);
-        }
     }
 
     void Update()
@@ -158,10 +150,16 @@ public class CodigoProfe : MonoBehaviour
             miSpriteRenderer.sprite = spriteMejorado;
         }
 
-        // Activamos la flechita de mejora antes de iniciar el escalado del Profe
-        if (flechaMejora != null)
+        transform.localScale = escalaOriginal;
+
+        if (prefabFlechaMejora != null)
         {
-            flechaMejora.SetActive(true);
+            GameObject flecha = Instantiate(prefabFlechaMejora, transform);
+            codigoFlechitaMejora scriptFlecha = flecha.GetComponent<codigoFlechitaMejora>();
+            if (scriptFlecha != null)
+            {
+                scriptFlecha.Inicializar(posicionOriginal, escalaOriginal);
+            }
         }
 
         if (rutinaMejora != null) StopCoroutine(rutinaMejora);

@@ -101,9 +101,9 @@ public class generacionExamenes : MonoBehaviour
             yield return new WaitForSeconds(1f);
             
             // Cada oleada aumenta 2 enemigos de cada tipo
-            int basicos = 5 + (oleada - 1) * 4;
-            int pesados = 2 + (oleada - 1) * 4;
-            int veloces = 4 + (oleada - 1) * 4;
+            int basicos = 5 + (oleada - 1) * 2;
+            int pesados = 2 + (oleada - 1) * 2;
+            int veloces = 2 + (oleada - 1) * 2;
             int nRachas = 1;
             
             if (oleada >= 3) nRachas = 2; // A partir de la oleada 3, 2 rachas de enemigos

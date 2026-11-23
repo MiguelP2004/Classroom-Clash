@@ -33,6 +33,7 @@ public class codigoExamen : MonoBehaviour
     private bool congelado = false;
     private float tiempoRestanteCongelacion = 0f;
     private Color colorCongelado = new Color(0f, 171f / 255f, 1f, 1f);
+    private static int ultimoFrameSonidoCongelacion = -1;
 
     [Header("Sombra")]
     public GameObject prefabSombra;
@@ -177,13 +178,14 @@ public class codigoExamen : MonoBehaviour
 
             if (particulasHielo != null) particulasHielo.Play();
 
-            if (MenuPrincipal.instancia == null && sonidoCongelacion != null)
+            if (MenuPrincipal.instancia == null && sonidoCongelacion != null && Time.frameCount != ultimoFrameSonidoCongelacion)
             {
+                ultimoFrameSonidoCongelacion = Time.frameCount;
                 GameObject audioTemporal = new GameObject("Sonido_Congelacion");
                 AudioSource fuenteAudio = audioTemporal.AddComponent<AudioSource>();
                 fuenteAudio.clip = sonidoCongelacion;
                 fuenteAudio.spatialBlend = 0f;
-                fuenteAudio.volume = ControladorJuego.volumenSFXGuardado * 0.5f; // Se escuchará un 50% de normal
+                fuenteAudio.volume = ControladorJuego.volumenSFXGuardado * 0.5f;
                 fuenteAudio.Play();
                 Destroy(audioTemporal, sonidoCongelacion.length + 0.1f);
             }

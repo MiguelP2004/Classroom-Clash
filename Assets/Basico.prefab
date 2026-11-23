@@ -5138,7 +5138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::codigoExamen
   vida: 5
-  velocidad: 1.2
+  velocidad: 1.1
   energiaRecibida: 2
   canvasBarraVida: {fileID: 2882683708302377588}
   imagenRellenoVida: {fileID: 8316832064828660014}
