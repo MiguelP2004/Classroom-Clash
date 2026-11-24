@@ -116,16 +116,21 @@ MonoBehaviour:
   zonaImpactoHielo: 0
   costeMejora: 50
   rangoMejorado: 3.25
-  cadenciaMejorada: 1.2
+  cadenciaMejorada: 1
   danoMejorado: 1
   zonaImpactoHieloMejorada: 0.5
   prefabFlechaMejora: {fileID: 3127360624936882420, guid: 78e8961aeea147e468dc12cb1e8fd8f1, type: 3}
   sonidoMejora: {fileID: 8300000, guid: 1529af9173d1f0c4682530a9bdbf7a21, type: 3}
+  costeMejoraNivel3: 50
+  rangoMejoradoNivel3: 3.5
+  cadenciaMejoradaNivel3: 0.8
+  danoMejoradoNivel3: 1.25
+  zonaImpactoHieloMejoradaNivel3: 0.75
   velocidadBrilloSeleccion: 5
   colorBrilloSeleccion: {r: 1, g: 1, b: 0, a: 1}
   estaColocado: 0
   seleccionado: 0
-  estaMejorado: 0
+  nivelActual: 1
 --- !u!114 &-7841631227051896934
 MonoBehaviour:
   m_ObjectHideFlags: 0

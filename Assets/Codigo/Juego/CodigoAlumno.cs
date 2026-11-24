@@ -20,9 +20,16 @@ public class CodigoAlumno : MonoBehaviour
     public float rangoMejorado = 3.5f;
     public float cadenciaMejorada = 1.0f;
     public float danoMejorado = 1.2f;
-    public float zonaImpactoHieloMejorada = 0f; // Pon 0.5 en el prefab del Alumno Hielo
+    public float zonaImpactoHieloMejorada = 0f;
     public GameObject prefabFlechaMejora;
     public AudioClip sonidoMejora;
+
+    [Header("Mejora Nivel 3")]
+    public int costeMejoraNivel3 = 50;
+    public float rangoMejoradoNivel3 = 4.0f;
+    public float cadenciaMejoradaNivel3 = 0.8f;
+    public float danoMejoradoNivel3 = 1.5f;
+    public float zonaImpactoHieloMejoradaNivel3 = 0f;
 
     [Header("Brillo Selección (Coseno)")]
     public float velocidadBrilloSeleccion = 5f;
@@ -34,7 +41,7 @@ public class CodigoAlumno : MonoBehaviour
 
     [HideInInspector] public bool estaColocado = false;
     [HideInInspector] public bool seleccionado = false;
-    [HideInInspector] public bool estaMejorado = false;
+    [HideInInspector] public int nivelActual = 1;
 
     private bool listoParaSeleccionar = false;
     private bool inicializado = false;
@@ -48,6 +55,14 @@ public class CodigoAlumno : MonoBehaviour
     private Vector3 posicionOriginal;
     private Vector3 escalaOriginal;
     private SpriteRenderer miSpriteRenderer;
+    private codigoFlechitaMejora flechaInstanciada;
+
+    public bool EstaAlMaximo() => nivelActual >= 3;
+    public int ObtenerCosteSiguienteMejora() => (nivelActual == 1) ? costeMejora : costeMejoraNivel3;
+    public float ObtenerRangoSiguiente() => (nivelActual == 1) ? rangoMejorado : rangoMejoradoNivel3;
+    public float ObtenerCadenciaSiguiente() => (nivelActual == 1) ? cadenciaMejorada : cadenciaMejoradaNivel3;
+    public float ObtenerDanoSiguiente() => (nivelActual == 1) ? danoMejorado : danoMejoradoNivel3;
+    public float ObtenerZonaHieloSiguiente() => (nivelActual == 1) ? zonaImpactoHieloMejorada : zonaImpactoHieloMejoradaNivel3;
 
     void Awake()
     {
@@ -171,17 +186,52 @@ public class CodigoAlumno : MonoBehaviour
 
     public void AplicarMejora()
     {
-        if (estaMejorado) return;
+        if (EstaAlMaximo()) return;
 
-        estaMejorado = true;
-        rangoAtaque = rangoMejorado;
-        cadenciaFuego = cadenciaMejorada;
+        if (rutinaMejora != null) StopCoroutine(rutinaMejora);
+        transform.localScale = escalaOriginal;
 
-        estaMejorado = true;
-        rangoAtaque = rangoMejorado;
-        cadenciaFuego = cadenciaMejorada;
-        danoProyectil = danoMejorado;
-        zonaImpactoHielo = zonaImpactoHieloMejorada;
+        if (nivelActual == 1)
+        {
+            nivelActual = 2;
+            rangoAtaque = rangoMejorado;
+            cadenciaFuego = cadenciaMejorada;
+            danoProyectil = danoMejorado;
+            zonaImpactoHielo = zonaImpactoHieloMejorada;
+
+            if (prefabFlechaMejora != null)
+            {
+                GameObject flecha = Instantiate(prefabFlechaMejora, transform);
+                flechaInstanciada = flecha.GetComponent<codigoFlechitaMejora>();
+                if (flechaInstanciada != null)
+                {
+                    flechaInstanciada.Inicializar(posicionOriginal, escalaOriginal);
+                }
+            }
+        }
+        else if (nivelActual == 2)
+        {
+            nivelActual = 3;
+            rangoAtaque = rangoMejoradoNivel3;
+            cadenciaFuego = cadenciaMejoradaNivel3;
+            danoProyectil = danoMejoradoNivel3;
+            zonaImpactoHielo = zonaImpactoHieloMejoradaNivel3;
+
+            if (flechaInstanciada == null && prefabFlechaMejora != null)
+            {
+                GameObject flecha = Instantiate(prefabFlechaMejora, transform);
+                flechaInstanciada = flecha.GetComponent<codigoFlechitaMejora>();
+                if (flechaInstanciada != null)
+                {
+                    flechaInstanciada.Inicializar(posicionOriginal, escalaOriginal);
+                }
+            }
+
+            if (flechaInstanciada != null)
+            {
+                flechaInstanciada.CambiarASpriteNivel3();
+            }
+        }
 
         if (sonidoMejora != null)
         {
@@ -196,19 +246,6 @@ public class CodigoAlumno : MonoBehaviour
             Destroy(audioTemporal, sonidoMejora.length + 0.1f);
         }
 
-        transform.localScale = escalaOriginal;
-
-        if (prefabFlechaMejora != null)
-        {
-            GameObject flecha = Instantiate(prefabFlechaMejora, transform);
-            codigoFlechitaMejora scriptFlecha = flecha.GetComponent<codigoFlechitaMejora>();
-            if (scriptFlecha != null)
-            {
-                scriptFlecha.Inicializar(posicionOriginal, escalaOriginal);
-            }
-        }
-
-        if (rutinaMejora != null) StopCoroutine(rutinaMejora);
         rutinaMejora = StartCoroutine(EfectoVisualMejora());
     }
 

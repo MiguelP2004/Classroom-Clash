@@ -114,7 +114,7 @@ public class GestionMejoras : MonoBehaviour
 
         if (botonNo != null) botonNo.gameObject.SetActive(true);
 
-        if (alumnoSeleccionado.estaMejorado)
+        if (alumnoSeleccionado.EstaAlMaximo())
         {
             if (botonSi != null)
             {
@@ -126,58 +126,92 @@ public class GestionMejoras : MonoBehaviour
 
             if (textoInfoMejora != null)
             {
-                textoInfoMejora.text = "\n<color=#F3FF00><size=34>NIVEL MAXIMO</size></color>";
+                List<string> lineasMax = new List<string>();
+
+                string alcanceMax = (alumnoSeleccionado.rangoAtaque * 10f).ToString("0.#", CultureInfo.InvariantCulture);
+                string cadenciaMax = alumnoSeleccionado.cadenciaFuego.ToString("0.0#", CultureInfo.InvariantCulture);
+                string golpeMax = alumnoSeleccionado.danoProyectil.ToString("0.0#", CultureInfo.InvariantCulture);
+
+                lineasMax.Add($"ALCANCE: <color=#51DBFF><size=25>{alcanceMax}</size></color>");
+                lineasMax.Add($"CADENCIA: <color=#51DBFF><size=25>{cadenciaMax}</size></color>");
+                lineasMax.Add($"GOLPE: <color=#51DBFF><size=25>{golpeMax}</size></color>");
+
+                if (alumnoSeleccionado.zonaImpactoHielo > 0f)
+                {
+                    string zonaMax = alumnoSeleccionado.zonaImpactoHielo.ToString("0.##", CultureInfo.InvariantCulture);
+                    lineasMax.Add($"ZONA HIELO: <color=#51DBFF><size=25>{zonaMax}</size></color>");
+                }
+
+                string saltoMax = (lineasMax.Count >= 4) ? "\n" : "\n\n";
+
+                textoInfoMejora.text =
+                    "<color=#F3FF00><size=25>NIVEL MAXIMO!!</size></color>" +
+                    saltoMax +
+                    string.Join("\n", lineasMax);
             }
             return;
         }
 
+        int nivelActual = alumnoSeleccionado.nivelActual;
+        int siguienteNivel = nivelActual + 1;
+        int costeSiguiente = alumnoSeleccionado.ObtenerCosteSiguienteMejora();
+
+        float rangoSiguiente = alumnoSeleccionado.ObtenerRangoSiguiente();
+        float cadenciaSiguiente = alumnoSeleccionado.ObtenerCadenciaSiguiente();
+        float danoSiguiente = alumnoSeleccionado.ObtenerDanoSiguiente();
+        float zonaSiguiente = alumnoSeleccionado.ObtenerZonaHieloSiguiente();
+
         if (botonSi != null)
         {
             botonSi.gameObject.SetActive(true);
-            botonSi.coste = alumnoSeleccionado.costeMejora;
+            botonSi.coste = costeSiguiente;
         }
 
         if (iconoCafe != null) iconoCafe.SetActive(true);
 
         if (textoInfoPrecio != null)
         {
-            textoInfoPrecio.text = alumnoSeleccionado.costeMejora.ToString();
+            textoInfoPrecio.text = costeSiguiente.ToString();
         }
 
         if (textoInfoMejora != null)
         {
             List<string> lineasMejora = new List<string>();
 
-            if (Mathf.Abs(alumnoSeleccionado.rangoMejorado - alumnoSeleccionado.rangoAtaque) > 0.001f)
+            if (Mathf.Abs(rangoSiguiente - alumnoSeleccionado.rangoAtaque) > 0.001f)
             {
                 string alcanceActual = (alumnoSeleccionado.rangoAtaque * 10f).ToString("0.#", CultureInfo.InvariantCulture);
-                string alcanceNuevo = (alumnoSeleccionado.rangoMejorado * 10f).ToString("0.#", CultureInfo.InvariantCulture);
+                string alcanceNuevo = (rangoSiguiente * 10f).ToString("0.#", CultureInfo.InvariantCulture);
                 lineasMejora.Add($"ALCANCE: {alcanceActual} -- <color=#FF5151><size=25>{alcanceNuevo}</size></color>");
             }
 
-            if (Mathf.Abs(alumnoSeleccionado.cadenciaMejorada - alumnoSeleccionado.cadenciaFuego) > 0.001f)
+            if (Mathf.Abs(cadenciaSiguiente - alumnoSeleccionado.cadenciaFuego) > 0.001f)
             {
                 string cadenciaActual = alumnoSeleccionado.cadenciaFuego.ToString("0.0#", CultureInfo.InvariantCulture);
-                string cadenciaNueva = alumnoSeleccionado.cadenciaMejorada.ToString("0.0#", CultureInfo.InvariantCulture);
+                string cadenciaNueva = cadenciaSiguiente.ToString("0.0#", CultureInfo.InvariantCulture);
                 lineasMejora.Add($"CADENCIA: {cadenciaActual} -- <color=#FF5151><size=25>{cadenciaNueva}</size></color>");
             }
 
-            if (Mathf.Abs(alumnoSeleccionado.danoMejorado - alumnoSeleccionado.danoProyectil) > 0.001f)
+            if (Mathf.Abs(danoSiguiente - alumnoSeleccionado.danoProyectil) > 0.001f)
             {
                 string golpeActual = alumnoSeleccionado.danoProyectil.ToString("0.0#", CultureInfo.InvariantCulture);
-                string golpeNuevo = alumnoSeleccionado.danoMejorado.ToString("0.0#", CultureInfo.InvariantCulture);
+                string golpeNuevo = danoSiguiente.ToString("0.0#", CultureInfo.InvariantCulture);
                 lineasMejora.Add($"GOLPE: {golpeActual} -- <color=#FF5151><size=25>{golpeNuevo}</size></color>");
             }
 
-            if (Mathf.Abs(alumnoSeleccionado.zonaImpactoHieloMejorada - alumnoSeleccionado.zonaImpactoHielo) > 0.001f)
+            if (Mathf.Abs(zonaSiguiente - alumnoSeleccionado.zonaImpactoHielo) > 0.001f)
             {
                 string zonaActual = alumnoSeleccionado.zonaImpactoHielo.ToString("0.##", CultureInfo.InvariantCulture);
-                string zonaNueva = alumnoSeleccionado.zonaImpactoHieloMejorada.ToString("0.##", CultureInfo.InvariantCulture);
+                string zonaNueva = zonaSiguiente.ToString("0.##", CultureInfo.InvariantCulture);
                 lineasMejora.Add($"ZONA HIELO: {zonaActual} -- <color=#FF5151><size=25>{zonaNueva}</size></color>");
             }
 
+            // Si hay 4 líneas, eliminamos la línea en blanco para que no se salga del papel
+            string salto = (lineasMejora.Count >= 4) ? "\n" : "\n\n";
+
             textoInfoMejora.text =
-                "Subir de nivel <color=#F3FF00><size=25>1</size></color> a <color=#51DBFF><size=25>2</size></color>?\n\n" +
+                $"Subir de nivel <color=#F3FF00><size=25>{nivelActual}</size></color> a <color=#51DBFF><size=25>{siguienteNivel}</size></color>?" +
+                salto +
                 string.Join("\n", lineasMejora);
         }
     }
@@ -201,13 +235,16 @@ public class GestionMejoras : MonoBehaviour
     {
         CodigoProfe.BloquearDisparoHastaSoltar();
 
-        if (alumnoSeleccionado == null || alumnoSeleccionado.estaMejorado) return;
+        if (alumnoSeleccionado == null || alumnoSeleccionado.EstaAlMaximo()) return;
         if (ControladorJuego.instancia == null || ControladorJuego.instancia.esGameOver || ControladorJuego.instancia.enTransicion) return;
-        if (!ControladorJuego.instancia.PuedeComprar(alumnoSeleccionado.costeMejora)) return;
 
-        ControladorJuego.instancia.GastarEnergia(alumnoSeleccionado.costeMejora);
+        int coste = alumnoSeleccionado.ObtenerCosteSiguienteMejora();
+        if (!ControladorJuego.instancia.PuedeComprar(coste)) return;
+
+        ControladorJuego.instancia.GastarEnergia(coste);
         alumnoSeleccionado.AplicarMejora();
 
+        if (botonSi != null) botonSi.ForzarDeseleccion();
         if (EventSystem.current != null)
         {
             EventSystem.current.SetSelectedGameObject(null);

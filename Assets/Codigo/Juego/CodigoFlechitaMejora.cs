@@ -3,6 +3,9 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class codigoFlechitaMejora : MonoBehaviour
 {
+    [Header("Sprites de Mejora")]
+    public Sprite spriteNivel3; // Arrastra aquí el sprite "mejora 2"
+
     [Header("Offsets de Posición")]
     public Vector2 offsetProfe = Vector2.zero;
     public Vector2 offsetAlumno = Vector2.zero;
@@ -47,6 +50,16 @@ public class codigoFlechitaMejora : MonoBehaviour
 
         AplicarTransformacion(0f);
         inicializado = true;
+    }
+
+    public void CambiarASpriteNivel3()
+    {
+        if (miSprite == null) miSprite = GetComponent<SpriteRenderer>();
+
+        if (miSprite != null && spriteNivel3 != null)
+        {
+            miSprite.sprite = spriteNivel3;
+        }
     }
 
     void LateUpdate()

@@ -105,6 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 046393a82162fde41944797f7819c324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::codigoFlechitaMejora
+  spriteNivel3: {fileID: -9081059063372452377, guid: d4c553ef4e5e3994098bd02fadf6d4f4, type: 3}
   offsetProfe: {x: -0.4, y: 0.4}
   offsetAlumno: {x: -0.4, y: 0.4}
 --- !u!114 &-94341102941156166
