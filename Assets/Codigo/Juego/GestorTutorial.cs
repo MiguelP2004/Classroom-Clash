@@ -39,6 +39,7 @@ public class GestorTutorial : MonoBehaviour
     private string msgExplicacionMejora = "LAS <color=#51DBFF><size=60>MEJORAS DEL PROFESOR</size></color> SON PERMANENTES Y MULTIPLICAN TU POTENCIA DE DISPARO PARA FRENAR GRANDES OLEADAS";
     private string msgFinal = "<color=#F3FF00><size=60>ENHORABUENA</size></color>\nHAS APRENDIDO LO BASICO\nCUIDADO QUE SE ACERCAN MAS <color=#FF5151><size=60>EXAMENES!</size></color>\nPON EN PRACTICA TUS HABILIDADES!";
     private string msgVictoria = "<color=#F3FF00><size=60>ENHORABUENA</size></color>\nHAS TERMINADO EL TUTORIAL!!";
+    private string msgVictoriaNivel = "<color=#F3FF00><size=60>ZONA DESPEJADA</size></color>\nNO PARECEN HABER MAS ENEMIGOS...";
 
     private float distanciaCamaraRecorrida = 0f;
     private bool profeHaDisparado = false;
@@ -347,17 +348,19 @@ public class GestorTutorial : MonoBehaviour
 
     public IEnumerator MostrarVictoria()
     {
-        // ¡NUEVO! Respetamos el mensaje de Enhorabuena antes de soltar el trofeo
-        yield return StartCoroutine(MostrarTexto(msgVictoria, Color.white));
-        textoTutorial.transform.localScale = new Vector3(tamañoZoomExito, tamañoZoomExito, 1f);
+        string mensajeFinal = (MenuPrincipal.nivelElegido <= 1) ? msgVictoria : msgVictoriaNivel;
+
+        yield return StartCoroutine(MostrarTexto(mensajeFinal, Color.white));
+        if (textoTutorial != null)
+        {
+            textoTutorial.transform.localScale = new Vector3(tamañoZoomExito, tamañoZoomExito, 1f);
+        }
         yield return new WaitForSeconds(4.5f);
         yield return StartCoroutine(OcultarTexto());
         yield return new WaitForSeconds(0.5f);
 
-        if (objetoTrofeo != null)
-        {
-            objetoTrofeo.SetActive(true);
-        }
+        if (objetoTrofeo != null) objetoTrofeo.SetActive(true);
+
         yield return new WaitForSeconds(3f);
     }
 
