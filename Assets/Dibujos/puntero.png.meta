@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c01c1cc1e28170a46840d4feb6c617c4
+guid: 40b98b6728011f044b51a5960b485772
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3058218701513599181
-    second: cursor_guante_click_64_0
+      213: -93593130185690281
+    second: puntero_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -57,7 +57,7 @@ TextureImporter:
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
-  textureType: 0
+  textureType: 7
   textureShape: 1
   singleChannelComponent: 0
   flipbookRows: 1
@@ -72,10 +72,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 512
     resizeAlgorithm: 0
-    textureFormat: 4
-    textureCompression: 1
+    textureFormat: -1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cursor_guante_click_64_0
+      name: puntero_0
       rect:
         serializedVersion: 2
-        x: 11
-        y: 0
-        width: 53
-        height: 64
+        x: 30
+        y: 5
+        width: 219
+        height: 305
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dc8ac25b4b9f07a20800000000000000
-      internalID: 3058218701513599181
+      spriteID: 7537dd14b8d73bef0800000000000000
+      internalID: -93593130185690281
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      cursor_guante_click_64_0: 3058218701513599181
+      puntero_0: -93593130185690281
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

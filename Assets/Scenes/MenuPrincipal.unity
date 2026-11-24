@@ -2573,12 +2573,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4677d9fa99f7a8c4da9af2db93bad85c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControladorCursor
-  cursorMano: {fileID: 2800000, guid: 4472cce62d61ae84cb11b4b23fef452d, type: 3}
-  cursorClick: {fileID: 2800000, guid: c01c1cc1e28170a46840d4feb6c617c4, type: 3}
-  cursorDiana: {fileID: 2800000, guid: 64427bbf47ebfd34f9c7be62a5417add, type: 3}
-  puntoMano: {x: 18, y: 2}
-  puntoClick: {x: 18, y: 2}
-  puntoDiana: {x: 32, y: 32}
+  cursorMano: {fileID: 2800000, guid: 40b98b6728011f044b51a5960b485772, type: 3}
 --- !u!4 &738693877
 Transform:
   m_ObjectHideFlags: 0

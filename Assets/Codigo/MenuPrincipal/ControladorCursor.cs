@@ -1,74 +1,86 @@
-
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 
 public class ControladorCursor : MonoBehaviour
 {
-    [Header("Cursores del menú")]
+    public static ControladorCursor instancia;
     public Texture2D cursorMano;
-    public Texture2D cursorClick;
-
-    [Header("Cursor del juego")]
-    public Texture2D cursorDiana;
-
-    [Header("Puntos de referencia")]
-    public Vector2 puntoMano = new Vector2(18, 2);
-    public Vector2 puntoClick = new Vector2(18, 2);
-    public Vector2 puntoDiana = new Vector2(32, 32);
-
-    private bool estaEnMenu;
+    private int tamanoCursor = 95;
+    private Vector2 puntoClickRelativo = new Vector2(0.75f, 0.1f);
+    private Texture2D texturaFinal;
 
     void Awake()
     {
+        if (instancia != null && instancia != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instancia = this;
         DontDestroyOnLoad(gameObject);
+
+        AplicarCursor();
     }
 
-    void OnEnable()
+    void OnApplicationFocus(bool tieneFoco)
     {
-        SceneManager.sceneLoaded += AlCargarEscena;
-    }
-
-    void OnDisable()
-    {
-        SceneManager.sceneLoaded -= AlCargarEscena;
-    }
-
-    void Start()
-    {
-        CambiarEscena(SceneManager.GetActiveScene().name);
-    }
-
-    void Update()
-    {
-        if (!estaEnMenu) return;
-
-        if (Mouse.current != null && Mouse.current.leftButton.isPressed)
+        if (tieneFoco)
         {
-            Cursor.SetCursor(cursorClick, puntoClick, CursorMode.Auto);
-        }
-        else
-        {
-            Cursor.SetCursor(cursorMano, puntoMano, CursorMode.Auto);
+            AplicarCursor();
         }
     }
 
-    void AlCargarEscena(Scene escena, LoadSceneMode modo)
+    void OnDestroy()
     {
-        CambiarEscena(escena.name);
+        if (texturaFinal != null)
+        {
+            Destroy(texturaFinal);
+        }
     }
 
-    void CambiarEscena(string nombreEscena)
+    private void AplicarCursor()
     {
-        estaEnMenu = nombreEscena == "MenuPrincipal";
+        if (cursorMano == null) return;
 
-        if (estaEnMenu)
+        if (texturaFinal == null)
         {
-            Cursor.SetCursor(cursorMano, puntoMano, CursorMode.Auto);
+            texturaFinal = RedimensionarTextura(cursorMano, Mathf.Max(16, tamanoCursor));
         }
-        else
+
+        Vector2 hotspot = new Vector2(
+            texturaFinal.width * Mathf.Clamp01(puntoClickRelativo.x),
+            texturaFinal.height * Mathf.Clamp01(puntoClickRelativo.y)
+        );
+
+        Cursor.visible = true;
+        Cursor.SetCursor(texturaFinal, hotspot, CursorMode.ForceSoftware);
+    }
+
+    private Texture2D RedimensionarTextura(Texture2D origen, int tamanoMax)
+    {
+        float escala = (float)tamanoMax / Mathf.Max(origen.width, origen.height);
+        int nuevoAncho = Mathf.Max(1, Mathf.RoundToInt(origen.width * escala));
+        int nuevoAlto = Mathf.Max(1, Mathf.RoundToInt(origen.height * escala));
+
+        Texture2D resultado = new Texture2D(nuevoAncho, nuevoAlto, TextureFormat.RGBA32, false, true);
+        resultado.wrapMode = TextureWrapMode.Clamp;
+        resultado.filterMode = FilterMode.Bilinear;
+
+        Color[] pixeles = new Color[nuevoAncho * nuevoAlto];
+
+        for (int y = 0; y < nuevoAlto; y++)
         {
-            Cursor.SetCursor(cursorDiana, puntoDiana, CursorMode.Auto);
+            float v = (y + 0.5f) / nuevoAlto;
+            for (int x = 0; x < nuevoAncho; x++)
+            {
+                float u = (x + 0.5f) / nuevoAncho;
+                pixeles[y * nuevoAncho + x] = origen.GetPixelBilinear(u, v);
+            }
         }
+
+        resultado.SetPixels(pixeles);
+        resultado.Apply();
+
+        return resultado;
     }
 }
