@@ -948,8 +948,6 @@ MonoBehaviour:
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
-  "tama\xF1oNormal": 1
-  "tama\xF1oAgrandado": 1.1
   tiempoCooldown: 0
   imagenCooldown: {fileID: 0}
 --- !u!114 &295495432
@@ -1208,8 +1206,6 @@ MonoBehaviour:
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
-  "tama\xF1oNormal": 1
-  "tama\xF1oAgrandado": 1.1
   tiempoCooldown: 0
   imagenCooldown: {fileID: 0}
 --- !u!114 &337456676
@@ -1383,8 +1379,6 @@ MonoBehaviour:
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
-  "tama\xF1oNormal": 1
-  "tama\xF1oAgrandado": 1.1
   tiempoCooldown: 0
   imagenCooldown: {fileID: 0}
 --- !u!114 &372739213
@@ -1957,8 +1951,6 @@ MonoBehaviour:
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
-  "tama\xF1oNormal": 1
-  "tama\xF1oAgrandado": 1.1
   tiempoCooldown: 0
   imagenCooldown: {fileID: 0}
 --- !u!114 &595444253
@@ -2858,8 +2850,6 @@ MonoBehaviour:
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
-  "tama\xF1oNormal": 1
-  "tama\xF1oAgrandado": 1.1
   tiempoCooldown: 0
   imagenCooldown: {fileID: 0}
 --- !u!114 &822953477
@@ -3339,8 +3329,6 @@ MonoBehaviour:
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
-  "tama\xF1oNormal": 1
-  "tama\xF1oAgrandado": 1.1
   tiempoCooldown: 0
   imagenCooldown: {fileID: 0}
 --- !u!114 &1112802327
@@ -4461,8 +4449,6 @@ MonoBehaviour:
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
-  "tama\xF1oNormal": 1
-  "tama\xF1oAgrandado": 1.1
   tiempoCooldown: 0
   imagenCooldown: {fileID: 0}
 --- !u!114 &1336222756
@@ -5101,8 +5087,6 @@ MonoBehaviour:
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
-  "tama\xF1oNormal": 1
-  "tama\xF1oAgrandado": 1.1
   tiempoCooldown: 0
   imagenCooldown: {fileID: 0}
 --- !u!114 &1514145765
@@ -5231,7 +5215,9 @@ MonoBehaviour:
   tiposDeAlumnos:
   - {fileID: 1783917996244953036, guid: ca99e6558c915d04dbb564a4aa1d27cf, type: 3}
   - {fileID: 1783917996244953036, guid: b1a8b5ac942e5ab48b01240c6cf6bcfb, type: 3}
-  cantidadAlumnosAColocar: 5
+  - {fileID: 1783917996244953036, guid: b2588a07c3713d2469e327561d002f38, type: 3}
+  - {fileID: 1783917996244953036, guid: f5f62efa04028194389b35e1057814fe, type: 3}
+  cantidadAlumnosAColocar: 6
   posiblesPosiciones:
   - x: -8.747
     y: -2.282
@@ -6092,8 +6078,6 @@ MonoBehaviour:
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
-  "tama\xF1oNormal": 1
-  "tama\xF1oAgrandado": 1.1
   tiempoCooldown: 0
   imagenCooldown: {fileID: 0}
 --- !u!114 &1976204975
@@ -6421,8 +6405,6 @@ MonoBehaviour:
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
-  "tama\xF1oNormal": 1
-  "tama\xF1oAgrandado": 1.1
   tiempoCooldown: 0
   imagenCooldown: {fileID: 0}
 --- !u!114 &2013314325
@@ -6942,8 +6924,6 @@ MonoBehaviour:
   bloqueadoPorTutorial: 0
   forzadoActivo: 0
   compradoPermanente: 0
-  "tama\xF1oNormal": 1
-  "tama\xF1oAgrandado": 1.1
   tiempoCooldown: 0
   imagenCooldown: {fileID: 0}
 --- !u!114 &2131091602

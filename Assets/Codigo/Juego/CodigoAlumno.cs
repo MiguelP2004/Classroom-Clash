@@ -5,35 +5,49 @@ using System.Collections;
 
 public class CodigoAlumno : MonoBehaviour
 {
-    [Header("Estadísticas del Alumno")]
-    public float rangoAtaque = 3f;
-    public float velocidadGiro = 6f;
+    public enum TipoAlumno { Basico, Hielo, Boomerang, Basket }
+
+    public GameObject proyectilPrefab;
+    public GameObject prefabFlechaMejora;
+    public AudioClip sonidoMejora;
+    private float velocidadGiro = 6f;
 
     [Header("Disparo")]
-    public GameObject proyectilPrefab;
+    public float rangoAtaque = 3f;
     public float cadenciaFuego = 1.2f;
     public float danoProyectil = 1f;
     public float zonaImpactoHielo = 0f;
+    public int maxImpactosBoomerang = 0;
+    public float radioZonaBasket = 0f;
+    public float danoAreaBasket = 0f;
+    public float duracionAturdimientoBasket = 0f;
+
 
     [Header("Mejora Nivel 2")]
-    public int costeMejora = 30;
     public float rangoMejorado = 3.5f;
     public float cadenciaMejorada = 1.0f;
     public float danoMejorado = 1.2f;
     public float zonaImpactoHieloMejorada = 0f;
-    public GameObject prefabFlechaMejora;
-    public AudioClip sonidoMejora;
+    public int maxImpactosBoomerangMejorado = 0;
+    public float radioZonaBasketMejorado = 0f;
+    public float danoAreaBasketMejorado = 0f;
+    public float duracionAturdimientoBasketMejorada = 0f;
+    public int costeMejora = 30;
 
     [Header("Mejora Nivel 3")]
-    public int costeMejoraNivel3 = 50;
     public float rangoMejoradoNivel3 = 4.0f;
     public float cadenciaMejoradaNivel3 = 0.8f;
     public float danoMejoradoNivel3 = 1.5f;
     public float zonaImpactoHieloMejoradaNivel3 = 0f;
+    public int maxImpactosBoomerangNivel3 = 0;
+    public float radioZonaBasketNivel3 = 0f;
+    public float danoAreaBasketNivel3 = 0f;
+    public float duracionAturdimientoBasketNivel3 = 0f;
+    public int costeMejoraNivel3 = 50;
 
     [Header("Brillo Selección (Coseno)")]
     public float velocidadBrilloSeleccion = 5f;
-    public Color colorBrilloSeleccion = new Color(1f, 0.9f, 0.55f, 1f);
+    public Color colorBrilloSeleccion = new Color(0.28f, 1f, 0f, 1f);
 
     private float fuerzaRetroceso = 0.1f;
     private float tiempoAtras = 0.1f;
@@ -57,12 +71,31 @@ public class CodigoAlumno : MonoBehaviour
     private SpriteRenderer miSpriteRenderer;
     private codigoFlechitaMejora flechaInstanciada;
 
+    public TipoAlumno ObtenerTipoAlumno()
+    {
+        if (proyectilPrefab != null)
+        {
+            CodigoLapiz lapiz = proyectilPrefab.GetComponent<CodigoLapiz>();
+            if (lapiz != null)
+            {
+                if (lapiz.esHielo) return TipoAlumno.Hielo;
+                if (lapiz.esBoomerang) return TipoAlumno.Boomerang;
+                if (lapiz.esBasket) return TipoAlumno.Basket;
+            }
+        }
+        return TipoAlumno.Basico;
+    }
+
     public bool EstaAlMaximo() => nivelActual >= 3;
     public int ObtenerCosteSiguienteMejora() => (nivelActual == 1) ? costeMejora : costeMejoraNivel3;
     public float ObtenerRangoSiguiente() => (nivelActual == 1) ? rangoMejorado : rangoMejoradoNivel3;
     public float ObtenerCadenciaSiguiente() => (nivelActual == 1) ? cadenciaMejorada : cadenciaMejoradaNivel3;
     public float ObtenerDanoSiguiente() => (nivelActual == 1) ? danoMejorado : danoMejoradoNivel3;
     public float ObtenerZonaHieloSiguiente() => (nivelActual == 1) ? zonaImpactoHieloMejorada : zonaImpactoHieloMejoradaNivel3;
+    public int ObtenerMaxImpactosSiguiente() => (nivelActual == 1) ? maxImpactosBoomerangMejorado : maxImpactosBoomerangNivel3;
+    public float ObtenerRadioBasketSiguiente() => (nivelActual == 1) ? radioZonaBasketMejorado : radioZonaBasketNivel3;
+    public float ObtenerDanoAreaBasketSiguiente() => (nivelActual == 1) ? danoAreaBasketMejorado : danoAreaBasketNivel3;
+    public float ObtenerAturdimientoBasketSiguiente() => (nivelActual == 1) ? duracionAturdimientoBasketMejorada : duracionAturdimientoBasketNivel3;
 
     void Awake()
     {
@@ -148,7 +181,7 @@ public class CodigoAlumno : MonoBehaviour
             if (rutinaMejora == null && miSpriteRenderer != null)
             {
                 tiempoCosenoSeleccion += Time.deltaTime * velocidadBrilloSeleccion;
-                float ondaCoseno = (1f - Mathf.Cos(tiempoCosenoSeleccion)) * 0.5f;
+                float ondaCoseno = (1f - Mathf.Cos(tiempoCosenoSeleccion));
                 miSpriteRenderer.color = Color.Lerp(Color.white, colorBrilloSeleccion, ondaCoseno);
             }
         }
@@ -191,13 +224,29 @@ public class CodigoAlumno : MonoBehaviour
         if (rutinaMejora != null) StopCoroutine(rutinaMejora);
         transform.localScale = escalaOriginal;
 
+        TipoAlumno tipo = ObtenerTipoAlumno();
+
         if (nivelActual == 1)
         {
             nivelActual = 2;
             rangoAtaque = rangoMejorado;
             cadenciaFuego = cadenciaMejorada;
             danoProyectil = danoMejorado;
-            zonaImpactoHielo = zonaImpactoHieloMejorada;
+
+            if (tipo == TipoAlumno.Hielo && zonaImpactoHieloMejorada > 0f)
+            {
+                zonaImpactoHielo = zonaImpactoHieloMejorada;
+            }
+            else if (tipo == TipoAlumno.Boomerang && maxImpactosBoomerangMejorado > 0)
+            {
+                maxImpactosBoomerang = maxImpactosBoomerangMejorado;
+            }
+            else if (tipo == TipoAlumno.Basket)
+            {
+                if (radioZonaBasketMejorado > 0f) radioZonaBasket = radioZonaBasketMejorado;
+                if (danoAreaBasketMejorado > 0f) danoAreaBasket = danoAreaBasketMejorado;
+                if (duracionAturdimientoBasketMejorada > 0f) duracionAturdimientoBasket = duracionAturdimientoBasketMejorada;
+            }
 
             if (prefabFlechaMejora != null)
             {
@@ -215,7 +264,21 @@ public class CodigoAlumno : MonoBehaviour
             rangoAtaque = rangoMejoradoNivel3;
             cadenciaFuego = cadenciaMejoradaNivel3;
             danoProyectil = danoMejoradoNivel3;
-            zonaImpactoHielo = zonaImpactoHieloMejoradaNivel3;
+
+            if (tipo == TipoAlumno.Hielo && zonaImpactoHieloMejoradaNivel3 > 0f)
+            {
+                zonaImpactoHielo = zonaImpactoHieloMejoradaNivel3;
+            }
+            else if (tipo == TipoAlumno.Boomerang && maxImpactosBoomerangNivel3 > 0)
+            {
+                maxImpactosBoomerang = maxImpactosBoomerangNivel3;
+            }
+            else if (tipo == TipoAlumno.Basket)
+            {
+                if (radioZonaBasketNivel3 > 0f) radioZonaBasket = radioZonaBasketNivel3;
+                if (danoAreaBasketNivel3 > 0f) danoAreaBasket = danoAreaBasketNivel3;
+                if (duracionAturdimientoBasketNivel3 > 0f) duracionAturdimientoBasket = duracionAturdimientoBasketNivel3;
+            }
 
             if (flechaInstanciada == null && prefabFlechaMejora != null)
             {
@@ -326,8 +389,24 @@ public class CodigoAlumno : MonoBehaviour
 
         if (scriptLapiz != null)
         {
+            TipoAlumno tipo = ObtenerTipoAlumno();
+
             scriptLapiz.daño = danoProyectil;
-            scriptLapiz.radioZonaHielo = zonaImpactoHielo;
+            scriptLapiz.radioZonaHielo = (tipo == TipoAlumno.Hielo) ? zonaImpactoHielo : 0f;
+
+            if (tipo == TipoAlumno.Boomerang && maxImpactosBoomerang > 0)
+            {
+                scriptLapiz.maxImpactosPorTramo = maxImpactosBoomerang;
+            }
+
+            if (tipo == TipoAlumno.Basket)
+            {
+                scriptLapiz.radioZonaBasket = radioZonaBasket;
+                scriptLapiz.danoAreaBasket = danoAreaBasket;
+                scriptLapiz.duracionAturdimientoBasket = duracionAturdimientoBasket;
+            }
+
+            scriptLapiz.AsignarOrigen(this.transform);
             scriptLapiz.AsignarObjetivo(objetivoActual);
         }
 

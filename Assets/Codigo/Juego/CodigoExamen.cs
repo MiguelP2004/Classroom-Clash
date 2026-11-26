@@ -35,6 +35,9 @@ public class codigoExamen : MonoBehaviour
     private Color colorCongelado = new Color(0f, 171f / 255f, 1f, 1f);
     private static int ultimoFrameSonidoCongelacion = -1;
 
+    // Aturdimiento (Basket)
+    private float tiempoRestanteAturdimiento = 0f;
+
     [Header("Sombra")]
     public GameObject prefabSombra;
 
@@ -109,6 +112,13 @@ public class codigoExamen : MonoBehaviour
             }
         }
 
+        // Gestión del Aturdimiento: se queda totalmente quieto
+        if (tiempoRestanteAturdimiento > 0f)
+        {
+            tiempoRestanteAturdimiento -= Time.deltaTime;
+            return;
+        }
+
         // Movimiento
         if (ruta != null && ruta.pointCount > 0 && indicePuntoActual < ruta.pointCount)
         {
@@ -155,13 +165,27 @@ public class codigoExamen : MonoBehaviour
     {
         if (estaMuriendo) return;
 
-        tiempoBalanceo += Time.deltaTime;
-        float anguloActual = inclinacionMaxima * Mathf.Sin(tiempoBalanceo * velocidadBalanceo);
-        transform.rotation = Quaternion.Euler(0, 0, anguloActual);
+        // Mientras está aturdido no avanza el balanceo y mantiene el último ángulo exacto
+        if (tiempoRestanteAturdimiento <= 0f)
+        {
+            tiempoBalanceo += Time.deltaTime;
+            float anguloActual = inclinacionMaxima * Mathf.Sin(tiempoBalanceo * velocidadBalanceo);
+            transform.rotation = Quaternion.Euler(0, 0, anguloActual);
+        }
 
         if (canvasBarraVida != null && canvasBarraVida.activeSelf)
         {
             canvasBarraVida.transform.rotation = Quaternion.identity;
+        }
+    }
+
+    public void AplicarAturdimiento(float duracion)
+    {
+        if (estaMuriendo) return;
+
+        if (duracion > tiempoRestanteAturdimiento)
+        {
+            tiempoRestanteAturdimiento = duracion;
         }
     }
 
@@ -190,7 +214,6 @@ public class codigoExamen : MonoBehaviour
                 Destroy(audioTemporal, sonidoCongelacion.length + 0.1f);
             }
 
-            // Si el examen no está recibiendo daño (parpadeo rojo) en este instante, le pintamos el azul
             if (rutinaGolpe == null)
             {
                 for (int i = 0; i < todosLosSprites.Length; i++)
@@ -293,7 +316,6 @@ public class codigoExamen : MonoBehaviour
                 if (todosLosSprites[i] != null)
                 {
                     Color colorDestino = congelado ? Color.Lerp(coloresBase[i], colorCongelado, 0.7f) : coloresBase[i];
-                    // La mezcla va del ROJO PURO al color final (base o azulado)
                     todosLosSprites[i].color = Color.Lerp(colorDanio, colorDestino, t);
                 }
             }

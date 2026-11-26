@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2752191, y: 0.29030776, z: 1}
+  m_LocalScale: {x: 0.28328303, y: 0.29881376, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -108,24 +108,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc061b3a556b3aa4c8844b10a3e03919, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CodigoAlumno
-  rangoAtaque: 3
-  velocidadGiro: 6
   proyectilPrefab: {fileID: 5888016210218751789, guid: 920d453ab7b056d469a72e9e2b83fdca, type: 3}
+  prefabFlechaMejora: {fileID: 3127360624936882420, guid: 78e8961aeea147e468dc12cb1e8fd8f1, type: 3}
+  sonidoMejora: {fileID: 8300000, guid: 1529af9173d1f0c4682530a9bdbf7a21, type: 3}
+  rangoAtaque: 3
   cadenciaFuego: 1.2
   danoProyectil: 1
   zonaImpactoHielo: 0
-  costeMejora: 50
-  rangoMejorado: 3.25
+  maxImpactosBoomerang: 0
+  radioZonaBasket: 0
+  danoAreaBasket: 0
+  duracionAturdimientoBasket: 0
+  rangoMejorado: 3.2
   cadenciaMejorada: 1
-  danoMejorado: 1
+  danoMejorado: 1.25
   zonaImpactoHieloMejorada: 0.5
-  prefabFlechaMejora: {fileID: 3127360624936882420, guid: 78e8961aeea147e468dc12cb1e8fd8f1, type: 3}
-  sonidoMejora: {fileID: 8300000, guid: 1529af9173d1f0c4682530a9bdbf7a21, type: 3}
-  costeMejoraNivel3: 50
+  maxImpactosBoomerangMejorado: 0
+  radioZonaBasketMejorado: 0
+  danoAreaBasketMejorado: 0
+  duracionAturdimientoBasketMejorada: 0
+  costeMejora: 50
   rangoMejoradoNivel3: 3.5
   cadenciaMejoradaNivel3: 0.8
-  danoMejoradoNivel3: 1.25
+  danoMejoradoNivel3: 1.5
   zonaImpactoHieloMejoradaNivel3: 0.75
+  maxImpactosBoomerangNivel3: 0
+  radioZonaBasketNivel3: 0
+  danoAreaBasketNivel3: 0
+  duracionAturdimientoBasketNivel3: 0
+  costeMejoraNivel3: 60
   velocidadBrilloSeleccion: 5
   colorBrilloSeleccion: {r: 1, g: 1, b: 0, a: 1}
   estaColocado: 0
@@ -299,7 +310,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 4.11, y: 2.55}
+  m_Size: {x: 4.4, y: 2.7}
   m_EdgeRadius: 0
 --- !u!114 &1561439698371988768
 MonoBehaviour:

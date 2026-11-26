@@ -114,6 +114,8 @@ public class GestionMejoras : MonoBehaviour
 
         if (botonNo != null) botonNo.gameObject.SetActive(true);
 
+        CodigoAlumno.TipoAlumno tipo = alumnoSeleccionado.ObtenerTipoAlumno();
+
         if (alumnoSeleccionado.EstaAlMaximo())
         {
             if (botonSi != null)
@@ -136,18 +138,35 @@ public class GestionMejoras : MonoBehaviour
                 lineasMax.Add($"CADENCIA: <color=#51DBFF><size=25>{cadenciaMax}</size></color>");
                 lineasMax.Add($"GOLPE: <color=#51DBFF><size=25>{golpeMax}</size></color>");
 
-                if (alumnoSeleccionado.zonaImpactoHielo > 0f)
+                if (tipo == CodigoAlumno.TipoAlumno.Hielo && alumnoSeleccionado.zonaImpactoHielo > 0f)
                 {
                     string zonaMax = alumnoSeleccionado.zonaImpactoHielo.ToString("0.##", CultureInfo.InvariantCulture);
                     lineasMax.Add($"ZONA HIELO: <color=#51DBFF><size=25>{zonaMax}</size></color>");
                 }
+                else if (tipo == CodigoAlumno.TipoAlumno.Boomerang && alumnoSeleccionado.maxImpactosBoomerang > 0)
+                {
+                    lineasMax.Add($"IMPACTOS: <color=#51DBFF><size=25>{alumnoSeleccionado.maxImpactosBoomerang}</size></color>");
+                }
+                else if (tipo == CodigoAlumno.TipoAlumno.Basket)
+                {
+                    if (alumnoSeleccionado.radioZonaBasket > 0f)
+                    {
+                        string areaMax = alumnoSeleccionado.radioZonaBasket.ToString("0.##", CultureInfo.InvariantCulture);
+                        lineasMax.Add($"AREA: <color=#51DBFF><size=25>{areaMax}</size></color>");
+                    }
+                    if (alumnoSeleccionado.danoAreaBasket > 0f)
+                    {
+                        string golpeAreaMax = alumnoSeleccionado.danoAreaBasket.ToString("0.0#", CultureInfo.InvariantCulture);
+                        lineasMax.Add($"GOLPE AREA: <color=#51DBFF><size=25>{golpeAreaMax}</size></color>");
+                    }
+                    if (alumnoSeleccionado.duracionAturdimientoBasket > 0f)
+                    {
+                        string aturdirMax = alumnoSeleccionado.duracionAturdimientoBasket.ToString("0.##", CultureInfo.InvariantCulture);
+                        lineasMax.Add($"ATURDIR: <color=#51DBFF><size=25>{aturdirMax}</size></color>");
+                    }
+                }
 
-                string saltoMax = (lineasMax.Count >= 4) ? "\n" : "\n\n";
-
-                textoInfoMejora.text =
-                    "<color=#F3FF00><size=25>NIVEL MAXIMO!!</size></color>" +
-                    saltoMax +
-                    string.Join("\n", lineasMax);
+                textoInfoMejora.text = FormatearBloqueStats("<color=#F3FF00><size=25>NIVEL MAXIMO!!</size></color>", lineasMax);
             }
             return;
         }
@@ -159,7 +178,6 @@ public class GestionMejoras : MonoBehaviour
         float rangoSiguiente = alumnoSeleccionado.ObtenerRangoSiguiente();
         float cadenciaSiguiente = alumnoSeleccionado.ObtenerCadenciaSiguiente();
         float danoSiguiente = alumnoSeleccionado.ObtenerDanoSiguiente();
-        float zonaSiguiente = alumnoSeleccionado.ObtenerZonaHieloSiguiente();
 
         if (botonSi != null)
         {
@@ -199,21 +217,72 @@ public class GestionMejoras : MonoBehaviour
                 lineasMejora.Add($"GOLPE: {golpeActual} -- <color=#FF5151><size=25>{golpeNuevo}</size></color>");
             }
 
-            if (Mathf.Abs(zonaSiguiente - alumnoSeleccionado.zonaImpactoHielo) > 0.001f)
+            if (tipo == CodigoAlumno.TipoAlumno.Hielo)
             {
-                string zonaActual = alumnoSeleccionado.zonaImpactoHielo.ToString("0.##", CultureInfo.InvariantCulture);
-                string zonaNueva = zonaSiguiente.ToString("0.##", CultureInfo.InvariantCulture);
-                lineasMejora.Add($"ZONA HIELO: {zonaActual} -- <color=#FF5151><size=25>{zonaNueva}</size></color>");
+                float zonaSiguiente = alumnoSeleccionado.ObtenerZonaHieloSiguiente();
+                if (zonaSiguiente > 0f && Mathf.Abs(zonaSiguiente - alumnoSeleccionado.zonaImpactoHielo) > 0.001f)
+                {
+                    string zonaActual = alumnoSeleccionado.zonaImpactoHielo.ToString("0.##", CultureInfo.InvariantCulture);
+                    string zonaNueva = zonaSiguiente.ToString("0.##", CultureInfo.InvariantCulture);
+                    lineasMejora.Add($"ZONA HIELO: {zonaActual} -- <color=#FF5151><size=25>{zonaNueva}</size></color>");
+                }
+            }
+            else if (tipo == CodigoAlumno.TipoAlumno.Boomerang)
+            {
+                int impactosSiguiente = alumnoSeleccionado.ObtenerMaxImpactosSiguiente();
+                if (impactosSiguiente > 0 && impactosSiguiente != alumnoSeleccionado.maxImpactosBoomerang)
+                {
+                    lineasMejora.Add($"IMPACTOS: {alumnoSeleccionado.maxImpactosBoomerang} -- <color=#FF5151><size=25>{impactosSiguiente}</size></color>");
+                }
+            }
+            else if (tipo == CodigoAlumno.TipoAlumno.Basket)
+            {
+                float radioBasketSiguiente = alumnoSeleccionado.ObtenerRadioBasketSiguiente();
+                if (radioBasketSiguiente > 0f && Mathf.Abs(radioBasketSiguiente - alumnoSeleccionado.radioZonaBasket) > 0.001f)
+                {
+                    string areaActual = alumnoSeleccionado.radioZonaBasket.ToString("0.##", CultureInfo.InvariantCulture);
+                    string areaNueva = radioBasketSiguiente.ToString("0.##", CultureInfo.InvariantCulture);
+                    lineasMejora.Add($"AREA: {areaActual} -- <color=#FF5151><size=25>{areaNueva}</size></color>");
+                }
+
+                float danoAreaBasketSiguiente = alumnoSeleccionado.ObtenerDanoAreaBasketSiguiente();
+                if (danoAreaBasketSiguiente > 0f && Mathf.Abs(danoAreaBasketSiguiente - alumnoSeleccionado.danoAreaBasket) > 0.001f)
+                {
+                    string golpeAreaActual = alumnoSeleccionado.danoAreaBasket.ToString("0.0#", CultureInfo.InvariantCulture);
+                    string golpeAreaNuevo = danoAreaBasketSiguiente.ToString("0.0#", CultureInfo.InvariantCulture);
+                    lineasMejora.Add($"GOLPE AREA: {golpeAreaActual} -- <color=#FF5151><size=25>{golpeAreaNuevo}</size></color>");
+                }
+
+                float aturdimientoSiguiente = alumnoSeleccionado.ObtenerAturdimientoBasketSiguiente();
+                if (aturdimientoSiguiente > 0f && Mathf.Abs(aturdimientoSiguiente - alumnoSeleccionado.duracionAturdimientoBasket) > 0.001f)
+                {
+                    string aturdirActual = alumnoSeleccionado.duracionAturdimientoBasket.ToString("0.##", CultureInfo.InvariantCulture);
+                    string aturdirNuevo = aturdimientoSiguiente.ToString("0.##", CultureInfo.InvariantCulture);
+                    lineasMejora.Add($"ATURDIR: {aturdirActual}s -- <color=#FF5151><size=25>{aturdirNuevo}s</size></color>");
+                }
             }
 
-            // Si hay 4 líneas, eliminamos la línea en blanco para que no se salga del papel
-            string salto = (lineasMejora.Count >= 4) ? "\n" : "\n\n";
-
-            textoInfoMejora.text =
-                $"Subir de nivel <color=#F3FF00><size=25>{nivelActual}</size></color> a <color=#51DBFF><size=25>{siguienteNivel}</size></color>?" +
-                salto +
-                string.Join("\n", lineasMejora);
+            string titulo = $"Subir de nivel <color=#F3FF00><size=25>{nivelActual}</size></color> a <color=#51DBFF><size=25>{siguienteNivel}</size></color>?";
+            textoInfoMejora.text = FormatearBloqueStats(titulo, lineasMejora);
         }
+    }
+
+    private string FormatearBloqueStats(string titulo, List<string> lineas)
+    {
+        string salto = (lineas.Count >= 4) ? "\n" : "\n\n";
+        string cuerpo = string.Join("\n", lineas);
+
+        if (lineas.Count >= 6)
+        {
+            titulo = "<size=19>" + titulo.Replace("<size=25>", "<size=22>") + "</size>";
+            cuerpo = "<size=16>" + cuerpo.Replace("<size=25>", "<size=19>") + "</size>";
+        }
+        else if (lineas.Count == 5)
+        {
+            cuerpo = "<size=18>" + cuerpo.Replace("<size=25>", "<size=22>") + "</size>";
+        }
+
+        return titulo + salto + cuerpo;
     }
 
     private void AbrirPanelDesdeAbajo()

@@ -9,6 +9,8 @@ public class GestorColocacion : MonoBehaviour
 
     public GameObject alumnoPrefab;
     public GameObject alumnoHieloPrefab;
+    public GameObject alumnoBoomerangPrefab;
+    public GameObject alumnoCañonPrefab;
     public Sprite spriteBasura; 
     public int costeAlumno1 = 20;
 
@@ -88,6 +90,11 @@ public class GestorColocacion : MonoBehaviour
 
     private bool EsPosicionValida(Vector2 posicion)
     {
+        if (posicion.y > 3.8f || posicion.y < -3.6f)
+        {
+            return false;
+        }
+
         if (colliderCamino != null)
         {
             Vector2 puntoMasCercano = colliderCamino.ClosestPoint(posicion);
@@ -136,9 +143,19 @@ public class GestorColocacion : MonoBehaviour
         CancelarAccion();
 
         GameObject prefabAInstanciar = alumnoPrefab;
-        if (botonQueLlama != null && botonQueLlama.name.ToLower().Contains("hielo") && alumnoHieloPrefab != null)
-        {
-            prefabAInstanciar = alumnoHieloPrefab;
+        if (botonQueLlama != null) {
+            if (botonQueLlama.name.ToLower().Contains("hielo") && alumnoHieloPrefab != null)
+            {
+                prefabAInstanciar = alumnoHieloPrefab;
+            } 
+            else if (botonQueLlama.name.ToLower().Contains("boomerang") && alumnoBoomerangPrefab != null)
+            {
+                prefabAInstanciar = alumnoBoomerangPrefab;
+            } 
+            else if (botonQueLlama.name.ToLower().Contains("cañon") && alumnoCañonPrefab != null)
+            {
+                prefabAInstanciar = alumnoCañonPrefab;
+            }
         }
 
         objetoEnRaton = Instantiate(prefabAInstanciar);

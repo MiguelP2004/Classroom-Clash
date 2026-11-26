@@ -5081,7 +5081,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 3
       scalar: 4
-      minScalar: 2.5
+      minScalar: 1.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -10006,6 +10006,13 @@ MonoBehaviour:
   esHielo: 1
   prefabParticulasZonaHielo: {fileID: 2091053850403160443}
   radioZonaHielo: 0
+  esBoomerang: 0
+  maxImpactosPorTramo: 3
+  esBasket: 0
+  radioZonaBasket: 1.5
+  danoAreaBasket: 1.5
+  duracionAturdimientoBasket: 0.5
+  prefabParticulasZonaBasket: {fileID: 0}
   prefabImpacto: {fileID: 2240418902598651553, guid: e93f42a4524e4ac4ea9afda92f7555ef, type: 3}
   golpes:
   - {fileID: 8300000, guid: e4df6e295c942f54f8474e161aab2859, type: 3}

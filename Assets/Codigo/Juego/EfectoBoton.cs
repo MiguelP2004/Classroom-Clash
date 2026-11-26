@@ -29,9 +29,8 @@ public class EfectoBoton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [HideInInspector] public bool forzadoActivo = false;
     [HideInInspector] public bool compradoPermanente = false;
 
-    [Header("Escala")]
-    public float tamañoNormal = 1f;
-    public float tamañoAgrandado = 1.05f;
+    private float tamañoNormal = 1f;
+    private float tamañoAgrandado = 1.1f;
 
     [Header("Cooldown")]
     public float tiempoCooldown = 5f;
