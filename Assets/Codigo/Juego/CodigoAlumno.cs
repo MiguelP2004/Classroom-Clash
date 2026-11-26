@@ -22,7 +22,6 @@ public class CodigoAlumno : MonoBehaviour
     public float danoAreaBasket = 0f;
     public float duracionAturdimientoBasket = 0f;
 
-
     [Header("Mejora Nivel 2")]
     public float rangoMejorado = 3.5f;
     public float cadenciaMejorada = 1.0f;
@@ -45,9 +44,10 @@ public class CodigoAlumno : MonoBehaviour
     public float duracionAturdimientoBasketNivel3 = 0f;
     public int costeMejoraNivel3 = 50;
 
-    [Header("Brillo Selección (Coseno)")]
+    [Header("Brillo Selección y Mejora")]
     public float velocidadBrilloSeleccion = 5f;
-    public Color colorBrilloSeleccion = new Color(0.28f, 1f, 0f, 1f);
+    public float intensidadBrilloSeleccion = 2.1f;
+    public float intensidadBrilloMejora = 2.4f;
 
     private float fuerzaRetroceso = 0.1f;
     private float tiempoAtras = 0.1f;
@@ -69,6 +69,8 @@ public class CodigoAlumno : MonoBehaviour
     private Vector3 posicionOriginal;
     private Vector3 escalaOriginal;
     private SpriteRenderer miSpriteRenderer;
+    private MaterialPropertyBlock propBlock;
+    private static readonly int idColor = Shader.PropertyToID("_Color");
     private codigoFlechitaMejora flechaInstanciada;
 
     public TipoAlumno ObtenerTipoAlumno()
@@ -100,7 +102,18 @@ public class CodigoAlumno : MonoBehaviour
     void Awake()
     {
         miSpriteRenderer = GetComponent<SpriteRenderer>();
+        propBlock = new MaterialPropertyBlock();
         escalaOriginal = transform.localScale;
+    }
+
+    private void AplicarColorBrillo(Color colorObjetivo)
+    {
+        if (miSpriteRenderer == null) return;
+        if (propBlock == null) propBlock = new MaterialPropertyBlock();
+
+        miSpriteRenderer.GetPropertyBlock(propBlock);
+        propBlock.SetColor(idColor, colorObjetivo);
+        miSpriteRenderer.SetPropertyBlock(propBlock);
     }
 
     void Update()
@@ -181,8 +194,9 @@ public class CodigoAlumno : MonoBehaviour
             if (rutinaMejora == null && miSpriteRenderer != null)
             {
                 tiempoCosenoSeleccion += Time.deltaTime * velocidadBrilloSeleccion;
-                float ondaCoseno = (1f - Mathf.Cos(tiempoCosenoSeleccion));
-                miSpriteRenderer.color = Color.Lerp(Color.white, colorBrilloSeleccion, ondaCoseno);
+                float ondaCoseno = (1f - Mathf.Cos(tiempoCosenoSeleccion)) * 0.5f;
+                Color colorVerdeFuerte = new Color(0.6f, intensidadBrilloSeleccion, 0.45f, 1f);
+                AplicarColorBrillo(Color.Lerp(Color.white, colorVerdeFuerte, ondaCoseno));
             }
         }
         else if (estabaSeleccionado)
@@ -190,7 +204,7 @@ public class CodigoAlumno : MonoBehaviour
             estabaSeleccionado = false;
             if (rutinaMejora == null && miSpriteRenderer != null)
             {
-                miSpriteRenderer.color = Color.white;
+                AplicarColorBrillo(Color.white);
             }
         }
 
@@ -318,7 +332,7 @@ public class CodigoAlumno : MonoBehaviour
         float duracionBajada = 0.5f;
 
         Vector3 escalaMax = escalaOriginal * 1.15f;
-        Color colorAzul = new Color(0.3f, 0.85f, 1f, 1f);
+        Color colorAzulFuerte = new Color(0.45f, intensidadBrilloMejora * 0.73f, intensidadBrilloMejora, 1f);
 
         float tiempo = 0f;
         while (tiempo < duracionSubida)
@@ -326,7 +340,7 @@ public class CodigoAlumno : MonoBehaviour
             tiempo += Time.deltaTime;
             float t = Mathf.SmoothStep(0f, 1f, tiempo / duracionSubida);
             transform.localScale = Vector3.Lerp(escalaOriginal, escalaMax, t);
-            if (miSpriteRenderer != null) miSpriteRenderer.color = Color.Lerp(Color.white, colorAzul, t);
+            AplicarColorBrillo(Color.Lerp(Color.white, colorAzulFuerte, t));
             yield return null;
         }
 
@@ -336,12 +350,12 @@ public class CodigoAlumno : MonoBehaviour
             tiempo += Time.deltaTime;
             float t = Mathf.SmoothStep(0f, 1f, tiempo / duracionBajada);
             transform.localScale = Vector3.Lerp(escalaMax, escalaOriginal, t);
-            if (miSpriteRenderer != null) miSpriteRenderer.color = Color.Lerp(colorAzul, Color.white, t);
+            AplicarColorBrillo(Color.Lerp(colorAzulFuerte, Color.white, t));
             yield return null;
         }
 
         transform.localScale = escalaOriginal;
-        if (miSpriteRenderer != null) miSpriteRenderer.color = Color.white;
+        AplicarColorBrillo(Color.white);
 
         tiempoCosenoSeleccion = 0f;
         rutinaMejora = null;

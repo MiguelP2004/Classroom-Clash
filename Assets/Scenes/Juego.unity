@@ -2936,8 +2936,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 607.5, y: 481.7}
-  m_SizeDelta: {x: 359, y: 92.5}
+  m_AnchoredPosition: {x: 608.9, y: 481}
+  m_SizeDelta: {x: 359, y: 97.993}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &746618806
 MonoBehaviour:
@@ -2959,7 +2959,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -7469746465860171294, guid: b4008227ccc1dfc42bacd7127e5904d8, type: 3}
+  m_Sprite: {fileID: -4971565265042320130, guid: 43b639212de1f3a4bb4356aff866d38e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5146,7 +5146,6 @@ GameObject:
   - component: {fileID: 1108839861}
   - component: {fileID: 1108839859}
   - component: {fileID: 1108839860}
-  - component: {fileID: 1108839862}
   m_Layer: 0
   m_Name: Aura
   m_TagString: Untagged
@@ -9981,20 +9980,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1391283890}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
---- !u!114 &1108839862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1108839858}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0efee3a39f28c3b4c854de18b3cb108a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OrdenarCapas
-  offset: 9
-  ignorarEjeY: 1
 --- !u!1 &1148615355
 GameObject:
   m_ObjectHideFlags: 0
@@ -10699,6 +10684,7 @@ MonoBehaviour:
   prefabFlechaMejora: {fileID: 3127360624936882420, guid: 78e8961aeea147e468dc12cb1e8fd8f1, type: 3}
   costeMejora: 70
   sonidoMejora: {fileID: 8300000, guid: 1529af9173d1f0c4682530a9bdbf7a21, type: 3}
+  intensidadBrilloMejora: 2.4
   bloqueadoPorTutorial: 0
 --- !u!61 &1203356549
 BoxCollider2D:

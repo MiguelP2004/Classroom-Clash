@@ -8,6 +8,7 @@ public class generacionExamenes : MonoBehaviour
     public GameObject examenPesado;
     public GameObject examenVeloz;
     [HideInInspector] public bool generacionActiva = false;
+    [HideInInspector] public float reduccionEnergia = 0f;
 
     [Header("Aparición y Ruta")]
     public float posX_Aparicion = -8.5f; 
@@ -25,6 +26,8 @@ public class generacionExamenes : MonoBehaviour
 
     private void Awake()
     {
+        reduccionEnergia = 0f;
+
         // Apagamos el panel de oleadas por defecto al inicio
         if (panelOleadas != null)
         {
@@ -57,6 +60,8 @@ public class generacionExamenes : MonoBehaviour
     {
         if (MenuPrincipal.nivelElegido <= 1)
         {
+            reduccionEnergia = 0f;
+
             // En el tutorial, el panel de oleadas se asegura de estar apagado siempre
             if (panelOleadas != null) panelOleadas.SetActive(false);
 
@@ -105,19 +110,27 @@ public class generacionExamenes : MonoBehaviour
             int pesados = 2 + (oleada - 1) * 2;
             int veloces = 2 + (oleada - 1) * 2;
             int nRachas = 1;
+            reduccionEnergia = 0f;
             
             if (oleada >= 3) nRachas = 2; // A partir de la oleada 3, 2 rachas de enemigos
-            if (oleada >= 5) nRachas = 3; // A partir de la oleada 5, 3 rachas de enemigos
+            if (oleada == 5) {
+                nRachas = 3; // A partir de la oleada 5, 3 rachas de enemigos
+                reduccionEnergia = 0.2f; // Reducir un 20% al matar enemigos
+            }
+            if (oleada == 6) {
+                nRachas = 4; // A partir de la oleada 6, 4 rachas de enemigos
+                reduccionEnergia = 0.5f; // Reducir un 50% al matar enemigos
+            }
             
             for (int i = 0; i < nRachas; i++) {
                 float cooldown = 1f - oleada * 0.2f;
-                if (cooldown < 0.5f) cooldown = 0.5f; // Limitar a un mínimo de 0.5 segundos siempre
+                if (cooldown < 0.3f) cooldown = 0.3f; // Limitar a un mínimo de 0.3 segundos siempre
                 
                 yield return StartCoroutine(GenerarRachaEspecifica(examenBasico, basicos, cooldown));
-                yield return new WaitForSeconds(2.4f - oleada * 0.1f);
+                yield return new WaitForSeconds(2.6f - oleada * 0.2f);
                 
                 yield return StartCoroutine(GenerarRachaEspecifica(examenPesado, pesados, cooldown));
-                yield return new WaitForSeconds(2.4f - oleada * 0.1f);
+                yield return new WaitForSeconds(2.6f - oleada * 0.2f);
                 
                 if (oleada >= 2) {
                     yield return StartCoroutine(GenerarRachaEspecifica(examenVeloz, veloces, cooldown / 2f));

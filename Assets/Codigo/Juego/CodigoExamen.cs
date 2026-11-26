@@ -10,7 +10,7 @@ public class codigoExamen : MonoBehaviour
     public float velocidad = 1.2f; 
     private float velocidadOriginal;
     private bool estaMuriendo = false;
-    public int energiaRecibida = 3;
+    public float energiaRecibida = 3f;
 
     [Header("Interfaz de Vida")]
     public GameObject canvasBarraVida;
@@ -271,7 +271,9 @@ public class codigoExamen : MonoBehaviour
             
             if (ControladorJuego.instancia != null)
             {
-                ControladorJuego.instancia.SumarEnergia(energiaRecibida);
+                float reduccion = (generador != null) ? Mathf.Clamp01(generador.reduccionEnergia) : 0f;
+                float energiaFinal = energiaRecibida * (1f - reduccion);
+                ControladorJuego.instancia.SumarEnergia(energiaFinal);
                 ControladorJuego.instancia.SumarBaja();
             }
             if (GestorTutorial.instancia != null)

@@ -13,14 +13,17 @@ public class CodigoProfe : MonoBehaviour
 
     [Header("Mejora x2")]
     public Sprite spriteMejorado; 
-    public GameObject prefabFlechaMejora; // Arrastra aquí el Prefab FlechaMejora
+    public GameObject prefabFlechaMejora;
     public int costeMejora = 70;
     public AudioClip sonidoMejora;
+    public float intensidadBrilloMejora = 2.4f;
 
     [HideInInspector] public bool bloqueadoPorTutorial = false;
 
     private bool tieneDisparoDoble = false;
     private SpriteRenderer miSpriteRenderer;
+    private MaterialPropertyBlock propBlock;
+    private static readonly int idColor = Shader.PropertyToID("_Color");
     private Vector3 escalaOriginal;
     private Coroutine rutinaMejora;
 
@@ -43,6 +46,7 @@ public class CodigoProfe : MonoBehaviour
     void Awake()
     {
         if (instancia == null) instancia = this;
+        propBlock = new MaterialPropertyBlock();
     }
 
     void Start()
@@ -51,6 +55,16 @@ public class CodigoProfe : MonoBehaviour
         escalaOriginal = transform.localScale;
         miSpriteRenderer = GetComponent<SpriteRenderer>();
         esperandoSoltarClick = false;
+    }
+
+    private void AplicarColorBrillo(Color colorObjetivo)
+    {
+        if (miSpriteRenderer == null) return;
+        if (propBlock == null) propBlock = new MaterialPropertyBlock();
+
+        miSpriteRenderer.GetPropertyBlock(propBlock);
+        propBlock.SetColor(idColor, colorObjetivo);
+        miSpriteRenderer.SetPropertyBlock(propBlock);
     }
 
     void Update()
@@ -209,7 +223,7 @@ public class CodigoProfe : MonoBehaviour
         float duracionBajada = 0.5f;
 
         Vector3 escalaMax = escalaOriginal * 1.15f;
-        Color colorAzul = new Color(0.3f, 0.85f, 1f, 1f); 
+        Color colorAzulFuerte = new Color(0.45f, intensidadBrilloMejora * 0.73f, intensidadBrilloMejora, 1f);
 
         float tiempo = 0f;
         while (tiempo < duracionSubida)
@@ -217,7 +231,7 @@ public class CodigoProfe : MonoBehaviour
             tiempo += Time.deltaTime;
             float t = Mathf.SmoothStep(0f, 1f, tiempo / duracionSubida);
             transform.localScale = Vector3.Lerp(escalaOriginal, escalaMax, t);
-            if (miSpriteRenderer != null) miSpriteRenderer.color = Color.Lerp(Color.white, colorAzul, t);
+            AplicarColorBrillo(Color.Lerp(Color.white, colorAzulFuerte, t));
             yield return null;
         }
 
@@ -227,12 +241,12 @@ public class CodigoProfe : MonoBehaviour
             tiempo += Time.deltaTime;
             float t = Mathf.SmoothStep(0f, 1f, tiempo / duracionBajada);
             transform.localScale = Vector3.Lerp(escalaMax, escalaOriginal, t);
-            if (miSpriteRenderer != null) miSpriteRenderer.color = Color.Lerp(colorAzul, Color.white, t);
+            AplicarColorBrillo(Color.Lerp(colorAzulFuerte, Color.white, t));
             yield return null;
         }
 
         transform.localScale = escalaOriginal;
-        if (miSpriteRenderer != null) miSpriteRenderer.color = Color.white;
+        AplicarColorBrillo(Color.white);
         rutinaMejora = null;
     }
 

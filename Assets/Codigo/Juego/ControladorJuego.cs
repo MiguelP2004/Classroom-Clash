@@ -11,9 +11,10 @@ public class ControladorJuego : MonoBehaviour
     public static ControladorJuego instancia;
 
     [Header("Energía")]
-    public int energia = 50;
+    public float energia = 50f;
     public TextMeshProUGUI textoEnergia; 
     private float tamañoAgrandado = 1.35f;
+    private int ultimaEnergiaMostrada = -1;
 
     [Header("Vidas")]
     public int vidas = 12;
@@ -82,10 +83,10 @@ public class ControladorJuego : MonoBehaviour
         
         AudioListener.pause = false;
 
-        energia = (MenuPrincipal.nivelElegido <= 1) ? 90 : 60;
+        energia = (MenuPrincipal.nivelElegido <= 1) ? 90f : 60f;
         vidas = 12;
         bajas = 0;
-        // energia = 10000; // Para pruebas solo
+        // energia = 10000f; // Para pruebas solo
 
         ActualizarTextoEnergia();
         ActualizarTextoVidas();
@@ -443,32 +444,44 @@ public class ControladorJuego : MonoBehaviour
         }
     }
 
-    public void SumarEnergia(int cantidad)
+    public int ObtenerEnergiaEntera()
+    {
+        return Mathf.FloorToInt(energia + 0.0001f);
+    }
+
+    public void SumarEnergia(float cantidad)
     {
         energia += cantidad;
         EfectoCambioEnergia();
     }
 
-    public void GastarEnergia(int cantidad)
+    public void GastarEnergia(float cantidad)
     {
         energia -= cantidad;
+        if (energia < 0f) energia = 0f;
         EfectoCambioEnergia();
     }
 
-    public bool PuedeComprar(int coste) { return energia >= coste; }
+    public bool PuedeComprar(float coste) { return (energia + 0.0001f) >= coste; }
 
     private void EfectoCambioEnergia()
     {
-        if (textoEnergia != null)
+        int nuevaEnergiaEntera = ObtenerEnergiaEntera();
+        if (nuevaEnergiaEntera != ultimaEnergiaMostrada)
         {
-            textoEnergia.text = energia.ToString();
-            textoEnergia.transform.localScale = new Vector3(tamañoAgrandado, tamañoAgrandado, 1f);
+            ultimaEnergiaMostrada = nuevaEnergiaEntera;
+            if (textoEnergia != null)
+            {
+                textoEnergia.text = ultimaEnergiaMostrada.ToString();
+                textoEnergia.transform.localScale = new Vector3(tamañoAgrandado, tamañoAgrandado, 1f);
+            }
         }
     }
 
     private void ActualizarTextoEnergia()
     {
-        if (textoEnergia != null) textoEnergia.text = energia.ToString();
+        ultimaEnergiaMostrada = ObtenerEnergiaEntera();
+        if (textoEnergia != null) textoEnergia.text = ultimaEnergiaMostrada.ToString();
     }
 
     public void RestarVida(int cantidad)
