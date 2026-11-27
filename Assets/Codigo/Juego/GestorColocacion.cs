@@ -90,7 +90,7 @@ public class GestorColocacion : MonoBehaviour
 
     private bool EsPosicionValida(Vector2 posicion)
     {
-        if (posicion.y > 3.8f || posicion.y < -3.6f)
+        if (posicion.y > 3.8f || posicion.y < -3.2f)
         {
             return false;
         }

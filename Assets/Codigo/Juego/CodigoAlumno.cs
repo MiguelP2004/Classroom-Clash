@@ -372,7 +372,7 @@ public class CodigoAlumno : MonoBehaviour
         {
             codigoExamen enemigo = col.GetComponent<codigoExamen>();
 
-            if (enemigo != null && enemigo.vida > 0)
+            if (enemigo != null && enemigo.vida > 0 && !enemigo.esInvisible)
             {
                 if (enemigo.distanciaRecorrida > mayorProgreso)
                 {

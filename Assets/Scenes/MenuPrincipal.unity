@@ -5239,6 +5239,7 @@ MonoBehaviour:
   - {fileID: 5661411276649858762, guid: 1a8127640cdd98e4b86ce2132a245cdc, type: 3}
   - {fileID: 5661411276649858762, guid: 98502edf4df71314f8f389e82c1c3143, type: 3}
   - {fileID: 5661411276649858762, guid: 09deac0411fee6f44b71e9ed88ba2956, type: 3}
+  - {fileID: 5661411276649858762, guid: 1c4937e842412a842a00bd63262979bd, type: 3}
   posX_Aparicion: -12.3
   posY_Aparicion: 0.45
   rutaCamino: {fileID: 1331979907}

@@ -112,7 +112,7 @@ MonoBehaviour:
   prefabFlechaMejora: {fileID: 3127360624936882420, guid: 78e8961aeea147e468dc12cb1e8fd8f1, type: 3}
   sonidoMejora: {fileID: 8300000, guid: 1529af9173d1f0c4682530a9bdbf7a21, type: 3}
   rangoAtaque: 3.5
-  cadenciaFuego: 2.4
+  cadenciaFuego: 2.5
   danoProyectil: 1
   zonaImpactoHielo: 0
   maxImpactosBoomerang: 2
@@ -120,7 +120,7 @@ MonoBehaviour:
   danoAreaBasket: 0
   duracionAturdimientoBasket: 0
   rangoMejorado: 3.8
-  cadenciaMejorada: 2.2
+  cadenciaMejorada: 2.3
   danoMejorado: 1.25
   zonaImpactoHieloMejorada: 0
   maxImpactosBoomerangMejorado: 3
@@ -129,7 +129,7 @@ MonoBehaviour:
   duracionAturdimientoBasketMejorada: 0
   costeMejora: 60
   rangoMejoradoNivel3: 4.2
-  cadenciaMejoradaNivel3: 2
+  cadenciaMejoradaNivel3: 2.1
   danoMejoradoNivel3: 1.5
   zonaImpactoHieloMejoradaNivel3: 0
   maxImpactosBoomerangNivel3: 4
@@ -138,7 +138,8 @@ MonoBehaviour:
   duracionAturdimientoBasketNivel3: 0
   costeMejoraNivel3: 85
   velocidadBrilloSeleccion: 5
-  colorBrilloSeleccion: {r: 1, g: 1, b: 0, a: 1}
+  intensidadBrilloSeleccion: 2.1
+  intensidadBrilloMejora: 2.4
   estaColocado: 0
   seleccionado: 0
   nivelActual: 1

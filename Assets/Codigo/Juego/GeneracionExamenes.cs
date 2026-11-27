@@ -7,6 +7,7 @@ public class generacionExamenes : MonoBehaviour
     public GameObject examenBasico;
     public GameObject examenPesado;
     public GameObject examenVeloz;
+    public GameObject examenCientifico;
     [HideInInspector] public bool generacionActiva = false;
     [HideInInspector] public float reduccionEnergia = 0f;
 
@@ -109,24 +110,28 @@ public class generacionExamenes : MonoBehaviour
             int basicos = 5 + (oleada - 1) * 2;
             int pesados = 2 + (oleada - 1) * 2;
             int veloces = 2 + (oleada - 1) * 2;
+            int cientificos = 2 + (oleada - 1) * 2;
             int nRachas = 1;
             reduccionEnergia = 0f;
             
-            if (oleada >= 3) nRachas = 2; // A partir de la oleada 3, 2 rachas de enemigos
-            if (oleada == 5) {
-                nRachas = 3; // A partir de la oleada 5, 3 rachas de enemigos
-                reduccionEnergia = 0.2f; // Reducir un 20% al matar enemigos
+            if (oleada >= 3)  {
+                nRachas = 2;
+                reduccionEnergia = 0.1f;
             }
-            if (oleada == 6) {
-                nRachas = 4; // A partir de la oleada 6, 4 rachas de enemigos
-                reduccionEnergia = 0.5f; // Reducir un 50% al matar enemigos
+            if (oleada == 5) {
+                nRachas = 3;
+                reduccionEnergia = 0.2f;
+            } else if (oleada == 6) {
+                nRachas = 4;
+                reduccionEnergia = 0.5f;
             }
             
             for (int i = 0; i < nRachas; i++) {
                 float cooldown = 1f - oleada * 0.2f;
                 if (cooldown < 0.3f) cooldown = 0.3f; // Limitar a un mínimo de 0.3 segundos siempre
+                if (oleada == 3 && i == 0) yield return StartCoroutine(GenerarRachaEspecifica(examenCientifico, 4, 0.5f));
                 
-                yield return StartCoroutine(GenerarRachaEspecifica(examenBasico, basicos, cooldown));
+                yield return StartCoroutine(GenerarRachaEspecifica(examenBasico, cientificos, cooldown));
                 yield return new WaitForSeconds(2.6f - oleada * 0.2f);
                 
                 yield return StartCoroutine(GenerarRachaEspecifica(examenPesado, pesados, cooldown));
@@ -135,6 +140,10 @@ public class generacionExamenes : MonoBehaviour
                 if (oleada >= 2) {
                     yield return StartCoroutine(GenerarRachaEspecifica(examenVeloz, veloces, cooldown / 2f));
                 }
+                if (oleada >= 4) {
+                    yield return StartCoroutine(GenerarRachaEspecifica(examenCientifico, cientificos, cooldown));
+                }
+                if (oleada == 3 && i == 1) yield return StartCoroutine(GenerarRachaEspecifica(examenCientifico, 4, 0.5f));
             }
             
             while (enemigosVivos > 0)

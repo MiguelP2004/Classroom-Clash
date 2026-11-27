@@ -19,6 +19,16 @@ public class SombraExamen : MonoBehaviour
         alphaBase = miSprite.color.a;
     }
 
+    public void EstablecerVisible(bool visible)
+    {
+        if (visible && objetivo != null)
+        {
+            transform.position = objetivo.position + new Vector3(0f, offsetY, 0f);
+        }
+
+        gameObject.SetActive(visible);
+    }
+
     void LateUpdate()
     {
         if (objetivo == null)
@@ -28,7 +38,6 @@ public class SombraExamen : MonoBehaviour
         }
 
         transform.position = objetivo.position + new Vector3(0f, offsetY, 0f);
-        
         transform.rotation = Quaternion.identity;
 
         if (spriteObjetivo != null && miSprite != null)
