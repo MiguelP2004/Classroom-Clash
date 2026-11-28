@@ -52,6 +52,7 @@ public class CodigoLapiz : MonoBehaviour
     private float progresoCurva = 0f;
     private float duracionCurva = 1f;
     private bool enTramoVuelta = false;
+    private bool perdioObjetivoPorTeleport = false;
     private codigoExamen objetivoBoomerangActual;
     private codigoExamen ultimoExamenIda;
     private float tiempoUltimoImpactoIda = -10f;
@@ -61,7 +62,6 @@ public class CodigoLapiz : MonoBehaviour
     private HashSet<codigoExamen> impactadosIda = new HashSet<codigoExamen>();
     private HashSet<codigoExamen> impactadosVuelta = new HashSet<codigoExamen>();
 
-    // Variables internas Basket
     private Vector2 direccionVuelo;
 
     void Start()
@@ -80,20 +80,25 @@ public class CodigoLapiz : MonoBehaviour
             Destroy(audioTemporal, disparo.length + 0.1f);
         }
 
+        bool objetivoInicialValido = (objetivo != null && scriptObjetivo != null && scriptObjetivo.vida > 0 && !scriptObjetivo.esInvisible);
+
         if (esBoomerang)
         {
             posicionOrigenGuardada = (alumnoOrigen != null) ? alumnoOrigen.position : transform.position;
             velocidadActualBoomerang = velocidad;
-            objetivoBoomerangActual = scriptObjetivo;
 
-            if (objetivo != null)
+            if (objetivoInicialValido)
             {
+                objetivoBoomerangActual = scriptObjetivo;
                 posicionUltimoObjetivo = objetivo.position;
                 Vector2 dir = (Vector2)(objetivo.position - transform.position);
                 anguloActualVuelo = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             }
             else
             {
+                objetivo = null;
+                scriptObjetivo = null;
+                objetivoBoomerangActual = null;
                 anguloActualVuelo = transform.eulerAngles.z;
                 posicionUltimoObjetivo = transform.position + transform.right * 3f;
             }
@@ -103,12 +108,14 @@ public class CodigoLapiz : MonoBehaviour
         }
         else if (esBasket)
         {
-            if (objetivo != null)
+            if (objetivoInicialValido)
             {
                 direccionVuelo = ((Vector2)(objetivo.position - transform.position)).normalized;
             }
             else
             {
+                objetivo = null;
+                scriptObjetivo = null;
                 direccionVuelo = transform.right.normalized;
             }
 
@@ -116,6 +123,12 @@ public class CodigoLapiz : MonoBehaviour
         }
         else
         {
+            if (!objetivoInicialValido)
+            {
+                objetivo = null;
+                scriptObjetivo = null;
+            }
+
             transform.Rotate(0, 0, -90f);
             Destroy(gameObject, tiempoDeVida);
         }
@@ -135,10 +148,9 @@ public class CodigoLapiz : MonoBehaviour
             return;
         }
 
-        // Lápiz normal y Boli congelado
         if (objetivo != null && scriptObjetivo != null)
         {
-            if (scriptObjetivo.vida > 0)
+            if (scriptObjetivo.vida > 0 && !scriptObjetivo.esInvisible)
             {
                 Vector3 direccion = objetivo.position - transform.position;
                 float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
@@ -147,6 +159,7 @@ public class CodigoLapiz : MonoBehaviour
             else
             {
                 objetivo = null;
+                scriptObjetivo = null;
             }
         }
 
@@ -157,7 +170,7 @@ public class CodigoLapiz : MonoBehaviour
     {
         if (objetivo != null && scriptObjetivo != null)
         {
-            if (scriptObjetivo.vida > 0)
+            if (scriptObjetivo.vida > 0 && !scriptObjetivo.esInvisible)
             {
                 Vector2 haciaObjetivo = (Vector2)(objetivo.position - transform.position);
                 if (haciaObjetivo.sqrMagnitude > 0.0001f)
@@ -168,6 +181,7 @@ public class CodigoLapiz : MonoBehaviour
             else
             {
                 objetivo = null;
+                scriptObjetivo = null;
             }
         }
 
@@ -182,6 +196,11 @@ public class CodigoLapiz : MonoBehaviour
             posicionOrigenGuardada = alumnoOrigen.position;
         }
 
+        if (ultimoExamenIda != null && (ultimoExamenIda.vida <= 0 || ultimoExamenIda.esInvisible))
+        {
+            ultimoExamenIda = null;
+        }
+
         if (faseBoomerang == FaseBoomerang.Ida)
         {
             if (impactadosIda.Count >= maxImpactosPorTramo)
@@ -190,12 +209,21 @@ public class CodigoLapiz : MonoBehaviour
                 return;
             }
 
+            if (objetivoBoomerangActual != null && objetivoBoomerangActual.esInvisible)
+            {
+                perdioObjetivoPorTeleport = true;
+                objetivoBoomerangActual = null;
+            }
+
             bool objetivoValido = (objetivoBoomerangActual != null &&
                                    objetivoBoomerangActual.vida > 0 &&
+                                   !objetivoBoomerangActual.esInvisible &&
                                    !impactadosIda.Contains(objetivoBoomerangActual));
 
             if (!objetivoValido)
             {
+                objetivoBoomerangActual = null;
+
                 if (impactadosIda.Count > 0)
                 {
                     objetivoBoomerangActual = BuscarExamenCercano(impactadosIda, radioBusquedaCercano);
@@ -208,9 +236,8 @@ public class CodigoLapiz : MonoBehaviour
                     }
                     objetivoValido = true;
                 }
-                else
+                else if (!perdioObjetivoPorTeleport)
                 {
-                    // Si el primer objetivo murió antes de llegar, intenta redirigirse a uno cercano o gira al llegar
                     codigoExamen reemplazo = BuscarExamenCercano(impactadosIda, radioBusquedaCercano);
                     if (reemplazo != null)
                     {
@@ -293,7 +320,7 @@ public class CodigoLapiz : MonoBehaviour
                     tiempoPersiguiendoActual = 0f;
 
                     objetivoBoomerangActual = BuscarExamenCercano(impactadosVuelta, radioBusquedaAlVolver);
-                    if (objetivoBoomerangActual == null && ultimoExamenIda != null && ultimoExamenIda.vida > 0)
+                    if (objetivoBoomerangActual == null && ultimoExamenIda != null && ultimoExamenIda.vida > 0 && !ultimoExamenIda.esInvisible)
                     {
                         objetivoBoomerangActual = ultimoExamenIda;
                     }
@@ -305,7 +332,6 @@ public class CodigoLapiz : MonoBehaviour
                 }
                 else if (enTramoVuelta && impactadosVuelta.Count < maxImpactosPorTramo)
                 {
-                    // Si mientras termina la curva de regreso aparece un examen cerca, engancha hacia él
                     codigoExamen cercano = BuscarExamenCercano(impactadosVuelta, radioBusquedaCercano);
                     if (cercano != null)
                     {
@@ -328,6 +354,7 @@ public class CodigoLapiz : MonoBehaviour
             {
                 bool objetivoValido = (objetivoBoomerangActual != null &&
                                        objetivoBoomerangActual.vida > 0 &&
+                                       !objetivoBoomerangActual.esInvisible &&
                                        !impactadosVuelta.Contains(objetivoBoomerangActual));
 
                 if (!objetivoValido)
@@ -381,7 +408,6 @@ public class CodigoLapiz : MonoBehaviour
             float anguloDeseado = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             float diferenciaAngulo = Mathf.Abs(Mathf.DeltaAngle(anguloActualVuelo, anguloDeseado));
 
-            // Desacelera levemente al cerrar curva hacia un examen cercano para mantener fluidez
             if (esObjetivoEnemigo)
             {
                 velocidadObjetivo = Mathf.Lerp(velocidad, velocidad * 0.7f, Mathf.Clamp01(diferenciaAngulo / 135f));
@@ -420,7 +446,7 @@ public class CodigoLapiz : MonoBehaviour
             if (!col.CompareTag("Examen")) continue;
 
             codigoExamen ex = col.GetComponent<codigoExamen>();
-            if (ex == null || ex.vida <= 0 || excluidos.Contains(ex)) continue;
+            if (ex == null || ex.vida <= 0 || ex.esInvisible || excluidos.Contains(ex)) continue;
 
             if (enTramoVuelta && ex == ultimoExamenIda && (Time.time - tiempoUltimoImpactoIda) < 0.12f)
             {
@@ -474,7 +500,7 @@ public class CodigoLapiz : MonoBehaviour
         {
             codigoExamen enemigo = otro.GetComponent<codigoExamen>();
 
-            if (enemigo != null && enemigo.vida > 0)
+            if (enemigo != null && enemigo.vida > 0 && !enemigo.esInvisible)
             {
                 haImpactado = true;
 
@@ -524,7 +550,7 @@ public class CodigoLapiz : MonoBehaviour
         if (!otro.CompareTag("Examen")) return;
 
         codigoExamen enemigo = otro.GetComponent<codigoExamen>();
-        if (enemigo == null || enemigo.vida <= 0) return;
+        if (enemigo == null || enemigo.vida <= 0 || enemigo.esInvisible) return;
 
         HashSet<codigoExamen> listaTramo = enTramoVuelta ? impactadosVuelta : impactadosIda;
         if (listaTramo.Contains(enemigo)) return;
@@ -556,7 +582,8 @@ public class CodigoLapiz : MonoBehaviour
                 IniciarCurvaBoomerang();
             }
             else if (objetivoBoomerangActual == enemigo || objetivoBoomerangActual == null ||
-                     objetivoBoomerangActual.vida <= 0 || impactadosIda.Contains(objetivoBoomerangActual))
+                     objetivoBoomerangActual.vida <= 0 || objetivoBoomerangActual.esInvisible ||
+                     impactadosIda.Contains(objetivoBoomerangActual))
             {
                 objetivoBoomerangActual = BuscarExamenCercano(impactadosIda, radioBusquedaCercano);
                 tiempoPersiguiendoActual = 0f;
@@ -574,7 +601,8 @@ public class CodigoLapiz : MonoBehaviour
                 objetivoBoomerangActual = null;
             }
             else if (objetivoBoomerangActual == enemigo || objetivoBoomerangActual == null ||
-                     objetivoBoomerangActual.vida <= 0 || impactadosVuelta.Contains(objetivoBoomerangActual))
+                     objetivoBoomerangActual.vida <= 0 || objetivoBoomerangActual.esInvisible ||
+                     impactadosVuelta.Contains(objetivoBoomerangActual))
             {
                 objetivoBoomerangActual = BuscarExamenCercano(impactadosVuelta, radioBusquedaCercano);
                 tiempoPersiguiendoActual = 0f;
@@ -592,7 +620,7 @@ public class CodigoLapiz : MonoBehaviour
             if (!col.CompareTag("Examen")) continue;
 
             codigoExamen otroEnemigo = col.GetComponent<codigoExamen>();
-            if (otroEnemigo != null && otroEnemigo != enemigoImpactado && otroEnemigo.vida > 0)
+            if (otroEnemigo != null && otroEnemigo != enemigoImpactado && otroEnemigo.vida > 0 && !otroEnemigo.esInvisible)
             {
                 otroEnemigo.AplicarCongelacion();
             }
@@ -609,7 +637,7 @@ public class CodigoLapiz : MonoBehaviour
             if (!col.CompareTag("Examen")) continue;
 
             codigoExamen otroEnemigo = col.GetComponent<codigoExamen>();
-            if (otroEnemigo != null && otroEnemigo != enemigoImpactado && otroEnemigo.vida > 0)
+            if (otroEnemigo != null && otroEnemigo != enemigoImpactado && otroEnemigo.vida > 0 && !otroEnemigo.esInvisible)
             {
                 otroEnemigo.RecibirImpacto(danoAreaBasket);
             }
@@ -682,7 +710,15 @@ public class CodigoLapiz : MonoBehaviour
         if (objetivo != null)
         {
             scriptObjetivo = objetivo.GetComponent<codigoExamen>();
-            posicionUltimoObjetivo = objetivo.position;
+            if (scriptObjetivo != null && !scriptObjetivo.esInvisible)
+            {
+                posicionUltimoObjetivo = objetivo.position;
+            }
+            else
+            {
+                objetivo = null;
+                scriptObjetivo = null;
+            }
         }
     }
 }

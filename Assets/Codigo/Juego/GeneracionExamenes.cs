@@ -114,16 +114,16 @@ public class generacionExamenes : MonoBehaviour
             int nRachas = 1;
             reduccionEnergia = 0f;
             
-            if (oleada >= 3)  {
+            if (oleada >= 2)  {
                 nRachas = 2;
-                reduccionEnergia = 0.1f;
+                if (oleada == 3) reduccionEnergia = 0.1f;
             }
             if (oleada == 5) {
                 nRachas = 3;
-                reduccionEnergia = 0.2f;
+                reduccionEnergia = 0.25f;
             } else if (oleada == 6) {
                 nRachas = 4;
-                reduccionEnergia = 0.5f;
+                reduccionEnergia = 0.6f;
             }
             
             for (int i = 0; i < nRachas; i++) {
